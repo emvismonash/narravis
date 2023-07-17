@@ -1264,3 +1264,5 @@ confA404ErrFaq=There are ({1}) 404 error(s). The attachment/page is not found. T
 confA500ErrFaq=There are ({1}) 500 error(s). An internal server error in Confluence Cloud. Such errors are due to overloading the server and usually fixed by retrying the process.
 confAOtherErrFaq=There are ({1}) other error(s). Please check the error description. If the description is not clear, please contact our support.
 confAReplaceBaseUrl=Replace Base URL in diagram links when no page ID mapping is found
+# New words
+narrativeabduction=Narrative Abduction
