@@ -60,7 +60,7 @@ if (mxIsElectron)
 	// We can't use eval in Electron because of CSP, so load all shapes and disable eval
 	mxscript('js/stencils.min.js', function()
 	{
-		mxscript('js/shapes-14-6-5.min.js', function()
+		mxscript('js/shapes-14-6-5.js', function()
 		{
 			if (window.pendingRequest != null)
 			{
@@ -71,7 +71,7 @@ if (mxIsElectron)
 		});
 	});
 	
-	// Disables eval for JS (uses shapes-14-6-5.min.js)
+	// Disables eval for JS (uses shapes-14-6-5.js)
 	mxStencilRegistry.allowEval = false;
 }
 //TODO Add support for loading math from a local folder
