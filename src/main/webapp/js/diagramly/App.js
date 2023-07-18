@@ -318,6 +318,7 @@ App.startTime = new Date();
  * https://www.drawio.com/doc/faq/supported-url-parameters
  */
 App.pluginRegistry = {'4xAKTrabTpTzahoLthkwPNUn': 'plugins/explore.js',
+	'narrativeabduction': 'plugins/narrativeabduction.js',	
 	'ex': 'plugins/explore.js',
 	'ac': 'plugins/connect.js', 'acj': 'plugins/connectJira.js',
 	'ac148': 'plugins/cConf-1-4-8.js', 'ac148cmnt': 'plugins/cConf-comments.js', 
@@ -334,9 +335,11 @@ App.pluginRegistry = {'4xAKTrabTpTzahoLthkwPNUn': 'plugins/explore.js',
 	'tickets': 'plugins/tickets.js', 'flow': 'plugins/flow.js',
 	'webcola': 'plugins/webcola/webcola.js', 'rnd': 'plugins/random.js',
 	'page': 'plugins/page.js', 'gd': 'plugins/googledrive.js',
-	'tags': 'plugins/tags.js'};
+	'tags': 'plugins/tags.js',
+};
 
 App.publicPlugin = [
+	'narrativeabduction',
 	'ex',
 	'voice',
 	'tips',
