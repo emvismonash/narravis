@@ -11,6 +11,10 @@ class NarrativeAbduction{
         this.LoadPalette();
     }
     
+    DisableMoreShapes = function(){
+        
+    }
+
     LoadPalette = function(){
         var sidebar = this.editorui.sidebar;
 
