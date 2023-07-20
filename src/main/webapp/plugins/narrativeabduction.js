@@ -42,6 +42,8 @@ class NarrativeAbduction{
 
     LoadPalette = function(){
         var sidebar = this.editorui.sidebar;
+        console.log("Sidebar", sidebar);
+        console.log("Sidebar entries", sidebar.entries);
 
         //mxResources.get("narrativeabduction")
         Sidebar.prototype.addNarrativeAbductionPalette = function(a) {
@@ -61,6 +63,8 @@ class NarrativeAbduction{
         }
     
         sidebar.addNarrativeAbductionPalette();
+
+
     }
 
     LoadUI = function(){
