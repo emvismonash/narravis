@@ -59,6 +59,42 @@ class NarrativeAbduction{
             for(var i = 0; i < templates.Nodes.length; i++){
                 nodes[i] = sidebar.addDataEntry(templates.Nodes[i].Name, 0, 0, templates.Nodes[i].Name, Graph.compress(templates.Nodes[i].XML));
             }
+
+            //Custom
+            // Creates the graph inside the given container
+				var graph = new mxGraph();
+				graph.constrainChildren = false;
+				graph.extendParents = false;
+				graph.extendParentsOnAdd = false;
+
+				// Uncomment the following if you want the container
+				// to fit the size of the graph
+				//graph.setResizeContainer(true);
+				
+				// Enables rubberband selection
+				new mxRubberband(graph);
+				
+				// Gets the default parent for inserting new cells. This
+				// is normally the first child of the root (ie. layer 0).
+				var parent = graph.getDefaultParent();
+								
+				// Adds cells to the model in a single step
+				graph.getModel().beginUpdate();
+				try
+				{
+                    var v1 = graph.insertVertex(parent, null, 'Container', 20, 20, 200, 200,
+					'shape=swimlane;startSize=20;');
+                    var v2 = graph.insertVertex(v1, null, 'World!', 90, 20, 60, 20);
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+                var encoder = new mxCodec();
+                var result = encoder.encode(graph.getModel());
+                var xml = mxUtils.getXml(result);
+            nodes.push(sidebar.addDataEntry("Test", 0, 0, "Test", Graph.compress(xml)));
             return nodes;
         }
     
