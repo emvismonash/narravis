@@ -52,6 +52,7 @@ class NarrativeAbduction{
             sidebar.setCurrentSearchEntryLibrary()
         };
     
+        var t = this;
         Sidebar.prototype.createNarrativeAbductionShapes = function(){
 
             var nodes = [];
@@ -60,47 +61,103 @@ class NarrativeAbduction{
                 nodes[i] = sidebar.addDataEntry(templates.Nodes[i].Name, 0, 0, templates.Nodes[i].Name, Graph.compress(templates.Nodes[i].XML));
             }
 
-            //Custom
-            // Creates the graph inside the given container
-				var graph = new mxGraph();
-				graph.constrainChildren = false;
-				graph.extendParents = false;
-				graph.extendParentsOnAdd = false;
+           
+            var xml1 = t.CreateContainerGraph1();
+            var xml2 = t.CreateContainerGraph2();
+            nodes.push(sidebar.addDataEntry("Test", 0, 0, "Test", Graph.compress(xml1)));
+            nodes.push(sidebar.addDataEntry("Test 2", 0, 0, "Test", Graph.compress(xml2)));
 
-				// Uncomment the following if you want the container
-				// to fit the size of the graph
-				//graph.setResizeContainer(true);
-				
-				// Enables rubberband selection
-				new mxRubberband(graph);
-				
-				// Gets the default parent for inserting new cells. This
-				// is normally the first child of the root (ie. layer 0).
-				var parent = graph.getDefaultParent();
-								
-				// Adds cells to the model in a single step
-				graph.getModel().beginUpdate();
-				try
-				{
-                    var v1 = graph.insertVertex(parent, null, 'Container', 20, 20, 200, 200,
-					'shape=swimlane;startSize=20;');
-                    var v2 = graph.insertVertex(v1, null, 'World!', 90, 20, 60, 20);
-				}
-				finally
-				{
-					// Updates the display
-					graph.getModel().endUpdate();
-				}
-                var encoder = new mxCodec();
-                var result = encoder.encode(graph.getModel());
-                var xml = mxUtils.getXml(result);
-            nodes.push(sidebar.addDataEntry("Test", 0, 0, "Test", Graph.compress(xml)));
+
             return nodes;
         }
     
         sidebar.addNarrativeAbductionPalette();
 
+    }
 
+    CreateContainerGraph1 = function(){
+            //Custom
+            // Creates the graph inside the given container
+            var graph = new mxGraph();
+            graph.constrainChildren = false;
+            graph.extendParents = false;
+            graph.extendParentsOnAdd = false;
+
+            // Uncomment the following if you want the container
+            // to fit the size of the graph
+            //graph.setResizeContainer(true);
+            
+            // Enables rubberband selection
+            new mxRubberband(graph);
+            
+            // Gets the default parent for inserting new cells. This
+            // is normally the first child of the root (ie. layer 0).
+            var parent = graph.getDefaultParent();
+                            
+            // Adds cells to the model in a single step
+            graph.getModel().beginUpdate();
+            try
+            {
+                var v1 = graph.insertVertex(parent, null, 'Container', 20, 20, 200, 200,
+                'swimlane;shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;image=https://thenounproject.com/api/private/icons/286718/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0;rotation=0;labelBackgroundColor=#ffffff;labelBorderColor=none;');
+                v1.geometry.alternateBounds = new mxRectangle(0, 0, 110, 70);
+                var v2 = graph.insertVertex(v1, null, 'World!', 90, 20, 60, 20);
+            }
+            finally
+            {
+                // Updates the display
+                graph.getModel().endUpdate();
+            }
+
+            var encoder = new mxCodec();
+            var result = encoder.encode(graph.getModel());
+            var xml = mxUtils.getXml(result);
+
+            return xml;
+    }
+
+    CreateContainerGraph2 = function(){
+        var graph = new mxGraph();
+			var parent = graph.getDefaultParent();
+			
+			// Extends mxGraphModel.getStyle to show an image when collapsed
+			var modelGetStyle = graph.model.getStyle;
+			graph.model.getStyle = function(cell)
+			{
+				if (cell != null)
+				{
+					var style = modelGetStyle.apply(this, arguments);
+					
+					if (this.isCollapsed(cell))
+					{
+						style = style + ';shape=image;image=http://www.jgraph.com/images/mxgraph.gif;' +
+							'noLabel=1;imageBackground=#C3D9FF;imageBorder=#6482B9';
+					}
+					
+					return style;
+				}
+				
+				return null;
+			};
+			
+			graph.getModel().beginUpdate();
+			try
+			{
+				var v1 = graph.insertVertex(parent, null, 'Container', 20, 20, 200, 200,
+					'shape=swimlane;startSize=20;');
+				v1.geometry.alternateBounds = new mxRectangle(0, 0, 110, 70);
+				var v11 = graph.insertVertex(v1, null, 'Hello,', 10, 40, 120, 80);
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+
+            var encoder = new mxCodec();
+            var result = encoder.encode(graph.getModel());
+            var xml = mxUtils.getXml(result);
+
+            return xml;
     }
 
     LoadUI = function(){
