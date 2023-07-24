@@ -35,10 +35,6 @@ class NarrativeAbduction{
         this.LoadUI();
         this.UpdateHoverIcons();
     }
-    
-    DisableMoreShapes = function(){
-
-    }
 
     LoadPalette = function(){
         var sidebar = this.editorui.sidebar;
@@ -72,7 +68,6 @@ class NarrativeAbduction{
         }
     
         sidebar.addNarrativeAbductionPalette();
-
     }
 
     CreateContainerGraph1 = function(){
@@ -202,24 +197,274 @@ class NarrativeAbduction{
 
         napalette[1].append(this.uicontainer);
     }
-
-    AddFunction = function(label, f){
-        //create button
-        var button = document.createElement("button");
-        console.log(button); 
-
-        button.classList.add('geBtn');
-        button.innerText = label;
-        button.onclick = f;
-
-        //add uis to container
-        this.uipanel.append(button);
-    }
 };
+
+class NarrativeAbductionDev {
+    constructor(ui) {
+        this.editorui = ui;
+    }
+
+    Init = function(){
+        this.Example();
+
+        var editorui = this.editorui;
+        this.editorui.editor.graph.addListener(mxEvent.DOUBLE_CLICK, function (sender, evt) {
+
+            console.log("Graph double clicked");
+            var cell = evt.getProperty("cell"); // cell may be null
+            if (cell != null) {
+                console.log("Cell", cell);
+                console.log("is Collapsed", cell.isCollapsed());
+                if(!cell.isCollapsed()){
+                    cell.setStyle("verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.6_point_star");
+                }else{
+                    cell.setCollapsed(true);
+                    cell.setStyle("swimlane;startSize=20;");
+                }
+                editorui.editor.graph.setSelectionCell(cell);
+
+            }
+            evt.consume();
+        });
+        
+    }
+
+    Example = function(){       
+        // Note that these XML nodes will be enclosing the
+				// mxCell nodes for the model cells in the output
+				var doc = mxUtils.createXmlDocument();
+
+				var person1 = doc.createElement('Person');
+				person1.setAttribute('firstName', 'Daffy');
+				person1.setAttribute('lastName', 'Duck');
+
+				var person2 = doc.createElement('Person');
+				person2.setAttribute('firstName', 'Bugs');
+				person2.setAttribute('lastName', 'Bunny');
+
+				var relation = doc.createElement('Knows');
+				relation.setAttribute('since', '1985');
+				
+				// Creates the graph inside the given container
+				var graph = new mxGraph();
+
+				// Optional disabling of sizing
+				graph.setCellsResizable(false);
+				
+				// Configures the graph contains to resize and
+				// add a border at the bottom, right
+				graph.setResizeContainer(true);
+				graph.minimumContainerSize = new mxRectangle(0, 0, 500, 380);
+				graph.setBorder(60);
+				
+				// Stops editing on enter key, handles escape
+				new mxKeyHandler(graph);
+
+				// Overrides method to disallow edge label editing
+				graph.isCellEditable = function(cell)
+				{
+					return !this.getModel().isEdge(cell);
+				};
+				
+				// Overrides method to provide a cell label in the display
+				// graph.convertValueToString = function(cell)
+				// {
+				// 	if (mxUtils.isNode(cell.value))
+				// 	{
+				// 		if (cell.value.nodeName.toLowerCase() == 'person')
+				// 		{
+				// 			var firstName = cell.getAttribute('firstName', '');
+				// 			var lastName = cell.getAttribute('lastName', '');
+
+				// 			if (lastName != null && lastName.length > 0)
+				// 			{
+				// 				return lastName + ', ' + firstName;
+				// 			}
+
+				// 			return firstName;
+				// 		}
+				// 		else if (cell.value.nodeName.toLowerCase() == 'knows')
+				// 		{
+				// 			return cell.value.nodeName + ' (Since '
+				// 					+  cell.getAttribute('since', '') + ')';
+				// 		}
+
+				// 	}
+
+				// 	return '';
+				// };
+
+				// Overrides method to store a cell label in the model
+				var cellLabelChanged = graph.cellLabelChanged;
+				graph.cellLabelChanged = function(cell, newValue, autoSize)
+				{
+					if (mxUtils.isNode(cell.value) &&
+						cell.value.nodeName.toLowerCase() == 'person')
+					{
+						var pos = newValue.indexOf(' ');
+
+						var firstName = (pos > 0) ? newValue.substring(0,
+								pos) : newValue;
+						var lastName = (pos > 0) ? newValue.substring(
+								pos + 1, newValue.length) : '';
+
+						// Clones the value for correct undo/redo
+						var elt = cell.value.cloneNode(true);
+
+						elt.setAttribute('firstName', firstName);
+						elt.setAttribute('lastName', lastName);
+
+						newValue = elt;
+						autoSize = true;
+					}
+					
+					cellLabelChanged.apply(this, arguments);
+				};
+
+				// Overrides method to create the editing value
+				var getEditingValue = graph.getEditingValue;
+				graph.getEditingValue = function(cell)
+				{
+					if (mxUtils.isNode(cell.value) &&
+						cell.value.nodeName.toLowerCase() == 'person')
+					{
+						var firstName = cell.getAttribute('firstName', '');
+						var lastName = cell.getAttribute('lastName', '');
+
+						return firstName + ' ' + lastName;
+					}
+				};
+
+				// Adds a special tooltip for edges
+				graph.setTooltips(true);
+				
+				var getTooltipForCell = graph.getTooltipForCell;
+				graph.getTooltipForCell = function(cell)
+				{
+					// Adds some relation details for edges
+					if (graph.getModel().isEdge(cell))
+					{
+						var src = this.getLabel(this.getModel().getTerminal(cell, true));
+						var trg = this.getLabel(this.getModel().getTerminal(cell, false));
+
+						return src + ' ' + cell.value.nodeName + ' ' +  trg;
+					}
+
+					return getTooltipForCell.apply(this, arguments);
+				};
+				
+				// Enables rubberband selection
+				new mxRubberband(graph);
+
+				// Adds an option to view the XML of the graph
+				document.body.appendChild(mxUtils.button('View XML', function()
+				{
+					var encoder = new mxCodec();
+					var node = encoder.encode(graph.getModel());
+					mxUtils.popup(mxUtils.getPrettyXml(node), true);
+				}));
+
+				// Changes the style for match the markup
+				// Creates the default style for vertices
+				var style = graph.getStylesheet().getDefaultVertexStyle();
+				style[mxConstants.STYLE_STROKECOLOR] = 'gray';
+				style[mxConstants.STYLE_ROUNDED] = true;
+				style[mxConstants.STYLE_SHADOW] = true;
+				style[mxConstants.STYLE_FILLCOLOR] = '#DFDFDF';
+				style[mxConstants.STYLE_GRADIENTCOLOR] = 'white';
+				style[mxConstants.STYLE_FONTCOLOR] = 'black';
+				style[mxConstants.STYLE_FONTSIZE] = '12';
+				style[mxConstants.STYLE_SPACING] = 4;
+		
+				// Creates the default style for edges
+				style = graph.getStylesheet().getDefaultEdgeStyle();
+				style[mxConstants.STYLE_STROKECOLOR] = '#0C0C0C';
+				style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = 'white';
+				style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
+				style[mxConstants.STYLE_ROUNDED] = true;
+				style[mxConstants.STYLE_FONTCOLOR] = 'black';
+				style[mxConstants.STYLE_FONTSIZE] = '10';
+				
+				// Gets the default parent for inserting new cells. This
+				// is normally the first child of the root (ie. layer 0).
+				var parent = graph.getDefaultParent();
+								
+				// Adds cells to the model in a single step
+				graph.getModel().beginUpdate();
+				try
+				{
+					var v1 = graph.insertVertex(parent, null, person1, 40, 40, 80, 30);
+					var v2 = graph.insertVertex(parent, null, person2, 200, 150, 80, 30);
+					var e1 = graph.insertEdge(parent, null, relation, v1, v2);
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+
+
+        NAUtil.AddPalette(this.editorui.sidebar, "Example", NAUtil.ModelToXML(graph));
+    }
+}
+
+class NAUtil {
+    static ModelToXML = function(graph){
+        var encoder = new mxCodec();
+        var result = encoder.encode(graph.getModel());
+        var xml = mxUtils.getXml(result);
+
+        return xml;
+    }
+
+    static AddPalette = function(sidebar, name, xml){
+        var nodes = [sidebar.addDataEntry("Test", 0, 0, name, Graph.compress(xml))];
+        //mxResources.get("narrativeabduction")
+        sidebar.setCurrentSearchEntryLibrary("narrative", "abduction");
+        sidebar.addPaletteFunctions("narrativeabduction", name, !1, nodes);
+        sidebar.setCurrentSearchEntryLibrary()         
+    }
+}
+
+class NarrativeAbductionUI{
+    constructor(ui) {
+        this.editorui = ui;
+    }
+
+    AddButton = function(label, funct)
+    {
+        var btn = document.createElement('div');
+        mxUtils.write(btn, label);
+        btn.style.position = 'absolute';
+        btn.style.backgroundColor = 'transparent';
+        btn.style.border = '1px solid gray';
+        btn.style.textAlign = 'center';
+        btn.style.fontSize = '10px';
+        btn.style.cursor = 'hand';
+        btn.style.width = bw + 'px';
+        btn.style.height = bh + 'px';
+        btn.style.left = left + 'px';
+        btn.style.top = '0px';
+        
+        mxEvent.addListener(btn, 'click', function(evt)
+        {
+            funct();
+            mxEvent.consume(evt);
+        });
+        
+        left += bw;
+        
+        buttons.appendChild(btn);
+    };
+}
 
 // load plugin
 Draw.loadPlugin(function(ui) {
-    var na = new NarrativeAbduction(ui);
+    console.log("EditorUi", ui);
+    console.log("Sidebar", ui.sidebar.graph);
+    console.log("Editor", ui.editor);
+
+
+    var na = new NarrativeAbductionDev(ui);
     na.Init();
-    console.log(na.editorui);
 });
