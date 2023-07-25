@@ -199,6 +199,14 @@ class NarrativeAbduction{
     }
 };
 
+
+const NarrativeAbductionNames = {
+    NARRATIVEITEM: 'NarrativeItem',
+    NARRATIVESET: 'NarrativeSet',
+    EVIDENCEITEM: 'EvidenceItem',
+    EXPLAINLINK: 'ExplainLinks'
+}
+
 class NarrativeAbductionDev {
     constructor(ui) {
         this.editorui = ui;
@@ -229,21 +237,57 @@ class NarrativeAbductionDev {
         
     }
 
+    CreatePalette = function(){
+        var nodes = [];
+
+        NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", NAUtil.ModelToXML(graph));        
+    }
+
+    CreateItemNarrativeItem = function(){
+        var doc = mxUtils.createXmlDocument();
+        var narrativeitem = doc.createElement(NarrativeAbductionNames.NARRATIVEITEM);
+        narrativeitem.setAttribute('Title', 'Untitled Narrative Item');
+        narrativeitem.setAttribute('Description', '');
+     
+        var title = doc.createElement(NarrativeAbductionNames.NARRATIVEITEM + "_title");
+        var description = doc.createElement(NarrativeAbductionNames.NARRATIVEITEM + "_description");
+
+        var graph = new mxGraph();
+        // Gets the default parent for inserting new cells. This
+        // is normally the first child of the root (ie. layer 0).
+        var parent = graph.getDefaultParent();
+                        
+        // Adds cells to the model in a single step
+        graph.getModel().beginUpdate();
+        try
+        {
+            var vnarrativeitem = graph.insertVertex(parent, null, null, 40, 40, 80, 30);
+            vnarrativeitem.setStyle("swimlane;");
+
+            var vtitle = graph.insertVertex(vnarrativeitem, null, "<h1>Title</h1>", 200, 150, 80, 30);
+            var vdesc = graph.insertVertex(vnarrativeitem, null, "<p>Title</p>", 200, 150, 80, 30);
+        }
+        finally
+        {
+            // Updates the display
+            graph.getModel().endUpdate();
+        }
+    }
+
     Example = function(){       
         // Note that these XML nodes will be enclosing the
 				// mxCell nodes for the model cells in the output
 				var doc = mxUtils.createXmlDocument();
 
-				var person1 = doc.createElement('Person');
-				person1.setAttribute('firstName', 'Daffy');
-				person1.setAttribute('lastName', 'Duck');
+				var narrativeset = doc.createElement('NarrativeSet');
+				narrativeset.setAttribute('Title', 'Untitled narrative');
 
-				var person2 = doc.createElement('Person');
-				person2.setAttribute('firstName', 'Bugs');
-				person2.setAttribute('lastName', 'Bunny');
+				var narrativeelement = doc.createElement('NarrativeItem');
+				narrativeset.setAttribute('Title', 'Untitled narrative');
+				narrativeset.setAttribute('Description', '');
 
-				var relation = doc.createElement('Knows');
-				relation.setAttribute('since', '1985');
+				var explain = doc.createElement('Explains');
+				explain.setAttribute('Description', '');
 				
 				// Creates the graph inside the given container
 				var graph = new mxGraph();
@@ -251,14 +295,9 @@ class NarrativeAbductionDev {
 				// Optional disabling of sizing
 				graph.setCellsResizable(false);
 				
-				// Configures the graph contains to resize and
-				// add a border at the bottom, right
-				graph.setResizeContainer(true);
-				graph.minimumContainerSize = new mxRectangle(0, 0, 500, 380);
-				graph.setBorder(60);
-				
+								
 				// Stops editing on enter key, handles escape
-				new mxKeyHandler(graph);
+				//new mxKeyHandler(graph);
 
 				// Overrides method to disallow edge label editing
 				graph.isCellEditable = function(cell)
@@ -295,45 +334,45 @@ class NarrativeAbductionDev {
 				// };
 
 				// Overrides method to store a cell label in the model
-				var cellLabelChanged = graph.cellLabelChanged;
-				graph.cellLabelChanged = function(cell, newValue, autoSize)
-				{
-					if (mxUtils.isNode(cell.value) &&
-						cell.value.nodeName.toLowerCase() == 'person')
-					{
-						var pos = newValue.indexOf(' ');
+				// var cellLabelChanged = graph.cellLabelChanged;
+				// graph.cellLabelChanged = function(cell, newValue, autoSize)
+				// {
+				// 	if (mxUtils.isNode(cell.value) &&
+				// 		cell.value.nodeName.toLowerCase() == 'person')
+				// 	{
+				// 		var pos = newValue.indexOf(' ');
 
-						var firstName = (pos > 0) ? newValue.substring(0,
-								pos) : newValue;
-						var lastName = (pos > 0) ? newValue.substring(
-								pos + 1, newValue.length) : '';
+				// 		var firstName = (pos > 0) ? newValue.substring(0,
+				// 				pos) : newValue;
+				// 		var lastName = (pos > 0) ? newValue.substring(
+				// 				pos + 1, newValue.length) : '';
 
-						// Clones the value for correct undo/redo
-						var elt = cell.value.cloneNode(true);
+				// 		// Clones the value for correct undo/redo
+				// 		var elt = cell.value.cloneNode(true);
 
-						elt.setAttribute('firstName', firstName);
-						elt.setAttribute('lastName', lastName);
+				// 		elt.setAttribute('firstName', firstName);
+				// 		elt.setAttribute('lastName', lastName);
 
-						newValue = elt;
-						autoSize = true;
-					}
+				// 		newValue = elt;
+				// 		autoSize = true;
+				// 	}
 					
-					cellLabelChanged.apply(this, arguments);
-				};
+				// 	cellLabelChanged.apply(this, arguments);
+				// };
 
 				// Overrides method to create the editing value
-				var getEditingValue = graph.getEditingValue;
-				graph.getEditingValue = function(cell)
-				{
-					if (mxUtils.isNode(cell.value) &&
-						cell.value.nodeName.toLowerCase() == 'person')
-					{
-						var firstName = cell.getAttribute('firstName', '');
-						var lastName = cell.getAttribute('lastName', '');
+				// var getEditingValue = graph.getEditingValue;
+				// graph.getEditingValue = function(cell)
+				// {
+				// 	if (mxUtils.isNode(cell.value) &&
+				// 		cell.value.nodeName.toLowerCase() == 'person')
+				// 	{
+				// 		var firstName = cell.getAttribute('firstName', '');
+				// 		var lastName = cell.getAttribute('lastName', '');
 
-						return firstName + ' ' + lastName;
-					}
-				};
+				// 		return firstName + ' ' + lastName;
+				// 	}
+				// };
 
 				// Adds a special tooltip for edges
 				graph.setTooltips(true);
@@ -393,9 +432,9 @@ class NarrativeAbductionDev {
 				graph.getModel().beginUpdate();
 				try
 				{
-					var v1 = graph.insertVertex(parent, null, person1, 40, 40, 80, 30);
-					var v2 = graph.insertVertex(parent, null, person2, 200, 150, 80, 30);
-					var e1 = graph.insertEdge(parent, null, relation, v1, v2);
+					var v1 = graph.insertVertex(parent, null, narrativeset, 40, 40, 80, 30);
+					var v2 = graph.insertVertex(v1, null, narrativeelement, 200, 150, 80, 30);
+					var e1 = graph.insertEdge(parent, null, explain, v1, v2);
 				}
 				finally
 				{
