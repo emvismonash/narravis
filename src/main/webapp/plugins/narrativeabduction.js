@@ -2,6 +2,17 @@
  * Narrative Abduction plugin contains custom functionalities to support narrative abduction workflow. 
  * The registration of this plugin still requires modification of the original app (e.g., app.js, App.js, etc.).  
  */
+// load plugin
+Draw.loadPlugin(function(ui) {
+    console.log("EditorUi",  ui);
+    console.log("Sidebar", ui.sidebar.graph);
+    console.log("Editor", ui.editor);
+
+    var na = new NarrativeAbductionDev(ui);
+    na.init();
+});
+
+
 class NASettings{
     static Dictionary = {
         NARRATIVEITEM: 'NarrativeItem',
@@ -19,19 +30,98 @@ class NarrativeAbductionDev {
     constructor(ui) {
         this.editorui = ui;
         this.windowRegistry = {};
+        this.entries = [];
+        this.nodes = [];
     }
 
 
     init = function(){
         this.createPalette();     
+        this.overrideShapePicker();
     }
 
     createPalette = function(){
-        var nodes = [];
-        nodes.push(this.editorui.sidebar.addDataEntry(NASettings.Dictionary.NARRATIVEITEM, 0, 0, NASettings.Dictionary.NARRATIVEITEM, Graph.compress(this.createItemNarrativeItem())));
-        NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", nodes);        
+        this.entries.push(this.editorui.sidebar.addDataEntry(NASettings.Dictionary.NARRATIVEITEM, 0, 0, NASettings.Dictionary.NARRATIVEITEM, Graph.compress(this.createItemNarrativeItem())));
+        console.log("Entires", this.entries);
+        NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", this.entries);        
     }
 
+    overrideShapePicker = function(){
+        //override
+        var editorui = this.editorui;
+        var t = this;
+        this.editorui.getCellsForShapePicker = function(cell, hovering, showEdges){
+
+            var graph = editorui.editor.graph;
+    
+            var createVertex = mxUtils.bind(this, function(style, w, h, value)
+            {
+                return graph.createVertex(null, null, value || '', 0, 0, w || 120, h || 60, style, false);
+            });
+        
+            var createEdge = mxUtils.bind(this, function(style, y, value)
+            {
+                var cell = new mxCell(value || '', new mxGeometry(0, 0, graph.defaultEdgeLength + 20, 0), style);
+                cell.geometry.setTerminalPoint(new mxPoint(0, 0), true);
+                cell.geometry.setTerminalPoint(new mxPoint(cell.geometry.width, (y != null) ? y : 0), false);
+                cell.geometry.points = (y != null) ? [new mxPoint(cell.geometry.width / 2, y)] : [];
+                cell.geometry.relative = true;
+                cell.edge = true;
+        
+                return cell;
+            });
+        
+            // Creates a clone of the source cell and moves it to the origin
+            if (cell != null)
+            {
+                try
+                {
+                    cell = graph.cloneCell(cell);
+                    
+                    if (graph.model.isVertex(cell) && cell.geometry != null)
+                    {
+                        cell.geometry.x = 0;
+                        cell.geometry.y = 0;
+                    }
+                }
+                catch (e)
+                {
+                    cell = null;
+                }
+            }
+            
+            if (cell == null)
+            {
+                cell = createVertex('text;html=1;align=center;verticalAlign=middle;resizable=0;' +
+                    'points=[];autosize=1;strokeColor=none;fillColor=none;', 40, 20, 'Text');
+                
+                if (graph.model.isVertex(cell) && graph.isAutoSizeCell(cell))
+                {
+                    // Uses offscreen graph to bypass undo history
+                    var tempGraph = Graph.createOffscreenGraph(graph.getStylesheet());
+                    tempGraph.updateCellSize(cell);
+                }
+            }
+        
+            var cells = [cell, createVertex('whiteSpace=wrap;html=1;'),
+                createVertex('ellipse;whiteSpace=wrap;html=1;', 80, 80),
+                createVertex('rhombus;whiteSpace=wrap;html=1;', 80, 80)];
+            
+            if (showEdges)
+            {
+                cells = cells.concat([
+                    createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;'),
+                    createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;startArrow=classic;endSize=8;startSize=8;'),
+                    createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;shape=flexArrow;rounded=1;startSize=8;endSize=8;'),
+                    createEdge('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;',
+                        this.editor.graph.defaultEdgeLength / 2)
+                ]);
+            }
+        
+            console.log("Shape-picker cells", cells);
+            return t.nodes;
+        };
+    }
 
     createItemNarrativeItem = function(){       
         // Note that these XML nodes will be enclosing the
@@ -45,8 +135,7 @@ class NarrativeAbductionDev {
 
         var graph = new mxGraph();
         var parent = graph.getDefaultParent();
-                     
-        
+                           
         // Adds cells to the model in a single step
         graph.getModel().beginUpdate();
         try
@@ -73,6 +162,7 @@ class NarrativeAbductionDev {
         var currgraph = this.editorui.editor.graph;
         var na = this;
 
+        // Add on click listener to show the Narrative Item window
         NAUtil.AddNodeClickListener(currgraph, NASettings.Dictionary.NARRATIVEITEM, function(cell){
 
             var cellName =  cell.children[0].value;
@@ -83,8 +173,6 @@ class NarrativeAbductionDev {
             console.log("Cell", cell);
             console.log("Name", cellName);
             console.log("Description", cellDesc);
-
-    
 
             var wnd = NAUtil.GetWindowById(NASettings.Dictionary.NARRATIVEITEMWINDOWID, na.windowRegistry);
 
@@ -185,6 +273,11 @@ class NarrativeAbductionDev {
           
         });
        
+
+        // store the Narrative Item cell
+        var cell = NAUtil.GetCellByNodeName(graph, NASettings.Dictionary.NARRATIVEITEM);
+        console.log("Target cell", cell);
+        this.nodes.push(cell);
         
         return NAUtil.ModelToXML(graph);
     }
@@ -197,6 +290,35 @@ class NAUtil {
         var xml = mxUtils.getXml(result);
 
         return xml;
+    }
+
+    static GetCellByNodeName = function(graph, name){
+        console.log("Graph", graph);
+        var cells = graph.model.getCells();
+        console.log("Celss", graph.model.getCells());
+        for(var i = 0; i < cells.length; i++){
+            console.log("Cell", cells[i]);
+            if(!cells[i].value) continue;
+            if(cells[i].value.nodeName == name){
+                return cells[i];
+            }
+        }
+    }
+
+    static Decycle = function(obj, stack = []) {
+        if (!obj || typeof obj !== 'object')
+            return obj;
+        
+        if (stack.includes(obj))
+            return null;
+    
+        let s = stack.concat([obj]);
+    
+        return Array.isArray(obj)
+            ? obj.map(x => NAUtil.Decycle(x, s))
+            : Object.fromEntries(
+                Object.entries(obj)
+                    .map(([k, v]) => [k, NAUtil.Decycle(v, s)]));
     }
 
     static AddNodeClickListener = function(graph, name, f){
@@ -265,13 +387,3 @@ class NarrativeAbductionUI{
     };
 }
 
-// load plugin
-Draw.loadPlugin(function(ui) {
-    console.log("EditorUi", ui);
-    console.log("Sidebar", ui.sidebar.graph);
-    console.log("Editor", ui.editor);
-
-
-    var na = new NarrativeAbductionDev(ui);
-    na.init();
-});
