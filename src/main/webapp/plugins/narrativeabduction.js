@@ -28,7 +28,7 @@ class NarrativeAbductionDev {
 
     createPalette = function(){
         var nodes = [];
-        nodes.push(this.createItemNarrativeItem());
+        nodes.push(this.editorui.sidebar.addDataEntry(NASettings.Dictionary.NARRATIVEITEM, 0, 0, NASettings.Dictionary.NARRATIVEITEM, Graph.compress(this.createItemNarrativeItem())));
         NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", nodes);        
     }
 
@@ -95,7 +95,7 @@ class NarrativeAbductionDev {
                 formContainer.style.padding = "20px";
     
                 const form = document.createElement('form');
-                form.id = 'myForm';
+                form.id = 'narrativeitemform';
     
                 const nameLabel = document.createElement('label');
                 nameLabel.textContent = 'Name:';
@@ -144,6 +144,11 @@ class NarrativeAbductionDev {
             descriptionTextarea.value = cellDesc;
             const applyButton = document.getElementById("applyButton");
             applyButton.onclick = applyForm(currgraph, cell);
+            const form = document.getElementById("narrativeitemform");
+            form.onsubmit =  function(event) {
+                event.preventDefault();
+                return false;
+            }
             
 
             function applyForm(currgraph, c, n, d) {
@@ -204,8 +209,8 @@ class NAUtil {
         });
     }
 
-    static AddPalette = function(sidebar, name, xml){
-        var nodes = [sidebar.addDataEntry("Test", 0, 0, name, Graph.compress(xml))];
+    static AddPalette = function(sidebar, name, nodes){
+      //  var nodes = [sidebar.addDataEntry("Test", 0, 0, name, Graph.compress(xml))];
         //mxResources.get("narrativeabduction")
         sidebar.setCurrentSearchEntryLibrary("narrative", "abduction");
         sidebar.addPaletteFunctions("narrativeabduction", name, !1, nodes);
