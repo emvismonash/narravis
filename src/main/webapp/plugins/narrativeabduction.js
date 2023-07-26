@@ -30,8 +30,8 @@ class NarrativeAbductionDev {
     constructor(ui) {
         this.editorui = ui;
         this.windowRegistry = {};
-        this.entries = [];
-        this.nodes = [];
+        this.nacells = [];
+        this.naentries = [];
     }
 
 
@@ -41,88 +41,109 @@ class NarrativeAbductionDev {
     }
 
     createPalette = function(){
-        this.entries.push(this.editorui.sidebar.addDataEntry(NASettings.Dictionary.NARRATIVEITEM, 0, 0, NASettings.Dictionary.NARRATIVEITEM, Graph.compress(this.createItemNarrativeItem())));
-        console.log("Entires", this.entries);
-        NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", this.entries);        
+        this.naentries = [
+            {
+                name: NASettings.Dictionary.NARRATIVEITEM,
+                xml: this.createItemNarrativeItem()
+            }          
+        ];
+
+        var entries = [];
+        for(var i = 0; i < this.naentries.length;i++){
+            entries.push(
+                this.editorui.sidebar.addDataEntry(
+                    this.naentries[i].name, 0, 0, this.naentries[i].name, Graph.compress(this.naentries[i].xml))
+                    );
+        }
+       
+        console.log("Entires", entries);
+        NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);        
     }
 
+    /**
+     * Shape-picker override to show NA cells
+     */
     overrideShapePicker = function(){
         //override
-        var editorui = this.editorui;
         var t = this;
         this.editorui.getCellsForShapePicker = function(cell, hovering, showEdges){
 
-            var graph = editorui.editor.graph;
+            // var graph = editorui.editor.graph;
     
-            var createVertex = mxUtils.bind(this, function(style, w, h, value)
-            {
-                return graph.createVertex(null, null, value || '', 0, 0, w || 120, h || 60, style, false);
-            });
+            // var createVertex = mxUtils.bind(this, function(style, w, h, value)
+            // {
+            //     return graph.createVertex(null, null, value || '', 0, 0, w || 120, h || 60, style, false);
+            // });
         
-            var createEdge = mxUtils.bind(this, function(style, y, value)
-            {
-                var cell = new mxCell(value || '', new mxGeometry(0, 0, graph.defaultEdgeLength + 20, 0), style);
-                cell.geometry.setTerminalPoint(new mxPoint(0, 0), true);
-                cell.geometry.setTerminalPoint(new mxPoint(cell.geometry.width, (y != null) ? y : 0), false);
-                cell.geometry.points = (y != null) ? [new mxPoint(cell.geometry.width / 2, y)] : [];
-                cell.geometry.relative = true;
-                cell.edge = true;
+            // var createEdge = mxUtils.bind(this, function(style, y, value)
+            // {
+            //     var cell = new mxCell(value || '', new mxGeometry(0, 0, graph.defaultEdgeLength + 20, 0), style);
+            //     cell.geometry.setTerminalPoint(new mxPoint(0, 0), true);
+            //     cell.geometry.setTerminalPoint(new mxPoint(cell.geometry.width, (y != null) ? y : 0), false);
+            //     cell.geometry.points = (y != null) ? [new mxPoint(cell.geometry.width / 2, y)] : [];
+            //     cell.geometry.relative = true;
+            //     cell.edge = true;
         
-                return cell;
-            });
+            //     return cell;
+            // });
         
-            // Creates a clone of the source cell and moves it to the origin
-            if (cell != null)
-            {
-                try
-                {
-                    cell = graph.cloneCell(cell);
+            // // Creates a clone of the source cell and moves it to the origin
+            // if (cell != null)
+            // {
+            //     try
+            //     {
+            //         cell = graph.cloneCell(cell);
                     
-                    if (graph.model.isVertex(cell) && cell.geometry != null)
-                    {
-                        cell.geometry.x = 0;
-                        cell.geometry.y = 0;
-                    }
-                }
-                catch (e)
-                {
-                    cell = null;
-                }
-            }
+            //         if (graph.model.isVertex(cell) && cell.geometry != null)
+            //         {
+            //             cell.geometry.x = 0;
+            //             cell.geometry.y = 0;
+            //         }
+            //     }
+            //     catch (e)
+            //     {
+            //         cell = null;
+            //     }
+            // }
             
-            if (cell == null)
-            {
-                cell = createVertex('text;html=1;align=center;verticalAlign=middle;resizable=0;' +
-                    'points=[];autosize=1;strokeColor=none;fillColor=none;', 40, 20, 'Text');
+            // if (cell == null)
+            // {
+            //     cell = createVertex('text;html=1;align=center;verticalAlign=middle;resizable=0;' +
+            //         'points=[];autosize=1;strokeColor=none;fillColor=none;', 40, 20, 'Text');
                 
-                if (graph.model.isVertex(cell) && graph.isAutoSizeCell(cell))
-                {
-                    // Uses offscreen graph to bypass undo history
-                    var tempGraph = Graph.createOffscreenGraph(graph.getStylesheet());
-                    tempGraph.updateCellSize(cell);
-                }
-            }
+            //     if (graph.model.isVertex(cell) && graph.isAutoSizeCell(cell))
+            //     {
+            //         // Uses offscreen graph to bypass undo history
+            //         var tempGraph = Graph.createOffscreenGraph(graph.getStylesheet());
+            //         tempGraph.updateCellSize(cell);
+            //     }
+            // }
         
-            var cells = [cell, createVertex('whiteSpace=wrap;html=1;'),
-                createVertex('ellipse;whiteSpace=wrap;html=1;', 80, 80),
-                createVertex('rhombus;whiteSpace=wrap;html=1;', 80, 80)];
+            // var cells = [cell, createVertex('whiteSpace=wrap;html=1;'),
+            //     createVertex('ellipse;whiteSpace=wrap;html=1;', 80, 80),
+            //     createVertex('rhombus;whiteSpace=wrap;html=1;', 80, 80)];
             
-            if (showEdges)
-            {
-                cells = cells.concat([
-                    createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;'),
-                    createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;startArrow=classic;endSize=8;startSize=8;'),
-                    createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;shape=flexArrow;rounded=1;startSize=8;endSize=8;'),
-                    createEdge('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;',
-                        this.editor.graph.defaultEdgeLength / 2)
-                ]);
-            }
+            // showEdges = true;
+            // if (showEdges)
+            // {
+            //     cells = cells.concat([
+            //         createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;'),
+            //         createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;startArrow=classic;endSize=8;startSize=8;'),
+            //         createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;shape=flexArrow;rounded=1;startSize=8;endSize=8;'),
+            //         createEdge('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;',
+            //             this.editor.graph.defaultEdgeLength / 2)
+            //     ]);
+            // }
         
-            console.log("Shape-picker cells", cells);
-            return t.nodes;
+            console.log("Shape-picker cells", t.nacells);
+            return t.nacells;
         };
     }
 
+    /**
+     * Create Narrative Item cell for the Shape picker and Palette
+     * @returns 
+     */
     createItemNarrativeItem = function(){       
         // Note that these XML nodes will be enclosing the
         // mxCell nodes for the model cells in the output
@@ -132,7 +153,6 @@ class NarrativeAbductionDev {
         var objtitle = doc.createElement(NASettings.Dictionary.NARRATIVEITEMTITLE);
         var objdescription = doc.createElement(NASettings.Dictionary.NARRATIVEITEMDESCRIPTION);
 
-
         var graph = new mxGraph();
         var parent = graph.getDefaultParent();
                            
@@ -141,7 +161,6 @@ class NarrativeAbductionDev {
         try
         {
             var nodenaitem = graph.insertVertex(parent, null, objna, 200, 150, 150, 150);
-
             var nodetitle = graph.insertVertex(nodenaitem, null, objtitle, 10, 10, 120, 30);
             nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodetitle.value = "Title";
@@ -151,7 +170,6 @@ class NarrativeAbductionDev {
             nodedesc.setStyle("text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodedesc.value = "Desription";
             nodedesc.setConnectable(false);
-
         }
         finally
         {
@@ -164,7 +182,6 @@ class NarrativeAbductionDev {
 
         // Add on click listener to show the Narrative Item window
         NAUtil.AddNodeClickListener(currgraph, NASettings.Dictionary.NARRATIVEITEM, function(cell){
-
             var cellName =  cell.children[0].value;
             var cellDesc = cell.children[1].value;
 
@@ -277,8 +294,7 @@ class NarrativeAbductionDev {
         // store the Narrative Item cell
         var cell = NAUtil.GetCellByNodeName(graph, NASettings.Dictionary.NARRATIVEITEM);
         console.log("Target cell", cell);
-        this.nodes.push(cell);
-        
+        this.nacells.push(cell);       
         return NAUtil.ModelToXML(graph);
     }
 }
