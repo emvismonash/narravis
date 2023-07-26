@@ -20,7 +20,8 @@ class NASettings{
             NARRATIVEITEM: 'NarrativeItem',
             NARRATIVEEVIDENCECORE: "NarrativeEvidenceCore",             
             JOINTCAUSE: "JointCause",
-            EVIDENCENARRATIVESPECIFIC: "Evidence Narrative Specific", 
+            EVIDENCENARRATIVESPECIFIC: "EvidenceNarrativeSpecific", 
+            SUPPORTINGARGUMENT: "SupportingArgument",
             NARRATIVESET: 'NarrativeSet',
             EVIDENCEITEM: 'EvidenceItem',
             EXPLAINLINK: 'ExplainLinks',
@@ -36,7 +37,6 @@ class NarrativeAbductionDev {
     constructor(ui) {
         this.editorui = ui;
         this.windowRegistry = {};
-        this.nacells = [];
         this.naentries = [];
     }
 
@@ -49,21 +49,39 @@ class NarrativeAbductionDev {
     createPalette = function(){
         this.naentries = [
             {
-                name: NASettings.Dictionary.CELLS.NARRATIVEITEM,
-                xml: this.createDocumentItem(NASettings.Dictionary.CELLS.NARRATIVEITEM, 
-                    NAUtil.GetCellChildrenLabels(NASettings.Dictionary.CELLS.NARRATIVEITEM).title, 
-                    NAUtil.GetCellChildrenLabels(NASettings.Dictionary.CELLS.NARRATIVEITEM).description)            },
+                name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
+                style: ""            
+            },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
-                xml: this.createDocumentItem(NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE, 
-                    NAUtil.GetCellChildrenLabels(NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE).title, 
-                    NAUtil.GetCellChildrenLabels(NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE).description)
-            }           
+                style: "fillColor=#fad7ac;strokeColor=#b46504;rounded=0;"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.JOINTCAUSE,
+                style: ""
+            },
+            {
+                name: NASettings.Dictionary.CELLS.EVIDENCENARRATIVESPECIFIC,
+                style: "fillColor=#fad9d5;strokeColor=#ae4132;rounded=0;"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.SUPPORTINGARGUMENT,
+                style: "fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;"
+            }   
+
         ];
 
         var entries = [];
         for(var i = 0; i < this.naentries.length;i++){
-            entries.push(
+
+            var res = this.createDocumentItem(this.naentries[i].name,  
+                NAUtil.GetCellChildrenLabels(this.naentries[i].name).title, 
+                NAUtil.GetCellChildrenLabels(this.naentries[i].name).description, 
+                this.naentries[i].style);
+            this.naentries[i].xml = res.xml;
+            this.naentries[i].graph = res.graph;                
+            
+             entries.push(
                 this.editorui.sidebar.addDataEntry(
                     this.naentries[i].name, 0, 0, this.naentries[i].name, Graph.compress(this.naentries[i].xml))
                     );
@@ -81,75 +99,19 @@ class NarrativeAbductionDev {
         var t = this;
         this.editorui.getCellsForShapePicker = function(cell, hovering, showEdges){
 
-            // var graph = editorui.editor.graph;
-    
-            // var createVertex = mxUtils.bind(this, function(style, w, h, value)
-            // {
-            //     return graph.createVertex(null, null, value || '', 0, 0, w || 120, h || 60, style, false);
-            // });
-        
-            // var createEdge = mxUtils.bind(this, function(style, y, value)
-            // {
-            //     var cell = new mxCell(value || '', new mxGeometry(0, 0, graph.defaultEdgeLength + 20, 0), style);
-            //     cell.geometry.setTerminalPoint(new mxPoint(0, 0), true);
-            //     cell.geometry.setTerminalPoint(new mxPoint(cell.geometry.width, (y != null) ? y : 0), false);
-            //     cell.geometry.points = (y != null) ? [new mxPoint(cell.geometry.width / 2, y)] : [];
-            //     cell.geometry.relative = true;
-            //     cell.edge = true;
-        
-            //     return cell;
-            // });
-        
-            // // Creates a clone of the source cell and moves it to the origin
-            // if (cell != null)
-            // {
-            //     try
-            //     {
-            //         cell = graph.cloneCell(cell);
-                    
-            //         if (graph.model.isVertex(cell) && cell.geometry != null)
-            //         {
-            //             cell.geometry.x = 0;
-            //             cell.geometry.y = 0;
-            //         }
-            //     }
-            //     catch (e)
-            //     {
-            //         cell = null;
-            //     }
-            // }
-            
-            // if (cell == null)
-            // {
-            //     cell = createVertex('text;html=1;align=center;verticalAlign=middle;resizable=0;' +
-            //         'points=[];autosize=1;strokeColor=none;fillColor=none;', 40, 20, 'Text');
-                
-            //     if (graph.model.isVertex(cell) && graph.isAutoSizeCell(cell))
-            //     {
-            //         // Uses offscreen graph to bypass undo history
-            //         var tempGraph = Graph.createOffscreenGraph(graph.getStylesheet());
-            //         tempGraph.updateCellSize(cell);
-            //     }
-            // }
-        
-            // var cells = [cell, createVertex('whiteSpace=wrap;html=1;'),
-            //     createVertex('ellipse;whiteSpace=wrap;html=1;', 80, 80),
-            //     createVertex('rhombus;whiteSpace=wrap;html=1;', 80, 80)];
-            
-            // showEdges = true;
-            // if (showEdges)
-            // {
-            //     cells = cells.concat([
-            //         createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;'),
-            //         createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;startArrow=classic;endSize=8;startSize=8;'),
-            //         createEdge('edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;shape=flexArrow;rounded=1;startSize=8;endSize=8;'),
-            //         createEdge('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;',
-            //             this.editor.graph.defaultEdgeLength / 2)
-            //     ]);
-            // }
-        
-            console.log("Shape-picker cells", t.nacells);
-            return t.nacells;
+            //somehow the style fails, we need to override it 
+            var newcells = [];
+            t.naentries.forEach(function(currentValue, index, arr){
+                    console.log("c", currentValue);
+                    var cell = NAUtil.GetCellByNodeName(currentValue.graph, currentValue.name);
+                    var g = currentValue.graph;
+                    g.getModel().setStyle(cell, currentValue.style);
+                    newcells.push(cell);  
+             });
+
+            console.log("Shape-picker new cells", newcells);
+
+            return newcells;
         };
     }
 
@@ -157,7 +119,7 @@ class NarrativeAbductionDev {
      * Create document item cell for the Shape picker and Palette
      * @returns 
      */
-    createDocumentItem = function(itemname, titlename, descrname, ){
+    createDocumentItem = function(itemname, titlename, descrname, s){
         var doc = mxUtils.createXmlDocument();
         var objna = doc.createElement(itemname);
         var objtitle = doc.createElement(titlename);
@@ -167,15 +129,17 @@ class NarrativeAbductionDev {
         var parent = graph.getDefaultParent();
                            
         graph.getModel().beginUpdate();
+        var nodenaitem;
         try
         {
-            var nodenaitem = graph.insertVertex(parent, null, objna, 200, 150, 150, 150);
-            var nodetitle = graph.insertVertex(nodenaitem, null, objtitle, 10, 10, 120, 30);
+            nodenaitem = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
+            nodenaitem.setStyle(s);
+            var nodetitle = graph.insertVertex(nodenaitem, null, objtitle, 10, 10, 320, 30);
             nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
-            nodetitle.value = "Title";
+            nodetitle.value = titlename;
             nodetitle.setConnectable(false);
             
-            var nodedesc = graph.insertVertex(nodenaitem, null, objdescription, 10, 50, 120, 150);
+            var nodedesc = graph.insertVertex(nodenaitem, null, objdescription, 10, 50, 320, 150);
             nodedesc.setStyle("text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodedesc.value = "Desription";
             nodedesc.setConnectable(false);
@@ -245,7 +209,7 @@ class NarrativeAbductionDev {
                 // Add the form to the container
                 formContainer.appendChild(form);
     
-                wnd = NAUtil.CreateWindow(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, itemname, formContainer, 100, 100, 400, 200, na.windowRegistry);
+                wnd = NAUtil.CreateWindow(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, formContainer, 100, 100, 400, 200, na.windowRegistry);
             }
 
             const nameInput = document.getElementById("name");
@@ -290,11 +254,11 @@ class NarrativeAbductionDev {
             wnd.setVisible(true);        
         });
        
-        // store the Narrative Item cell
-        var cell = NAUtil.GetCellByNodeName(graph, itemname);
-        console.log("Target cell", cell);
-        this.nacells.push(cell);       
-        return NAUtil.ModelToXML(graph);
+        return {
+            xml: NAUtil.ModelToXML(graph),
+            graph: graph,
+            cell: nodenaitem
+        }
     }
 }
 
@@ -323,6 +287,7 @@ class NAUtil {
             console.log("Cell", cells[i]);
             if(!cells[i].value) continue;
             if(cells[i].value.nodeName == name){
+                console.log(cells[i].style);
                 return cells[i];
             }
         }
