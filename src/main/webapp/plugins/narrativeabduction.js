@@ -14,14 +14,20 @@ Draw.loadPlugin(function(ui) {
 
 
 class NASettings{
+    //base on https://docs.google.com/document/d/1FByhhJe67pJC6fPdE3lo8lgM6NN7K0_Uivf6n5Io9UE/edit
     static Dictionary = {
-        NARRATIVEITEM: 'NarrativeItem',
-        NARRATIVEITEMTITLE: 'NarrativeItemTitle',
-        NARRATIVEITEMDESCRIPTION: 'NarrativeItemDescription',
-        NARRATIVEITEMWINDOWID : 'NarrativeItemWindow',
-        NARRATIVESET: 'NarrativeSet',
-        EVIDENCEITEM: 'EvidenceItem',
-        EXPLAINLINK: 'ExplainLinks'
+        CELLS:{
+            NARRATIVEITEM: 'NarrativeItem',
+            NARRATIVEEVIDENCECORE: "NarrativeEvidenceCore",             
+            JOINTCAUSE: "JointCause",
+            EVIDENCENARRATIVESPECIFIC: "Evidence Narrative Specific", 
+            NARRATIVESET: 'NarrativeSet',
+            EVIDENCEITEM: 'EvidenceItem',
+            EXPLAINLINK: 'ExplainLinks',
+        },
+        UI: {
+            DOCUMENTITEMWINDOW : 'DocumentItemWindow'
+        }
     }
 }
 
@@ -43,9 +49,16 @@ class NarrativeAbductionDev {
     createPalette = function(){
         this.naentries = [
             {
-                name: NASettings.Dictionary.NARRATIVEITEM,
-                xml: this.createItemNarrativeItem()
-            }          
+                name: NASettings.Dictionary.CELLS.NARRATIVEITEM,
+                xml: this.createDocumentItem(NASettings.Dictionary.CELLS.NARRATIVEITEM, 
+                    NAUtil.GetCellChildrenLabels(NASettings.Dictionary.CELLS.NARRATIVEITEM).title, 
+                    NAUtil.GetCellChildrenLabels(NASettings.Dictionary.CELLS.NARRATIVEITEM).description)            },
+            {
+                name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
+                xml: this.createDocumentItem(NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE, 
+                    NAUtil.GetCellChildrenLabels(NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE).title, 
+                    NAUtil.GetCellChildrenLabels(NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE).description)
+            }           
         ];
 
         var entries = [];
@@ -141,22 +154,18 @@ class NarrativeAbductionDev {
     }
 
     /**
-     * Create Narrative Item cell for the Shape picker and Palette
+     * Create document item cell for the Shape picker and Palette
      * @returns 
      */
-    createItemNarrativeItem = function(){       
-        // Note that these XML nodes will be enclosing the
-        // mxCell nodes for the model cells in the output
+    createDocumentItem = function(itemname, titlename, descrname, ){
         var doc = mxUtils.createXmlDocument();
-
-        var objna = doc.createElement(NASettings.Dictionary.NARRATIVEITEM);
-        var objtitle = doc.createElement(NASettings.Dictionary.NARRATIVEITEMTITLE);
-        var objdescription = doc.createElement(NASettings.Dictionary.NARRATIVEITEMDESCRIPTION);
+        var objna = doc.createElement(itemname);
+        var objtitle = doc.createElement(titlename);
+        var objdescription = doc.createElement(descrname);
 
         var graph = new mxGraph();
         var parent = graph.getDefaultParent();
                            
-        // Adds cells to the model in a single step
         graph.getModel().beginUpdate();
         try
         {
@@ -173,7 +182,6 @@ class NarrativeAbductionDev {
         }
         finally
         {
-            // Updates the display
             graph.getModel().endUpdate();
         }
 
@@ -181,17 +189,17 @@ class NarrativeAbductionDev {
         var na = this;
 
         // Add on click listener to show the Narrative Item window
-        NAUtil.AddNodeClickListener(currgraph, NASettings.Dictionary.NARRATIVEITEM, function(cell){
+        NAUtil.AddNodeClickListener(currgraph, itemname, function(cell){
             var cellName =  cell.children[0].value;
             var cellDesc = cell.children[1].value;
 
-            console.log("Narrative item clicked");
+            console.log("Document item clicked");
             console.log("Graph", currgraph);
             console.log("Cell", cell);
             console.log("Name", cellName);
             console.log("Description", cellDesc);
 
-            var wnd = NAUtil.GetWindowById(NASettings.Dictionary.NARRATIVEITEMWINDOWID, na.windowRegistry);
+            var wnd = NAUtil.GetWindowById(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, na.windowRegistry);
 
             if(wnd == null)
             {
@@ -237,10 +245,7 @@ class NarrativeAbductionDev {
                 // Add the form to the container
                 formContainer.appendChild(form);
     
-                wnd = NAUtil.CreateWindow(NASettings.Dictionary.NARRATIVEITEMWINDOWID, NASettings.Dictionary.NARRATIVEITEM, formContainer, 100, 100, 400, 200, na.windowRegistry);
-            }else{
-              
-
+                wnd = NAUtil.CreateWindow(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, itemname, formContainer, 100, 100, 400, 200, na.windowRegistry);
             }
 
             const nameInput = document.getElementById("name");
@@ -279,20 +284,14 @@ class NarrativeAbductionDev {
                     {
                         currgraph.getModel().endUpdate();
                     }
-
                     console.log("Cell", c);
-
                 }
             };
-
-            wnd.setVisible(true);
-
-          
+            wnd.setVisible(true);        
         });
        
-
         // store the Narrative Item cell
-        var cell = NAUtil.GetCellByNodeName(graph, NASettings.Dictionary.NARRATIVEITEM);
+        var cell = NAUtil.GetCellByNodeName(graph, itemname);
         console.log("Target cell", cell);
         this.nacells.push(cell);       
         return NAUtil.ModelToXML(graph);
@@ -300,6 +299,14 @@ class NarrativeAbductionDev {
 }
 
 class NAUtil {
+
+    static GetCellChildrenLabels = function(name){
+        return {
+            title: name+"Title",
+            description : name+"Description"
+        }
+    }
+
     static ModelToXML = function(graph){
         var encoder = new mxCodec();
         var result = encoder.encode(graph.getModel());
