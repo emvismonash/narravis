@@ -165,26 +165,31 @@ class NarrativeAbductionDev {
         this.naentries.forEach(function(element){
             if(element.type == "edge"){
                 NAUtil.AddButton(element.name.replace("Link",""), setlinktypecontainer, function(){
-                    var selected = t.editorui.editor.graph.getSelectionCell();
-                    if(!selected) {
+                    var selectedCells = t.editorui.editor.graph.getSelectionCells();
+                    if(selectedCells.length == 0) {
                         alert("Select an edge");
                         return;
                     }
-                    console.log("Selection", selected);
-                    console.log("Is Edege", selected.isEdge());
-                    if(selected.isEdge()){
-                        var graph = t.editorui.editor.graph;
-                        graph.getModel().beginUpdate();
-                        try
-                        {
-                            graph.getModel().setValue(selected, element.name.replace("Link","") + "s");
-                            graph.setCellStyle(element.style, [selected]);
+
+                    console.log("Selection", selectedCells);
+                    selectedCells.forEach(function(selected){
+
+                        console.log("Is Edege", selected.isEdge());
+                        if(selected.isEdge()){
+                            var graph = t.editorui.editor.graph;
+                            graph.getModel().beginUpdate();
+                            try
+                            {
+                                graph.getModel().setValue(selected, element.name.replace("Link","") + "s");
+                                graph.setCellStyle(element.style, [selected]);
+                            }
+                            finally
+                            {
+                                graph.getModel().endUpdate();
+                            }
                         }
-                        finally
-                        {
-                            graph.getModel().endUpdate();
-                        }
-                    }
+                    })
+                   
         
                 });
             }
