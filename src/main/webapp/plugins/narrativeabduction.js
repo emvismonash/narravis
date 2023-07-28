@@ -45,6 +45,9 @@ class NarrativeAbductionDev {
         this.windowRegistry = {};
         this.panelwindow;
         this.narrativeviewerwindow;
+        this.settings = {
+            lodupdate: 1.5
+        }
         this.naentries = [
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
@@ -116,6 +119,19 @@ class NarrativeAbductionDev {
         //this.createNarrativeViewer();
         this.createPalette();     
         this.overrideShapePicker();
+        this.updateLOD();
+       
+    }
+
+    updateLOD = function(){
+ 			// Links level of detail to zoom level but can be independent of zoom
+             var t = this;
+             this.editorui.editor.graph.isCellVisible = function(cell)
+             {
+                //  console.log("Zooming", t.editorui.editor.graph.view.scale);
+                //  console.log("Cell LOD", cell.lod);     
+                 return cell.lod == null || cell.lod / 2 < t.editorui.editor.graph.view.scale;
+             };
     }
 
     createNarrativeViewer = function(){
@@ -340,6 +356,8 @@ class NarrativeAbductionDev {
             nodedesc.setStyle("text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodedesc.value = "Desription";
             nodedesc.setConnectable(false);
+            nodedesc.lod = this.settings.lodupdate;
+
         }
         finally
         {
