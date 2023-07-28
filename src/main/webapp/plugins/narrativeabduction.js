@@ -24,7 +24,13 @@ class NASettings{
             SUPPORTINGARGUMENT: "SupportingArgument",
             NARRATIVESET: 'NarrativeSet',
             EVIDENCEITEM: 'EvidenceItem',
-            EXPLAINLINK: 'ExplainLinks',
+            EXPLAINLINK: 'ExplainLink',
+            CAUSELINK: 'CauseLink',
+            TRIGGERLINK: 'TriggerLink',
+            ENABLELINK: 'EnableLink',
+            SUPPORTLINK: 'SupportLink',
+            MOTIVATELINK: 'MotivateLink',
+            CONFLICTLINK: 'ConflictLink'
         },
         UI: {
             DOCUMENTITEMWINDOW : 'DocumentItemWindow'
@@ -37,47 +43,196 @@ class NarrativeAbductionDev {
     constructor(ui) {
         this.editorui = ui;
         this.windowRegistry = {};
-        this.naentries = [];
+        this.panelwindow;
+        this.narrativeviewerwindow;
+        this.naentries = [
+            {
+                name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
+                style: "",
+                type: "node"            
+            },
+            {
+                name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
+                style: "fillColor=#fad7ac;strokeColor=#b46504;rounded=0;",
+                type: "node"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.JOINTCAUSE,
+                style: "",
+                type: "node"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.EVIDENCENARRATIVESPECIFIC,
+                style: "fillColor=#fad9d5;strokeColor=#ae4132;rounded=0;",
+                type: "node"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.SUPPORTINGARGUMENT,
+                style: "fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;",
+                type: "node"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.EXPLAINLINK, 
+                style: "shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+                type: "edge"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.CAUSELINK, 
+                style: "endArrow=classic;html=1;rounded=1;strokeWidth=3;",
+                type: "edge"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.TRIGGERLINK, 
+                style: "endArrow=classic;html=1;rounded=1;strokeWidth=3;dashed=1;",
+                type: "edge"
+            }
+            ,
+            {
+                name: NASettings.Dictionary.CELLS.ENABLELINK, 
+                style: "endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;",
+                type: "edge"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.SUPPORTLINK, 
+                style: "endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#006600;",
+                type: "edge"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.MOTIVATELINK, 
+                style: "shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+                type: "edge"
+            },
+            {
+                name: NASettings.Dictionary.CELLS.CONFLICTLINK, 
+                style: "shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+                type: "edge"
+            }
+        ];
     }
 
 
     init = function(){
+        this.createPanelWindow();
+        //this.createNarrativeViewer();
         this.createPalette();     
         this.overrideShapePicker();
     }
 
+    createNarrativeViewer = function(){
+        var container = document.createElement('div');
+        container.style.width = "200px";
+        container.style.padding = "20px";
+
+    
+        this.narrativeviewerwindow = new mxWindow("NA Viewer", container, 0, 0, 200, 300, true, true);
+        this.narrativeviewerwindow.setResizable(true);
+        this.narrativeviewerwindow.setScrollable(true);
+        this.narrativeviewerwindow.setVisible(true);
+
+        this.narrativeToView(this.editorui.editor.graph, container);
+    }
+
+    narrativeToView = function(graph, container){
+        console.log(graph.getModel().getCells());
+        graph.getModel().getCells().forEach(element => {
+            console.log("Value", element);
+        });
+    }
+
+    createPanelWindow = function(){
+        var container = document.createElement('div');
+        container.style.width = "150px";
+        container.style.padding = "20px";
+    
+        this.panelwindow = new mxWindow("NA Panel", container, 0, 0, 200, 300, true, true);
+        this.panelwindow.setResizable(false);
+        this.panelwindow.setScrollable(false);
+        this.panelwindow.setVisible(true);
+
+
+        //set link options
+        var setlinktypecontainer = document.createElement('div');
+        setlinktypecontainer.style.width = "150px";
+        setlinktypecontainer.style.padding = "5px";
+        setlinktypecontainer.style.border = "1px solid #aaa";
+        var label = document.createElement("div");
+        label.innerHTML = "Update edge into";
+        label.style.paddingBottom = "5px";
+        setlinktypecontainer.append(label);
+        container.append(setlinktypecontainer);
+
+
+        this.naentries.forEach(function(element){
+            if(element.type == "edge"){
+                NAUtil.AddButton(element.name.replace("Link",""), setlinktypecontainer, function(){
+                    var selected = t.editorui.editor.graph.getSelectionCell();
+                    if(!selected) {
+                        alert("Select an edge");
+                        return;
+                    }
+                    console.log("Selection", selected);
+                    console.log("Is Edege", selected.isEdge());
+                    if(selected.isEdge()){
+                        var graph = t.editorui.editor.graph;
+                        graph.getModel().beginUpdate();
+                        try
+                        {
+                            graph.getModel().setValue(selected, element.name.replace("Link","") + "s");
+                            graph.setCellStyle(element.style, [selected]);
+                        }
+                        finally
+                        {
+                            graph.getModel().endUpdate();
+                        }
+                    }
+        
+                });
+            }
+           
+        });
+        
+
+
+        //dev tool
+        
+        var devtoolcontainer = document.createElement('div');
+        devtoolcontainer.style.width = "150px";
+        devtoolcontainer.style.padding = "5px";
+        devtoolcontainer.style.marginTop = "15px";
+
+        devtoolcontainer.style.border = "1px solid #aaa";
+        var label = document.createElement("span");
+        label.innerHTML = "Dev tool";
+        devtoolcontainer.append(label);
+        container.append(devtoolcontainer);
+
+        var t = this;
+        NAUtil.AddButton("Show model", devtoolcontainer, function(){
+            console.log(t.editorui.editor.graph.getModel());
+        });
+    }
+
+    /**
+     * Create palette for the side bar
+     */
     createPalette = function(){
-        this.naentries = [
-            {
-                name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
-                style: ""            
-            },
-            {
-                name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
-                style: "fillColor=#fad7ac;strokeColor=#b46504;rounded=0;"
-            },
-            {
-                name: NASettings.Dictionary.CELLS.JOINTCAUSE,
-                style: ""
-            },
-            {
-                name: NASettings.Dictionary.CELLS.EVIDENCENARRATIVESPECIFIC,
-                style: "fillColor=#fad9d5;strokeColor=#ae4132;rounded=0;"
-            },
-            {
-                name: NASettings.Dictionary.CELLS.SUPPORTINGARGUMENT,
-                style: "fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;"
-            }   
+       
 
-        ];
-
-        var entries = [];
+        var entries = []; //all palette entries
         for(var i = 0; i < this.naentries.length;i++){
 
-            var res = this.createDocumentItem(this.naentries[i].name,  
-                NAUtil.GetCellChildrenLabels(this.naentries[i].name).title, 
-                NAUtil.GetCellChildrenLabels(this.naentries[i].name).description, 
-                this.naentries[i].style);
+            var res;
+            
+            if(this.naentries[i].type == "node"){
+               res = this.createDocumentItem(this.naentries[i].name,  
+                    NAUtil.GetCellChildrenLabels(this.naentries[i].name).title, 
+                    NAUtil.GetCellChildrenLabels(this.naentries[i].name).description, 
+                    this.naentries[i].style);
+            } else{
+                res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
+            }
+                
+
             this.naentries[i].xml = res.xml;
             this.naentries[i].graph = res.graph;                
             
@@ -86,7 +241,7 @@ class NarrativeAbductionDev {
                     this.naentries[i].name, 0, 0, this.naentries[i].name, Graph.compress(this.naentries[i].xml))
                     );
         }
-       
+
         console.log("Entires", entries);
         NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);        
     }
@@ -103,10 +258,14 @@ class NarrativeAbductionDev {
             var newcells = [];
             t.naentries.forEach(function(currentValue, index, arr){
                     console.log("c", currentValue);
-                    var cell = NAUtil.GetCellByNodeName(currentValue.graph, currentValue.name);
-                    var g = currentValue.graph;
-                    g.getModel().setStyle(cell, currentValue.style);
-                    newcells.push(cell);  
+                    //only add node items
+                    if(currentValue.type == "node"){
+                        var cell = NAUtil.GetCellByNodeName(currentValue.graph, currentValue.name);
+                        var g = currentValue.graph;
+                        g.getModel().setStyle(cell, currentValue.style);
+                        newcells.push(cell);  
+                    }
+
              });
 
             console.log("Shape-picker new cells", newcells);
@@ -115,13 +274,44 @@ class NarrativeAbductionDev {
         };
     }
 
+    createLinkItem = function(itemname, style){
+        var doc = mxUtils.createXmlDocument();
+        var objna = doc.createElement(itemname);
+
+        var graph = new mxGraph();
+        var parent = graph.getDefaultParent();
+                           
+        graph.getModel().beginUpdate();
+        var nodenaitem;
+        try
+        {
+            var v1 = graph.insertVertex(parent, null, null, 200, 0, 1, 1, 'opacity=0;');        
+            var v2 = graph.insertVertex(parent, null, null, 0, 0, 1, 1, 'opacity=0;');        
+
+            nodenaitem = graph.insertEdge(parent, null, '', v2, v1);
+            nodenaitem.setStyle(style);
+            nodenaitem.value = itemname;
+        }
+        finally
+        {
+            graph.getModel().endUpdate();
+        }
+
+        return {
+            xml: NAUtil.ModelToXML(graph),
+            graph: graph,
+            cell: nodenaitem
+        }
+    }
+
     /**
      * Create document item cell for the Shape picker and Palette
      * @returns 
      */
-    createDocumentItem = function(itemname, titlename, descrname, s){
+    createDocumentItem = function(itemname, titlename, descrname, style){
         var doc = mxUtils.createXmlDocument();
         var objna = doc.createElement(itemname);
+        objna.setAttribute("natype", itemname);
         var objtitle = doc.createElement(titlename);
         var objdescription = doc.createElement(descrname);
 
@@ -133,7 +323,9 @@ class NarrativeAbductionDev {
         try
         {
             nodenaitem = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
-            nodenaitem.setStyle(s);
+            nodenaitem.setStyle(style);
+            nodenaitem.natype = itemname;
+
             var nodetitle = graph.insertVertex(nodenaitem, null, objtitle, 10, 10, 320, 30);
             nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodetitle.value = titlename;
@@ -168,7 +360,7 @@ class NarrativeAbductionDev {
             if(wnd == null)
             {
                 var formContainer = document.createElement('div');
-                formContainer.style.width = "200px";
+                formContainer.style.width = "150px";
                 formContainer.style.padding = "20px";
     
                 const form = document.createElement('form');
@@ -190,7 +382,7 @@ class NarrativeAbductionDev {
                 descriptionTextarea.id = 'description';
                 descriptionTextarea.name = 'description';
                 descriptionTextarea.rows = 4;
-                descriptionTextarea.cols = 50;
+                descriptionTextarea.cols = 30;
     
                 const applyButton = document.createElement('button');
                 applyButton.id = 'applyButton';
@@ -209,7 +401,7 @@ class NarrativeAbductionDev {
                 // Add the form to the container
                 formContainer.appendChild(form);
     
-                wnd = NAUtil.CreateWindow(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, formContainer, 100, 100, 400, 200, na.windowRegistry);
+                wnd = NAUtil.CreateWindow(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, formContainer, 100, 100, 250, 200, na.windowRegistry);
             }
 
             const nameInput = document.getElementById("name");
@@ -341,37 +533,30 @@ class NAUtil {
         return registry[id] || null;
     }
 
-}
-
-class NarrativeAbductionUI{
-    constructor(ui) {
-        this.editorui = ui;
-    }
-
-    AddButton = function(label, funct)
+    static AddButton = function(label, container, funct)
     {
         var btn = document.createElement('div');
-        mxUtils.write(btn, label);
-        btn.style.position = 'absolute';
+        btn.innerHTML = label;
         btn.style.backgroundColor = 'transparent';
         btn.style.border = '1px solid gray';
         btn.style.textAlign = 'center';
         btn.style.fontSize = '10px';
         btn.style.cursor = 'hand';
-        btn.style.width = bw + 'px';
-        btn.style.height = bh + 'px';
-        btn.style.left = left + 'px';
+        btn.style.width = '70 px';
+        btn.style.height = '60 px';
         btn.style.top = '0px';
+        btn.style.cursor = "pointer";
         
         mxEvent.addListener(btn, 'click', function(evt)
         {
             funct();
             mxEvent.consume(evt);
         });
-        
-        left += bw;
-        
-        buttons.appendChild(btn);
+                
+        container.appendChild(btn);
     };
+
 }
+
+
 
