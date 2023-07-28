@@ -114,16 +114,111 @@ class NarrativeAbductionDev {
     }
 
 
-    init = function(){
+    init = function(){        
         this.createPanelWindow();
         //this.createNarrativeViewer();
         this.createPalette();     
         this.overrideShapePicker();
-        this.updateLOD();
-       
+        this.initLODUpdate();
+        this.initNewCellHandler();
+        this.inittEdgeDoubleClickEditHandler();
     }
 
-    updateLOD = function(){
+    /**
+     * Trigger custom functions everytime a new cell is added
+     */
+    initNewCellHandler = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+        graph.addListener(mxEvent.CELLS_ADDED, function(sender, evt)
+        {
+            //if edge, show Contextual Edge Option Menu
+            var cells = evt.getProperty('cells');   
+            if(cells[0] && cells[0].isEdge()){
+                console.log("Cell", cells);
+                console.log("evt", evt);    
+                console.log("sender", sender);        
+                t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
+            }                 
+
+
+        });
+    }
+
+    /**
+     * Prevent editing with double click
+     */
+    inittEdgeDoubleClickEditHandler = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+        graph.addListener(mxEvent.DOUBLE_CLICK, function(sender, evt)
+        {
+            //if edge, show Contextual Edge Option Menu
+            var cell = evt.getProperty('cell');   
+            if(cell != null && cell.isEdge()){
+                return false;            }                 
+        });
+    }
+
+    /**
+     * Show edge type options at position x and y
+     * @param {*} edge 
+     * @param {*} x 
+     * @param {*} y 
+     */
+    showContextualEdgeOptionMenu = function(edge, x, y){
+        var container = document.createElement('div');
+        var window = new mxWindow("EdgeType", container, x, y, 200, 100);
+        var t = this;
+        this.naentries.forEach(function(element){
+          if(element.type == "edge"){
+              NAUtil.AddButton(element.name.replace("Link",""), container, function(){
+                  var graph = t.editorui.editor.graph;
+                  graph.getModel().beginUpdate();
+                  try
+                  {
+                      graph.getModel().setValue(edge, element.name.replace("Link","") + "s");
+                      graph.setCellStyle(element.style, [edge]);
+                  }
+                  finally
+                  {
+                      graph.getModel().endUpdate();
+                  }
+                  window.destroy();
+              });
+          }
+         
+      });
+
+      window.setVisible(true);
+
+    }
+
+    /**
+     * Show link type option when two nodes are connected
+     */
+    initConnectionHandler = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+
+        graph.connectionHandler.addListener(mxEvent.CONNECT, function(sender, evt)
+        {
+          var edge = evt.getProperty('cell');
+          var source = graph.getModel().getTerminal(edge, true);
+          var target = graph.getModel().getTerminal(edge, false);
+          var event = evt.getProperty('event');
+                  
+          console.log("Connected");
+          console.log("Source", source);
+          console.log("Target", target);
+          console.log("evt", evt);
+
+          t.showContextualEdgeOptionMenu(edge, event.x, event.y);
+
+        });
+    }
+
+    initLODUpdate = function(){
  			// Links level of detail to zoom level but can be independent of zoom
              var t = this;
              this.editorui.editor.graph.isCellVisible = function(cell)
@@ -166,7 +261,7 @@ class NarrativeAbductionDev {
         this.panelwindow.setVisible(true);
 
 
-        //set link options
+        //This part is to add link type buttons 
         var setlinktypecontainer = document.createElement('div');
         setlinktypecontainer.style.width = "150px";
         setlinktypecontainer.style.padding = "5px";
@@ -176,8 +271,7 @@ class NarrativeAbductionDev {
         label.style.paddingBottom = "5px";
         setlinktypecontainer.append(label);
         container.append(setlinktypecontainer);
-
-
+        //looping through naentries
         this.naentries.forEach(function(element){
             if(element.type == "edge"){
                 NAUtil.AddButton(element.name.replace("Link",""), setlinktypecontainer, function(){
@@ -186,7 +280,6 @@ class NarrativeAbductionDev {
                         alert("Select an edge");
                         return;
                     }
-
                     console.log("Selection", selectedCells);
                     selectedCells.forEach(function(selected){
 
@@ -213,9 +306,7 @@ class NarrativeAbductionDev {
         });
         
 
-
-        //dev tool
-        
+        //This part contains some functions for development purposes
         var devtoolcontainer = document.createElement('div');
         devtoolcontainer.style.width = "150px";
         devtoolcontainer.style.padding = "5px";
@@ -237,13 +328,9 @@ class NarrativeAbductionDev {
      * Create palette for the side bar
      */
     createPalette = function(){
-       
-
         var entries = []; //all palette entries
         for(var i = 0; i < this.naentries.length;i++){
-
             var res;
-            
             if(this.naentries[i].type == "node"){
                res = this.createDocumentItem(this.naentries[i].name,  
                     NAUtil.GetCellChildrenLabels(this.naentries[i].name).title, 
@@ -252,17 +339,13 @@ class NarrativeAbductionDev {
             } else{
                 res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
             }
-                
-
             this.naentries[i].xml = res.xml;
             this.naentries[i].graph = res.graph;                
-            
              entries.push(
                 this.editorui.sidebar.addDataEntry(
                     this.naentries[i].name, 0, 0, this.naentries[i].name, Graph.compress(this.naentries[i].xml))
                     );
         }
-
         console.log("Entires", entries);
         NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);        
     }
@@ -274,8 +357,7 @@ class NarrativeAbductionDev {
         //override
         var t = this;
         this.editorui.getCellsForShapePicker = function(cell, hovering, showEdges){
-
-            //somehow the style fails, we need to override it 
+            //somehow the style fails, we need to override it. This might not be the case anymore, need to revisit this again later
             var newcells = [];
             t.naentries.forEach(function(currentValue, index, arr){
                     console.log("c", currentValue);
@@ -286,22 +368,22 @@ class NarrativeAbductionDev {
                         g.getModel().setStyle(cell, currentValue.style);
                         newcells.push(cell);  
                     }
-
              });
-
             console.log("Shape-picker new cells", newcells);
-
             return newcells;
         };
     }
 
+    /**
+     * Create link. This is still not working well as it creates two empty nodes 
+     * @param {*} itemname 
+     * @param {*} style 
+     * @returns 
+     */
     createLinkItem = function(itemname, style){
         var doc = mxUtils.createXmlDocument();
-        var objna = doc.createElement(itemname);
-
         var graph = new mxGraph();
-        var parent = graph.getDefaultParent();
-                           
+        var parent = graph.getDefaultParent();                           
         graph.getModel().beginUpdate();
         var nodenaitem;
         try
@@ -317,7 +399,6 @@ class NarrativeAbductionDev {
         {
             graph.getModel().endUpdate();
         }
-
         return {
             xml: NAUtil.ModelToXML(graph),
             graph: graph,
@@ -335,10 +416,8 @@ class NarrativeAbductionDev {
         objna.setAttribute("natype", itemname);
         var objtitle = doc.createElement(titlename);
         var objdescription = doc.createElement(descrname);
-
         var graph = new mxGraph();
-        var parent = graph.getDefaultParent();
-                           
+        var parent = graph.getDefaultParent();                           
         graph.getModel().beginUpdate();
         var nodenaitem;
         try
@@ -346,40 +425,32 @@ class NarrativeAbductionDev {
             nodenaitem = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
             nodenaitem.setStyle(style);
             nodenaitem.natype = itemname;
-
             var nodetitle = graph.insertVertex(nodenaitem, null, objtitle, 10, 10, 320, 30);
             nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodetitle.value = titlename;
-            nodetitle.setConnectable(false);
-            
+            nodetitle.setConnectable(false);            
             var nodedesc = graph.insertVertex(nodenaitem, null, objdescription, 10, 50, 320, 150);
             nodedesc.setStyle("text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodedesc.value = "Desription";
             nodedesc.setConnectable(false);
             nodedesc.lod = this.settings.lodupdate;
-
         }
         finally
         {
             graph.getModel().endUpdate();
         }
-
         var currgraph = this.editorui.editor.graph;
         var na = this;
-
         // Add on click listener to show the Narrative Item window
         NAUtil.AddNodeClickListener(currgraph, itemname, function(cell){
             var cellName =  cell.children[0].value;
             var cellDesc = cell.children[1].value;
-
             console.log("Document item clicked");
             console.log("Graph", currgraph);
             console.log("Cell", cell);
             console.log("Name", cellName);
             console.log("Description", cellDesc);
-
             var wnd = NAUtil.GetWindowById(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, na.windowRegistry);
-
             if(wnd == null)
             {
                 var formContainer = document.createElement('div');
@@ -534,6 +605,17 @@ class NAUtil {
         });
     }
 
+
+    static AddNodeDoubleClickListener = function(graph, name, f){
+        graph.addListener(mxEvent.DOUBLE_CLICK, function (sender, evt) {
+            var cell = evt.getProperty("cell"); // cell may be null
+            if(cell != null && cell.value != null && cell.value.nodeName == name){
+                f(cell);
+            }
+            evt.consume();
+        });
+    }
+
     static AddPalette = function(sidebar, name, nodes){
       //  var nodes = [sidebar.addDataEntry("Test", 0, 0, name, Graph.compress(xml))];
         //mxResources.get("narrativeabduction")
@@ -542,13 +624,24 @@ class NAUtil {
         sidebar.setCurrentSearchEntryLibrary()         
     }
 
+    /**
+     * Create window if the id does not exist in registry, otherwise return existing one
+     * @param {*} id 
+     * @param {*} title 
+     * @param {*} content 
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} width 
+     * @param {*} height 
+     * @param {*} registry 
+     * @returns 
+     */
     static CreateWindow = function(id, title, content, x, y, width, height, registry) {
-        const wnd = new mxWindow(title, content, x, y, width, height, true, true);
-        wnd.setResizable(false);
-        wnd.setScrollable(false);
-       // wnd.setClosable(true);
-      
-        registry[id] = wnd;      
+        var wnd = NAUtil.GetWindowById(id, registry);
+        if(wnd == null){
+            wnd = new mxWindow(title, content, x, y, width, height, true, true);
+            registry[id] = wnd;     
+        }
         return wnd;
       }
 
