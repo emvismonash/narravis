@@ -114,8 +114,12 @@ class NarrativeAbductionDev {
     }
 
 
+    /**
+     * Initialisation 
+     */
     init = function(){        
-        this.createPanelWindow();
+        this.hideMoreShapesButton();
+        this.createNAPanel();
         //this.createNarrativeViewer();
         this.createPalette();     
         this.overrideShapePicker();
@@ -134,14 +138,9 @@ class NarrativeAbductionDev {
         {
             //if edge, show Contextual Edge Option Menu
             var cells = evt.getProperty('cells');   
-            if(cells[0] && cells[0].isEdge()){
-                console.log("Cell", cells);
-                console.log("evt", evt);    
-                console.log("sender", sender);        
+            if(cells[0] && cells[0].isEdge()){     
                 t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
             }                 
-
-
         });
     }
 
@@ -155,9 +154,12 @@ class NarrativeAbductionDev {
         {
             //if edge, show Contextual Edge Option Menu
             var cell = evt.getProperty('cell');   
-            if(cell != null && cell.isEdge()){
-                return false;            }                 
+            if(cell != null && cell.isEdge())
+            {    
+                t.showContextualEdgeOptionMenu(cell , sender.lastMouseX, sender.lastMouseY);
+            }                 
         });
+        
     }
 
     /**
@@ -218,6 +220,9 @@ class NarrativeAbductionDev {
         });
     }
 
+    /**
+     * Update graph model base on LOD if specified
+     */
     initLODUpdate = function(){
  			// Links level of detail to zoom level but can be independent of zoom
              var t = this;
@@ -229,6 +234,9 @@ class NarrativeAbductionDev {
              };
     }
 
+    /**
+     * Todo
+     */
     createNarrativeViewer = function(){
         var container = document.createElement('div');
         container.style.width = "200px";
@@ -243,6 +251,11 @@ class NarrativeAbductionDev {
         this.narrativeToView(this.editorui.editor.graph, container);
     }
 
+    /**
+     * Convert graph narrative into view, TODO
+     * @param {*} graph 
+     * @param {*} container 
+     */
     narrativeToView = function(graph, container){
         console.log(graph.getModel().getCells());
         graph.getModel().getCells().forEach(element => {
@@ -250,15 +263,35 @@ class NarrativeAbductionDev {
         });
     }
 
-    createPanelWindow = function(){
+    /**
+     * Hide Mode Shapes button on the Side bar
+     */
+    hideMoreShapesButton = function(){
+        var buttons = document.getElementsByClassName("geSidebarFooter");
+        console.log("Buttons", buttons);
+        Array.from(buttons).forEach(function(elm){
+            console.log("Element", elm.innerHTML);
+            if(elm.innerHTML.includes('More Shapes')){
+                elm.style.display = 'none';
+            }
+        });
+    }
+
+    /**
+     * Create NA Panel Window
+     */
+    createNAPanel = function(){
         var container = document.createElement('div');
         container.style.width = "150px";
         container.style.padding = "20px";
     
-        this.panelwindow = new mxWindow("NA Panel", container, 0, 0, 200, 300, true, true);
-        this.panelwindow.setResizable(false);
-        this.panelwindow.setScrollable(false);
-        this.panelwindow.setVisible(true);
+        //this.panelwindow = new mxWindow("NA Panel", container, 0, 0, 200, 300, true, true);
+        this.panelwindow = container;
+        //this.panelwindow.setResizable(false);
+        //this.panelwindow.setScrollable(false);
+        //this.panelwindow.setVisible(true);
+
+        this.editorui.sidebar.container.append(container);
 
 
         //This part is to add link type buttons 
@@ -307,6 +340,10 @@ class NarrativeAbductionDev {
         
 
         //This part contains some functions for development purposes
+        this.createDevToolPanel(container);
+    }
+
+    createDevToolPanel = function(container){
         var devtoolcontainer = document.createElement('div');
         devtoolcontainer.style.width = "150px";
         devtoolcontainer.style.padding = "5px";
@@ -320,7 +357,12 @@ class NarrativeAbductionDev {
 
         var t = this;
         NAUtil.AddButton("Show model", devtoolcontainer, function(){
-            console.log(t.editorui.editor.graph.getModel());
+            console.log("Dev tool - show model", t.editorui.editor.graph.getModel());
+            var enc = new mxObjectCodec();
+            var rootNode = t.editorui.editor.graph.getDefaultParent();
+            var result = enc.decode(rootNode);
+
+            console.log("Dev too - show object", result);
         });
     }
 
