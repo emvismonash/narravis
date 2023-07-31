@@ -139,6 +139,7 @@ class NarrativeAccordionView{
         this.headContainer.classList.add(NASettings.CSSClasses.NarrativeAccordionView.HeadContainer);
         this.bodyContainer.classList.add(NASettings.CSSClasses.NarrativeAccordionView.BodyContainer);
 
+        this.headContainer.style.background = this.color;
 
         naNameLabel.style.height = '30px';
         naNameLabel.innerHTML = this.narrative.name;        
@@ -241,7 +242,6 @@ class NarrativeAbductionApp {
 
     constructor(ui) {
         this.editorui = ui;
-        this.windowRegistry = {};
         this.panelwindow;
         this.narrativeviewerwindow;
         this.narratives = [];
@@ -466,6 +466,7 @@ class NarrativeAbductionApp {
         setlinktypecontainer.append(label);
         container.append(setlinktypecontainer);
         //looping through naentries
+        var t = this;
         this.naentries.forEach(function(element){
             if(element.type == "edge"){
                 NAUtil.AddButton(element.name.replace("Link",""), setlinktypecontainer, function(){
@@ -557,22 +558,25 @@ class NarrativeAbductionApp {
         for(var i = 0; i < this.naentries.length;i++){
             var res;
             if(this.naentries[i].type == "node"){
-               res = this.createDocumentItem(this.naentries[i].name,  
+                res = this.createDocumentItem(this.naentries[i].name,  
                     NAUtil.GetCellChildrenLabels(this.naentries[i].name).title, 
                     NAUtil.GetCellChildrenLabels(this.naentries[i].name).description, 
                     this.naentries[i].style);
-            } else{
-                res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
-            }
-            this.naentries[i].xml = res.xml;
-            this.naentries[i].graph = res.graph;                
-             entries.push(
-                this.editorui.sidebar.addDataEntry(
-                    this.naentries[i].name, 0, 0, this.naentries[i].name, Graph.compress(this.naentries[i].xml))
-                    );
-        }
-        console.log("Entires", entries);
-        NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);        
+                this.naentries[i].xml = res.xml;
+                this.naentries[i].graph = res.graph;                
+                    entries.push(
+                    this.editorui.sidebar.addDataEntry(
+                        this.naentries[i].name, 0, 0, this.naentries[i].name, Graph.compress(this.naentries[i].xml))
+                        );
+                }
+                console.log("Entires", entries);
+            } 
+            //else{
+            //     res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
+            // }
+            NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries); 
+
+                  
     }
 
     /**
@@ -667,77 +671,86 @@ class NarrativeAbductionApp {
         var currgraph = this.editorui.editor.graph;
         var na = this;
         // Add on click listener to show the Narrative Item window
-        NAUtil.AddNodeClickListener(currgraph, itemname, function(cell, evt){
+        NAUtil.AddNodeDoubleClickListener(currgraph, itemname, function(cell, evt){
             var cellName =  cell.children[0].value;
             var cellDesc = cell.children[1].value;
+
             console.log("Document item clicked");
             console.log("Graph", currgraph);
             console.log("Cell", cell);
             console.log("Name", cellName);
             console.log("Description", cellDesc);
-            var wnd = NAUtil.GetWindowById(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, na.windowRegistry);
-                
+            
             console.log("Event", evt);
             var x = evt.getProperty('event').x;
             var y = evt.getProperty('event').y;
-            console.log("X" , x, "Y", y);
 
-            if(wnd == null)
-            {
-                var formContainer = document.createElement('div');
-                formContainer.style.width = "150px";
-                formContainer.style.padding = "20px";
-    
-                const form = document.createElement('form');
-                form.id = 'narrativeitemform';
-    
-                const nameLabel = document.createElement('label');
-                nameLabel.textContent = 'Name:';
-                const nameInput = document.createElement('input');
-                nameInput.type = 'text';
-                nameInput.id = 'name';
-                nameInput.name = 'name';
-                nameInput.required = true;
-    
-                const br = document.createElement('br');
-    
-                const descriptionLabel = document.createElement('label');
-                descriptionLabel.textContent = 'Description:';
-                const descriptionTextarea = document.createElement('textarea');
-                descriptionTextarea.id = 'description';
-                descriptionTextarea.name = 'description';
-                descriptionTextarea.rows = 4;
-                descriptionTextarea.cols = 30;
-    
-                const applyButton = document.createElement('button');
-                applyButton.id = 'applyButton';
-                applyButton.type = 'button';
-                applyButton.textContent = 'Apply';
-    
-                // Add elements to the form
-                form.appendChild(nameLabel);
-                form.appendChild(nameInput);
-                form.appendChild(br);
-                form.appendChild(descriptionLabel);
-                form.appendChild(descriptionTextarea);
-                form.appendChild(br.cloneNode(false)); // Create a new line break for spacing
-                form.appendChild(applyButton);
-    
-                // Add the form to the container
-                formContainer.appendChild(form);
+            var formContainer = document.createElement('div');
+            formContainer.style.width = "150px";
+            formContainer.style.padding = "20px";
 
-                wnd = NAUtil.CreateWindow(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, formContainer, x, y, 250, 200, na.windowRegistry);
-            }else{
-                wnd.setLocation(x, y);
+            const form = document.createElement('form');
+            form.id = 'narrativeitemform';
+
+            const nameLabel = document.createElement('label');
+            nameLabel.textContent = 'Name:';
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.id = 'name';
+            nameInput.name = 'name';
+            nameInput.required = true;
+            nameInput.value = cellName;
+
+            const br = document.createElement('br');
+
+            const descriptionLabel = document.createElement('label');
+            descriptionLabel.textContent = 'Description:';
+            const descriptionTextarea = document.createElement('textarea');
+            descriptionTextarea.id = 'description';
+            descriptionTextarea.name = 'description';
+            descriptionTextarea.rows = 4;
+            descriptionTextarea.cols = 30;
+            descriptionTextarea.value = cellDesc;
+
+            const applyButton = document.createElement('button');
+            applyButton.id = 'applyButton';
+            applyButton.type = 'button';
+            applyButton.textContent = 'Apply';
+            applyButton.onclick = applyForm(currgraph, cell);
+
+            // Add elements to the form
+            form.appendChild(nameLabel);
+            form.appendChild(nameInput);
+            form.appendChild(br);
+            form.appendChild(descriptionLabel);
+            form.appendChild(descriptionTextarea);
+            form.appendChild(br.cloneNode(false)); // Create a new line break for spacing
+            form.appendChild(applyButton);
+
+            // Add the form to the container
+            formContainer.appendChild(form);
+            var highlight = new mxCellHighlight(currgraph, '#000', 2);
+            formContainer.onmouseenter = function(){
+                highlight.highlight(currgraph.view.getState(cell));
+            }
+            formContainer.onmouseleave = function(){
+                highlight.hide();
             }
 
-            const nameInput = document.getElementById("name");
-            nameInput.value = cellName;
-            const descriptionTextarea = document.getElementById("description");
-            descriptionTextarea.value = cellDesc;
-            const applyButton = document.getElementById("applyButton");
-            applyButton.onclick = applyForm(currgraph, cell);
-            const form = document.getElementById("narrativeitemform");
+            var wnd = NAUtil.CreateWindow(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, formContainer, x, y, 250, 200);                
+
+            wnd.setLocation(x, y);
+            wnd.setClosable(true);
+            wnd.setMinimizable(false);
+            wnd.setVisible(true);  
+
+            // const nameInput = document.getElementById("name");
+            // nameInput.value = cellName;
+            // const descriptionTextarea = document.getElementById("description");
+            // descriptionTextarea.value = cellDesc;
+            // const applyButton = document.getElementById("applyButton");
+            // applyButton.onclick = applyForm(currgraph, cell);
+            // const form = document.getElementById("narrativeitemform");
             form.onsubmit =  function(event) {
                 event.preventDefault();
                 return false;
@@ -768,9 +781,11 @@ class NarrativeAbductionApp {
                         currgraph.getModel().endUpdate();
                     }
                     console.log("Cell", c);
+                    wnd.destroy();
+                    highlight.hide();
                 }
             };
-            wnd.setVisible(true);        
+      
         });
        
         return {
@@ -883,7 +898,7 @@ class NAUtil {
         graph.addListener(mxEvent.DOUBLE_CLICK, function (sender, evt) {
             var cell = evt.getProperty("cell"); // cell may be null
             if(cell != null && cell.value != null && cell.value.nodeName == name){
-                f(cell);
+                f(cell, evt);
             }
             evt.consume();
         });
@@ -906,21 +921,13 @@ class NAUtil {
      * @param {*} y 
      * @param {*} width 
      * @param {*} height 
-     * @param {*} registry 
      * @returns 
      */
-    static CreateWindow = function(id, title, content, x, y, width, height, registry) {
-        var wnd = NAUtil.GetWindowById(id, registry);
-        if(wnd == null){
-            wnd = new mxWindow(title, content, x, y, width, height, true, true);
-            registry[id] = wnd;     
-        }
+    static CreateWindow = function(id, title, content, x, y, width, height) {
+        var wnd = new mxWindow(title, content, x, y, width, height, true, true);
+        wnd.id = id;
         return wnd;
       }
-
-    static GetWindowById = function(id, registry) {
-        return registry[id] || null;
-    }
 
     static AddButton = function(label, container, funct)
     {
