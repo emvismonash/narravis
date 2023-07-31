@@ -9,7 +9,7 @@ Draw.loadPlugin(function(ui) {
     console.log("Editor", ui.editor);
 
     var na = new NarrativeAbductionDev(ui);
-    na.init();
+    na._init();
 });
 
 
@@ -38,6 +38,57 @@ class NASettings{
     }
 }
 
+class Narrative {
+    constructor(){
+        this.rootCell;
+        this.name;
+        this.cells = [];
+        this.graph;
+    }
+}
+
+class NarrativeListVeiw{
+    constructor(narrative, container, editorui){
+        this.narrative = narrative;
+        this.container = container;
+        this.editorui = editorui;
+        this.contentWrapper;
+    }
+
+    createContainer = function(){
+        var naContainer = document.createElement('div');
+        naContainer.style.height = '80px';
+
+        this.contentWrapper = naContainer;
+
+        var naNameLablel = document.createElement('div');
+        naNameLablel.innerHTML = this.narrative.name;
+        naContainer.append(naNameLablel);
+        
+        this.container.append(naContainer);
+    }
+
+    createButtons = function(){
+        var buttonAssignNode = document.createElement('button');
+        buttonAssignNode.innerHTML = "Assign Nodes";
+
+        var t = this;
+        buttonAssignNode.onclick = function(){
+            var graph = t.editorui.editor.graph;
+            var selectedCells = graph.getSelectionCells();
+            console.log("Assigning celss", selectedCells);
+            t.narrative.cells.push(selectedCells);
+        }
+
+        this.contentWrapper.append(buttonAssignNode);
+    }
+
+    updateView = function(){
+        this.createContainer();
+        this.createButtons();
+    }
+}
+
 class NarrativeAbductionDev {
 
     constructor(ui) {
@@ -45,6 +96,7 @@ class NarrativeAbductionDev {
         this.windowRegistry = {};
         this.panelwindow;
         this.narrativeviewerwindow;
+        this.narratives = [];
         this.settings = {
             lodupdate: 1.5
         }
@@ -117,9 +169,10 @@ class NarrativeAbductionDev {
     /**
      * Initialisation 
      */
-    init = function(){        
+    _init = function(){        
         this.hideMoreShapesButton();
         this.createNAPanel();
+        this.createNarrativeViewer();
         //this.createNarrativeViewer();
         this.createPalette();     
         this.overrideShapePicker();
@@ -128,6 +181,20 @@ class NarrativeAbductionDev {
         this.inittEdgeDoubleClickEditHandler();
     }
 
+        /**
+     * Hide Mode Shapes button on the Side bar
+     */
+        hideMoreShapesButton = function(){
+            var buttons = document.getElementsByClassName("geSidebarFooter");
+            console.log("Buttons", buttons);
+            Array.from(buttons).forEach(function(elm){
+                console.log("Element", elm.innerHTML);
+                if(elm.innerHTML.includes('More Shapes')){
+                    elm.style.display = 'none';
+                }
+            });
+        }
+    
     /**
      * Trigger custom functions everytime a new cell is added
      */
@@ -162,40 +229,7 @@ class NarrativeAbductionDev {
         
     }
 
-    /**
-     * Show edge type options at position x and y
-     * @param {*} edge 
-     * @param {*} x 
-     * @param {*} y 
-     */
-    showContextualEdgeOptionMenu = function(edge, x, y){
-        var container = document.createElement('div');
-        var window = new mxWindow("EdgeType", container, x, y, 200, 100);
-        var t = this;
-        this.naentries.forEach(function(element){
-          if(element.type == "edge"){
-              NAUtil.AddButton(element.name.replace("Link",""), container, function(){
-                  var graph = t.editorui.editor.graph;
-                  graph.getModel().beginUpdate();
-                  try
-                  {
-                      graph.getModel().setValue(edge, element.name.replace("Link","") + "s");
-                      graph.setCellStyle(element.style, [edge]);
-                  }
-                  finally
-                  {
-                      graph.getModel().endUpdate();
-                  }
-                  window.destroy();
-              });
-          }
-         
-      });
-
-      window.setVisible(true);
-
-    }
-
+   
     /**
      * Show link type option when two nodes are connected
      */
@@ -235,47 +269,20 @@ class NarrativeAbductionDev {
     }
 
     /**
-     * Todo
+     * Create NA viewer window
      */
     createNarrativeViewer = function(){
         var container = document.createElement('div');
         container.style.width = "200px";
         container.style.padding = "20px";
 
-    
         this.narrativeviewerwindow = new mxWindow("NA Viewer", container, 0, 0, 200, 300, true, true);
         this.narrativeviewerwindow.setResizable(true);
         this.narrativeviewerwindow.setScrollable(true);
         this.narrativeviewerwindow.setVisible(true);
-
-        this.narrativeToView(this.editorui.editor.graph, container);
     }
 
-    /**
-     * Convert graph narrative into view, TODO
-     * @param {*} graph 
-     * @param {*} container 
-     */
-    narrativeToView = function(graph, container){
-        console.log(graph.getModel().getCells());
-        graph.getModel().getCells().forEach(element => {
-            console.log("Value", element);
-        });
-    }
 
-    /**
-     * Hide Mode Shapes button on the Side bar
-     */
-    hideMoreShapesButton = function(){
-        var buttons = document.getElementsByClassName("geSidebarFooter");
-        console.log("Buttons", buttons);
-        Array.from(buttons).forEach(function(elm){
-            console.log("Element", elm.innerHTML);
-            if(elm.innerHTML.includes('More Shapes')){
-                elm.style.display = 'none';
-            }
-        });
-    }
 
     /**
      * Create NA Panel Window
@@ -364,6 +371,25 @@ class NarrativeAbductionDev {
 
             console.log("Dev too - show object", result);
         });
+
+
+        /// add group
+        NAUtil.AddButton("Group nodes", devtoolcontainer, function(){
+            console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
+            var graph = t.editorui.editor.graph;
+            var cells = graph.getSelectionCells();
+            graph.groupCells(null, 0, cells);
+        });
+
+        NAUtil.AddButton("Create narrative", devtoolcontainer, function(){
+            console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
+            var na = new Narrative();
+            na.name = "Narrative test";
+            console.log(t.narrativeviewerwindow);
+            var naViewList = new NarrativeListVeiw(na, t.narrativeviewerwindow.contentWrapper, t.editorui);
+            naViewList.updateView();
+        });
+
     }
 
     /**
@@ -588,6 +614,43 @@ class NarrativeAbductionDev {
             cell: nodenaitem
         }
     }
+
+    
+
+     /**
+     * Show edge type options at position x and y
+     * @param {*} edge 
+     * @param {*} x 
+     * @param {*} y 
+     */
+     showContextualEdgeOptionMenu = function(edge, x, y){
+        var container = document.createElement('div');
+        var window = new mxWindow("EdgeType", container, x, y, 200, 100);
+        var t = this;
+        this.naentries.forEach(function(element){
+          if(element.type == "edge"){
+              NAUtil.AddButton(element.name.replace("Link",""), container, function(){
+                  var graph = t.editorui.editor.graph;
+                  graph.getModel().beginUpdate();
+                  try
+                  {
+                      graph.getModel().setValue(edge, element.name.replace("Link","") + "s");
+                      graph.setCellStyle(element.style, [edge]);
+                  }
+                  finally
+                  {
+                      graph.getModel().endUpdate();
+                  }
+                  window.destroy();
+              });
+          }
+         
+      });
+
+      window.setVisible(true);
+
+    }
+
 }
 
 class NAUtil {
