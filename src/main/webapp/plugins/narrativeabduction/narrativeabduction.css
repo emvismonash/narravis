@@ -1,0 +1,14 @@
+.naAccordionViewContainer{
+    border: 1px solid #ccc;
+}
+
+.naSidePanel{
+    width: 100%;
+}
+
+.naUtilButton{
+    padding: 2px;
+    cursor: pointer;
+    border: 1px solid goldenrod;
+    margin: 2px;
+}
