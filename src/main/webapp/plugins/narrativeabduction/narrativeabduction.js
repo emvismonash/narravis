@@ -35,6 +35,15 @@ class NASettings{
         },
         UI: {
             DOCUMENTITEMWINDOW : 'DocumentItemWindow'
+        },
+        EVENTS:{
+            NEWNARRATIVE: 'newnarrative',
+            DELETENARRATIVE: 'deletenarrative'
+        }
+    }
+    static Language = {
+        English: {
+            "newnarrative": "New Narrative"
         }
     }
     static Colors = {
@@ -71,6 +80,7 @@ class NASettings{
 }
 
 class Narrative {
+    #event;
     constructor(){
         this.rootCell;
         this.name;
@@ -79,6 +89,12 @@ class Narrative {
     }
 }
 
+class NarrativesView {
+    constructor(){
+        this.narrativeaccodionviews = [];
+        this.app;
+    }
+}
 
 /**
  * Accordion View of a narrative
@@ -190,7 +206,6 @@ class NarrativeAccordionView{
             console.log("Assigning celss", t.narrative.cells);
             t.createBodyElements();
         }
-
         this.headContainer.append(buttonAssignNode);
     }
 
@@ -239,16 +254,27 @@ class NarrativeAccordionView{
 }
 
 class NarrativeAbductionApp {
-
+    #event;
     constructor(ui) {
         this.editorui = ui;
         this.panelwindow;
-        this.narrativeviewerwindow;
+        this.narrativesview;
         this.narratives = [];
         this.settings = {
             lodupdate: 1.5
-        }
+        };
+        this.myEvent = new CustomEvent("newnarrative", {
+            narrative: {},
+            bubbles: true,
+            cancelable: true,
+            composed: false,
+          });
         this.naentries = [
+            {
+                name: NASettings.Dictionary.CELLS.NARRATIVE,              
+                style: "swimlane;",
+                type: "node"            
+            },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
                 style: "fillColor=#ffff;",
@@ -319,20 +345,33 @@ class NarrativeAbductionApp {
      */
     _init = function(){        
         this.hideMoreShapesButton();
-        this.initNarrativeViewer();
+        this.initNarrativesView();
         this.createNAPanel();
-        //this.createNarrativeViewer();
         this.createPalette();     
         this.overrideShapePicker();
         this.initLODUpdate();
         this.initNewCellHandler();
+        this.initRemoveCellHandler();
         this.initEdgeDoubleClickEditHandler();
     }
+
+    /**
+     * Return the narrative entry
+     */
+    getNarrativeEntry = function(){
+        var res = null;
+        this.naentries.forEach(function(elem){
+            if(elem.name == NASettings.Dictionary.CELLS.NARRATIVE){
+                res = elem;
+            }
+        })
+        return res;
+    };
 
         /**
      * Hide Mode Shapes button on the Side bar
      */
-        hideMoreShapesButton = function(){
+    hideMoreShapesButton = function(){
             var buttons = document.getElementsByClassName("geSidebarFooter");
             console.log("Buttons", buttons);
             Array.from(buttons).forEach(function(elm){
@@ -341,8 +380,21 @@ class NarrativeAbductionApp {
                     elm.style.display = 'none';
                 }
             });
-        }
+     }
     
+    initRemoveCellHandler = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+
+        graph.addListener(mxEvent.REMOVE_CELLS, function(sender, evt) {
+            var cells = evt.getProperty('cells');
+            //if the cell is narrative, remove the view as well 
+            if(cells[0].natype == NASettings.Dictionary.CELLS.NARRATIVE){   
+                console.log("Remove view - TODO");                   
+            }   
+          });      
+    }
+
     /**
      * Trigger custom functions everytime a new cell is added
      */
@@ -355,7 +407,12 @@ class NarrativeAbductionApp {
             var cells = evt.getProperty('cells');   
             if(cells[0] && cells[0].isEdge()){     
                 t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
-            }                 
+            } 
+            //if the cell is Narrative, trigger create a new narrative action
+            if(cells[0].natype == NASettings.Dictionary.CELLS.NARRATIVE){
+                graph.removeCells([cells[0]]);
+                t.newNarrative();
+            }                
         });
     }
 
@@ -418,32 +475,65 @@ class NarrativeAbductionApp {
     }
 
     /**
-     * Create NA viewer window
+     * Create narrativesviewer window/panel
      */
-    initNarrativeViewer = function(){
+    initNarrativesView = function(){
+        this.narrativesview = new NarrativesView();
+        this.narrativesview.app = this;
         var container = document.createElement('div');
         this.editorui.sidebar.container.append(container);
-        this.narrativeviewerwindow = container;
+        this.narrativesview.container = container;
         container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
 
         var t = this;
-
-        NAUtil.AddButton("Create narrative", container, function(){
-            console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
-            var na = new Narrative();
-            t.narratives.push(na);
-
-            na.name = "Narrative test";
-            console.log(t.narrativeviewerwindow);
-            var container = document.createElement('div');
-            t.narrativeviewerwindow.append(container);
-            
-            var color = NASettings.Colors.Narratives[t.narratives.length-1];
-            var naViewList = new NarrativeAccordionView(na, container, t.editorui, color);
-            naViewList.updateView();
+        // add create narrative buttion
+        NAUtil.AddButton(NASettings.Language.English.newnarrative, container, function(){
+           console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
+           t.newNarrative();
         });
     }
 
+    /**
+     * Create a new narrative, trigger create narrative view and narrative cell
+     */
+    newNarrative = function(){
+        var na = new Narrative();
+        this.narratives.push(na);
+
+        na.name = NASettings.Language.English.newnarrative;
+
+        var container = document.createElement('div');
+        this.narrativesview.container.append(container);
+        
+        var color = NASettings.Colors.Narratives[this.narratives.length-1];
+        var naaccview = new NarrativeAccordionView(na, container, this.editorui, color);
+        naaccview.updateView();   
+
+
+        // add narrative node
+        var graph = this.editorui.editor.graph;
+        var narrativeentry = this.getNarrativeEntry();
+
+        var narrativecell = this.createDocumentItemCell(graph, narrativeentry.name,  
+            NAUtil.GetCellChildrenLabels(narrativeentry.name).title, 
+            NAUtil.GetCellChildrenLabels(narrativeentry.name).description, 
+            narrativeentry.style);
+
+        naaccview.cell = narrativecell;
+        
+        this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
+            detail: {
+                narrative: na, 
+                naaccordionview: naaccview,
+                narrativecell: narrativecell
+            }, 
+        });
+        dispatchEvent(this.#event);
+    }
+
+    deleteNarrative = function(narrative){
+
+    }
 
 
     /**
@@ -541,9 +631,8 @@ class NarrativeAbductionApp {
             console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
             var na = new Narrative();
             na.name = "Narrative test";
-            console.log(t.narrativeviewerwindow);
             var container = document.createElement('div');
-            t.narrativeviewerwindow.append(container);
+            t.narrativesview.container.append(container);
             var naViewList = new NarrativeAccordionView(na, container, t.editorui);
             naViewList.updateView();
         });
@@ -574,9 +663,7 @@ class NarrativeAbductionApp {
             //else{
             //     res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
             // }
-            NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries); 
-
-                  
+            NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);                   
     }
 
     /**
@@ -635,19 +722,15 @@ class NarrativeAbductionApp {
         }
     }
 
-    /**
-     * Create document item cell for the Shape picker and Palette
-     * @returns 
-     */
-    createDocumentItem = function(itemname, titlename, descrname, style){
+    createDocumentItemCell = function(graph, itemname, titlename, descrname, style){
         var doc = mxUtils.createXmlDocument();
         var objna = doc.createElement(itemname);
         objna.setAttribute("natype", itemname);
+
         var objtitle = doc.createElement(titlename);
         var objdescription = doc.createElement(descrname);
-        var graph = new mxGraph();
-        var parent = graph.getDefaultParent();                           
-        graph.getModel().beginUpdate();
+        
+        var parent = graph.getDefaultParent();       
         var nodenaitem;
         try
         {
@@ -667,7 +750,19 @@ class NarrativeAbductionApp {
         finally
         {
             graph.getModel().endUpdate();
-        }
+        }        
+
+        return nodenaitem;
+    }
+
+    /**
+     * Create document item cell for the Shape picker and Palette
+     * @returns 
+     */
+    createDocumentItem = function(itemname, titlename, descrname, style){
+        var graph = new mxGraph();
+        var nodenaitem  = this.createDocumentItemCell(graph, itemname, titlename, descrname, style);
+
         var currgraph = this.editorui.editor.graph;
         var na = this;
         // Add on click listener to show the Narrative Item window
