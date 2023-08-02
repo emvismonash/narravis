@@ -89,10 +89,46 @@ class Narrative {
     }
 }
 
-class NarrativesView {
+class NarrativeAccordionViewsContainer {
     constructor(){
         this.narrativeaccodionviews = [];
         this.app;
+    }
+
+    removeAccordionView = function(narrative){
+        var view;
+        console.log("Narrative to delete", narrative);
+        this.narrativeaccodionviews.forEach(function(naview){
+            console.log("Current narrative", naview.narrative);
+            if(naview.narrative.rootCell.id == narrative.id){
+                console.log("Same");
+                view = naview;
+            }
+        })
+
+        console.log("Remove view", view);
+        if(view){
+            view.remove();
+            var index = this.narrativeaccodionviews.indexOf(view);
+            if (index > -1) { // only splice array when item is found
+                this.narrativeaccodionviews = this.narrativeaccodionviews.splice(index, 1); // 2nd parameter means remove one item only
+            }
+
+            index = this.app.narratives.indexOf(view);
+            if (index > -1) { // only splice array when item is found
+                this.app.narratives =  this.app.narratives.splice(index, 1); // 2nd parameter means remove one item only
+            }
+        }
+    }
+
+    addAccordionView = function(na, narrativecell){
+        var container = document.createElement('div');
+        this.container.append(container);
+        var color = NASettings.Colors.Narratives[this.app.narratives.length-1];
+        var naaccview = new NarrativeAccordionView(na, container, this.app.editorui, color);
+        naaccview.updateView();   
+        naaccview.cell = narrativecell;        
+        this.narrativeaccodionviews.push(naaccview);
     }
 }
 
@@ -107,6 +143,11 @@ class NarrativeAccordionView{
         this.container = container;
         this.editorui = editorui;
         this.color = color;
+    }
+
+    remove = function(){
+        console.log("Removing accordion view", this);
+        this.container.remove();
     }
 
     getHighlightStyle = function(){
@@ -258,7 +299,7 @@ class NarrativeAbductionApp {
     constructor(ui) {
         this.editorui = ui;
         this.panelwindow;
-        this.narrativesview;
+        this.narrativeaccordionviewscontainer;
         this.narratives = [];
         this.settings = {
             lodupdate: 1.5
@@ -386,11 +427,13 @@ class NarrativeAbductionApp {
         var graph = this.editorui.editor.graph;
         var t = this;
 
-        graph.addListener(mxEvent.REMOVE_CELLS, function(sender, evt) {
+        graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt) {
             var cells = evt.getProperty('cells');
+
             //if the cell is narrative, remove the view as well 
-            if(cells[0].natype == NASettings.Dictionary.CELLS.NARRATIVE){   
-                console.log("Remove view - TODO");                   
+            if(cells[0] && cells[0].natype == NASettings.Dictionary.CELLS.NARRATIVE){  
+                console.log("Narrative removed", cells[0]);  
+                t.narrativeaccordionviewscontainer.removeAccordionView(cells[0]);
             }   
           });      
     }
@@ -478,11 +521,11 @@ class NarrativeAbductionApp {
      * Create narrativesviewer window/panel
      */
     initNarrativesView = function(){
-        this.narrativesview = new NarrativesView();
-        this.narrativesview.app = this;
+        this.narrativeaccordionviewscontainer = new NarrativeAccordionViewsContainer();
+        this.narrativeaccordionviewscontainer.app = this;
         var container = document.createElement('div');
         this.editorui.sidebar.container.append(container);
-        this.narrativesview.container = container;
+        this.narrativeaccordionviewscontainer.container = container;
         container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
 
         var t = this;
@@ -497,34 +540,30 @@ class NarrativeAbductionApp {
      * Create a new narrative, trigger create narrative view and narrative cell
      */
     newNarrative = function(){
+
+        //create new narrative
         var na = new Narrative();
         this.narratives.push(na);
-
         na.name = NASettings.Language.English.newnarrative;
-
-        var container = document.createElement('div');
-        this.narrativesview.container.append(container);
         
-        var color = NASettings.Colors.Narratives[this.narratives.length-1];
-        var naaccview = new NarrativeAccordionView(na, container, this.editorui, color);
-        naaccview.updateView();   
-
-
         // add narrative node
         var graph = this.editorui.editor.graph;
         var narrativeentry = this.getNarrativeEntry();
 
+        //create cell
         var narrativecell = this.createDocumentItemCell(graph, narrativeentry.name,  
             NAUtil.GetCellChildrenLabels(narrativeentry.name).title, 
             NAUtil.GetCellChildrenLabels(narrativeentry.name).description, 
             narrativeentry.style);
 
-        naaccview.cell = narrativecell;
-        
+        na.rootCell = narrativecell;
+
+        //create view
+        this.narrativeaccordionviewscontainer.addAccordionView(na, narrativecell);
+
         this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
             detail: {
                 narrative: na, 
-                naaccordionview: naaccview,
                 narrativecell: narrativecell
             }, 
         });
@@ -629,12 +668,7 @@ class NarrativeAbductionApp {
 
         NAUtil.AddButton("Create narrative", devtoolcontainer, function(){
             console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
-            var na = new Narrative();
-            na.name = "Narrative test";
-            var container = document.createElement('div');
-            t.narrativesview.container.append(container);
-            var naViewList = new NarrativeAccordionView(na, container, t.editorui);
-            naViewList.updateView();
+            t.newNarrative();
         });
 
     }
