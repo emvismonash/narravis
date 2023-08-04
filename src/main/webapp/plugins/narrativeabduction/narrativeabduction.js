@@ -109,15 +109,15 @@ class NarrativeAccordionViewsContainer {
         console.log("Remove view", view);
         if(view){
             view.remove();
-            var index = this.narrativeaccodionviews.indexOf(view);
-            if (index > -1) { // only splice array when item is found
-                this.narrativeaccodionviews = this.narrativeaccodionviews.splice(index, 1); // 2nd parameter means remove one item only
-            }
+            // var index = this.narrativeaccodionviews.indexOf(view);
+            // if (index > -1) { // only splice array when item is found
+            //     this.narrativeaccodionviews = this.narrativeaccodionviews.splice(index, 1); // 2nd parameter means remove one item only
+            // }
 
-            index = this.app.narratives.indexOf(view);
-            if (index > -1) { // only splice array when item is found
-                this.app.narratives =  this.app.narratives.splice(index, 1); // 2nd parameter means remove one item only
-            }
+            // index = this.app.narratives.indexOf(view);
+            // if (index > -1) { // only splice array when item is found
+            //     this.app.narratives =  this.app.narratives.splice(index, 1); // 2nd parameter means remove one item only
+            // }
         }
     }
 
@@ -313,68 +313,73 @@ class NarrativeAbductionApp {
         this.naentries = [
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVE,              
-                style: "swimlane;",
+                style: "text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;fontStyle=1;",
                 type: "node"            
             },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
                 style: "fillColor=#ffff;",
+                iconURL: "https://thenounproject.com/api/private/icons/5926263/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"            
             },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
                 style: "fillColor=#fad7ac;strokeColor=#b46504;rounded=0;",
+                iconURL: "https://thenounproject.com/api/private/icons/4353546/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
             {
                 name: NASettings.Dictionary.CELLS.JOINTCAUSE,
                 style: "fillColor=#ffff;",
+                iconURL: "https://thenounproject.com/api/private/icons/4493200/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
             {
                 name: NASettings.Dictionary.CELLS.EVIDENCENARRATIVESPECIFIC,
                 style: "fillColor=#fad9d5;strokeColor=#ae4132;rounded=0;",
+                iconURL: "https://thenounproject.com/api/private/icons/4040420/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
             {
                 name: NASettings.Dictionary.CELLS.SUPPORTINGARGUMENT,
-                style: "fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;",
+                style: "fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=0;",
+                iconURL: "https://thenounproject.com/api/private/icons/5741355/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
             {
                 name: NASettings.Dictionary.CELLS.EXPLAINLINK, 
-                style: "shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+                style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
                 type: "edge"
             },
             {
                 name: NASettings.Dictionary.CELLS.CAUSELINK, 
-                style: "endArrow=classic;html=1;rounded=1;strokeWidth=3;",
+                style: "editable=0;endArrow=classic;html=1;rounded=1;strokeWidth=3;",
                 type: "edge"
             },
             {
                 name: NASettings.Dictionary.CELLS.TRIGGERLINK, 
-                style: "endArrow=classic;html=1;rounded=1;strokeWidth=3;dashed=1;",
+                style: "editable=0;endArrow=classic;html=1;rounded=1;strokeWidth=3;dashed=1;",
                 type: "edge"
             }
             ,
             {
                 name: NASettings.Dictionary.CELLS.ENABLELINK, 
-                style: "endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;",
+                style: "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;",
                 type: "edge"
             },
             {
                 name: NASettings.Dictionary.CELLS.SUPPORTLINK, 
-                style: "endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#006600;",
+                style: "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#006600;",
                 type: "edge"
             },
             {
                 name: NASettings.Dictionary.CELLS.MOTIVATELINK, 
-                style: "shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+                style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
                 type: "edge"
             },
             {
                 name: NASettings.Dictionary.CELLS.CONFLICTLINK, 
-                style: "shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+                style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
                 type: "edge"
             }
         ];
@@ -385,15 +390,15 @@ class NarrativeAbductionApp {
      * Initialisation 
      */
     _init = function(){        
-        this.hideMoreShapesButton();
         this.initNarrativesView();
         this.createNAPanel();
         this.createPalette();     
-        this.overrideShapePicker();
         this.initLODUpdate();
+        this.initShapePickerHandler();
         this.initNewCellHandler();
         this.initRemoveCellHandler();
         this.initEdgeDoubleClickEditHandler();
+        this.updateMoreShapesButton();
     }
 
     /**
@@ -409,26 +414,43 @@ class NarrativeAbductionApp {
         return res;
     };
 
-        /**
-     * Hide Mode Shapes button on the Side bar
+    /**
+     * Update position of more shape button
      */
-    hideMoreShapesButton = function(){
+    updateMoreShapesButton = function(){
             var buttons = document.getElementsByClassName("geSidebarFooter");
             console.log("Buttons", buttons);
+            var t = this;
             Array.from(buttons).forEach(function(elm){
                 console.log("Element", elm.innerHTML);
                 if(elm.innerHTML.includes('More Shapes')){
-                    elm.style.display = 'none';
+                    elm.style.position = 'relative';
+                    t.panelwindow.append(elm);
                 }
             });
      }
     
+         /**
+     * Hide Mode Shapes button on the Side bar
+     */
+     hideMoreShapesButton = function(){
+        var buttons = document.getElementsByClassName("geSidebarFooter");
+        console.log("Buttons", buttons);
+        Array.from(buttons).forEach(function(elm){
+            console.log("Element", elm.innerHTML);
+            if(elm.innerHTML.includes('More Shapes')){
+                elm.style.display = 'none';
+            }
+        });
+ }
+
     initRemoveCellHandler = function(){
         var graph = this.editorui.editor.graph;
         var t = this;
 
         graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt) {
             var cells = evt.getProperty('cells');
+            console.log("Narrative removed", cells[0]);  
 
             //if the cell is narrative, remove the view as well 
             if(cells[0] && cells[0].natype == NASettings.Dictionary.CELLS.NARRATIVE){  
@@ -551,23 +573,42 @@ class NarrativeAbductionApp {
         var narrativeentry = this.getNarrativeEntry();
 
         //create cell
-        var narrativecell = this.createDocumentItemCell(graph, narrativeentry.name,  
-            NAUtil.GetCellChildrenLabels(narrativeentry.name).title, 
-            NAUtil.GetCellChildrenLabels(narrativeentry.name).description, 
-            narrativeentry.style);
+        // var entry = narrativeentry;
+        // entry.titlename = NAUtil.GetCellChildrenLabels(narrativeentry.name).title;
+        // entry.descname = NAUtil.GetCellChildrenLabels(narrativeentry.name).description;
 
-        na.rootCell = narrativecell;
+       // var narrativecell = this.createDocumentItemCell(graph, entry);
+       var parent = graph.getDefaultParent();       
 
-        //create view
-        this.narrativeaccordionviewscontainer.addAccordionView(na, narrativecell);
+       var narrativecell;
+       try
+       {
+            console.log(narrativeentry);
+            var doc = mxUtils.createXmlDocument();
+            var objna = doc.createElement(narrativeentry.name);
+            narrativecell = graph.insertVertex(parent, na.name, objna, 200, 150, 350, 150);       
+            narrativecell.value = (na.name);    
+            narrativecell.natype = NASettings.Dictionary.CELLS.NARRATIVE;       
+            graph.setCellStyle(narrativeentry.style, [narrativecell]);   
+       }
+       finally
+       {
+           graph.getModel().endUpdate();
+           na.rootCell = narrativecell;
 
-        this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
-            detail: {
-                narrative: na, 
-                narrativecell: narrativecell
-            }, 
-        });
-        dispatchEvent(this.#event);
+           //create view
+           this.narrativeaccordionviewscontainer.addAccordionView(na, narrativecell);
+   
+           this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
+               detail: {
+                   narrative: na, 
+                   narrativecell: narrativecell
+               }, 
+           });
+           dispatchEvent(this.#event);
+       }        
+
+
     }
 
     deleteNarrative = function(narrative){
@@ -680,11 +721,14 @@ class NarrativeAbductionApp {
         var entries = []; //all palette entries
         for(var i = 0; i < this.naentries.length;i++){
             var res;
-            if(this.naentries[i].type == "node"){
-                res = this.createDocumentItem(this.naentries[i].name,  
-                    NAUtil.GetCellChildrenLabels(this.naentries[i].name).title, 
-                    NAUtil.GetCellChildrenLabels(this.naentries[i].name).description, 
-                    this.naentries[i].style);
+            if(this.naentries[i].type == "node" && this.naentries[i].name != NASettings.Dictionary.CELLS.NARRATIVE){
+
+
+                var entry = this.naentries[i];
+                entry.titlename = NAUtil.GetCellChildrenLabels(this.naentries[i].name).title;
+                entry.descname = NAUtil.GetCellChildrenLabels(this.naentries[i].name).description;
+
+                res = this.createDocumentItem(entry);
                 this.naentries[i].xml = res.xml;
                 this.naentries[i].graph = res.graph;                
                     entries.push(
@@ -703,7 +747,7 @@ class NarrativeAbductionApp {
     /**
      * Shape-picker override to show NA cells
      */
-    overrideShapePicker = function(){
+    initShapePickerHandler = function(){
         //override
         var t = this;
         this.editorui.getCellsForShapePicker = function(cell, hovering, showEdges){
@@ -712,7 +756,7 @@ class NarrativeAbductionApp {
             t.naentries.forEach(function(currentValue, index, arr){
                     console.log("c", currentValue);
                     //only add node items
-                    if(currentValue.type == "node"){
+                    if(currentValue.type == "node" && currentValue.name != NASettings.Dictionary.CELLS.NARRATIVE){
                         var cell = NAUtil.GetCellByNodeName(currentValue.graph, currentValue.name);
                         var g = currentValue.graph;
                         g.getModel().setStyle(cell, currentValue.style);
@@ -731,7 +775,7 @@ class NarrativeAbductionApp {
      * @returns 
      */
     createLinkItem = function(itemname, style){
-        var doc = mxUtils.createXmlDocument();
+
         var graph = new mxGraph();
         var parent = graph.getDefaultParent();                           
         graph.getModel().beginUpdate();
@@ -756,7 +800,13 @@ class NarrativeAbductionApp {
         }
     }
 
-    createDocumentItemCell = function(graph, itemname, titlename, descrname, style){
+
+    createDocumentItemCell = function(graph, entry){
+        var itemname = entry.name;
+        var titlename = entry.titlename;
+        var descrname = entry.descrname;
+        var style = entry.style;
+
         var doc = mxUtils.createXmlDocument();
         var objna = doc.createElement(itemname);
         objna.setAttribute("natype", itemname);
@@ -780,6 +830,11 @@ class NarrativeAbductionApp {
             nodedesc.value = "Desription";
             nodedesc.setConnectable(false);
             nodedesc.lod = this.settings.lodupdate;
+            if(entry.iconURL){
+                var nodeicon = graph.insertVertex(nodenaitem, null, "", 10, 300, 100, 100);
+                var iconstyle = "shape=image;imageAspect=1;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;rotation=0;labelBackgroundColor=#ffffff;labelBorderColor=none;connectable=0;allowArrows=0;recursiveResize=0;expand=0;editable=1;movable=1;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;image=" + entry.iconURL;
+                nodeicon.setStyle(iconstyle);
+            }
         }
         finally
         {
@@ -793,14 +848,14 @@ class NarrativeAbductionApp {
      * Create document item cell for the Shape picker and Palette
      * @returns 
      */
-    createDocumentItem = function(itemname, titlename, descrname, style){
+    createDocumentItem = function(entry){
         var graph = new mxGraph();
-        var nodenaitem  = this.createDocumentItemCell(graph, itemname, titlename, descrname, style);
+
+        var nodenaitem  = this.createDocumentItemCell(graph, entry);
 
         var currgraph = this.editorui.editor.graph;
-        var na = this;
         // Add on click listener to show the Narrative Item window
-        NAUtil.AddNodeDoubleClickListener(currgraph, itemname, function(cell, evt){
+        NAUtil.AddNodeDoubleClickListener(currgraph, entry.name, function(cell, evt){
             var cellName =  cell.children[0].value;
             var cellDesc = cell.children[1].value;
 
