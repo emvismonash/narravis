@@ -3,6 +3,9 @@ Customized for Narrative Visualisation Project
 This repository contains a customized version of draw.io. 
 The following is from the original repository.
 
+Current demo: https://kadeksatriadi.github.io/drawio-na/
+Activate "narrativeabduction" plugin to start. 
+
 About
 -----
 draw.io, this project, is a configurable diagramming/whiteboarding visualization application. draw.io is jointly owned and developed by JGraph Ltd and draw.io AG.
