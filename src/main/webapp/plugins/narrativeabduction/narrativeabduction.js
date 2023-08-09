@@ -81,12 +81,46 @@ class NASettings{
 
 class Narrative {
     #event;
-    constructor(){
-        this.rootCell;
-        this.name;
+    constructor(rootCell, graph, name){
+        this.rootCell = rootCell;
+        this.name = name;
         this.cells = [];
-        this.graph;
+        this.graph = graph;
+        this.currentGroup;
     }
+
+    addCell = function(c){
+         if(!this.cells.includes(c)) {
+            this.cells.push(c);
+        }
+    }
+
+    addCells = function(cells){
+        var t = this;
+        cells.forEach(element => {
+            t.addCell(element);
+        });
+        this.updateGroup();
+    }
+
+    updateGroup = function(){
+        if( this.currentGroup) {
+            var t = this;
+            this.cells.forEach(element => {
+                if(!t.currentGroup.children.includes(element)){
+                    t.currentGroup.children.push(element);
+                }
+            });
+        } else{
+            var cells = Array.from(this.cells);
+            cells.push(this.rootCell);
+            console.log("Cells", this.cells);
+            console.log("In ", this.name);
+            this.currentGroup = this.graph.groupCells(null, 0, cells);
+            console.log("Group",  this.currentGroup);
+        }
+    }
+
 }
 
 class NarrativeAccordionViewsContainer {
@@ -241,9 +275,7 @@ class NarrativeAccordionView{
         buttonAssignNode.onclick = function(){
             var graph = t.editorui.editor.graph;
             var selectedCells = graph.getSelectionCells();
-            selectedCells.forEach(function(elm){
-                if(!t.narrative.cells.includes(elm, 0)) t.narrative.cells.push(elm);
-            });
+            t.narrative.addCells(selectedCells);
             console.log("Assigning celss", t.narrative.cells);
             t.createBodyElements();
         }
@@ -302,7 +334,7 @@ class NarrativeAbductionApp {
         this.narrativeaccordionviewscontainer;
         this.narratives = [];
         this.settings = {
-            lodupdate: 1.5
+            lodupdate: 5.5
         };
         this.myEvent = new CustomEvent("newnarrative", {
             narrative: {},
@@ -313,7 +345,7 @@ class NarrativeAbductionApp {
         this.naentries = [
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVE,              
-                style: "text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;fontStyle=1;",
+                style: "swimlane;text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;fontStyle=1;",
                 type: "node"            
             },
             {
@@ -393,7 +425,7 @@ class NarrativeAbductionApp {
         this.initNarrativesView();
         this.createNAPanel();
         this.createPalette();     
-        this.initLODUpdate();
+        //this.initLODUpdate();
         this.initShapePickerHandler();
         this.initNewCellHandler();
         this.initRemoveCellHandler();
@@ -563,10 +595,7 @@ class NarrativeAbductionApp {
      */
     newNarrative = function(){
 
-        //create new narrative
-        var na = new Narrative();
-        this.narratives.push(na);
-        na.name = NASettings.Language.English.newnarrative;
+ 
         
         // add narrative node
         var graph = this.editorui.editor.graph;
@@ -586,17 +615,20 @@ class NarrativeAbductionApp {
             console.log(narrativeentry);
             var doc = mxUtils.createXmlDocument();
             var objna = doc.createElement(narrativeentry.name);
-            narrativecell = graph.insertVertex(parent, na.name, objna, 200, 150, 350, 150);       
-            narrativecell.value = (na.name);    
+            narrativecell = graph.insertVertex(parent, NASettings.Language.English.newnarrative, objna, 200, 150, 350, 150);       
+            narrativecell.value = (NASettings.Language.English.newnarrative);    
             narrativecell.natype = NASettings.Dictionary.CELLS.NARRATIVE;       
             graph.setCellStyle(narrativeentry.style, [narrativecell]);   
+
+
        }
        finally
        {
            graph.getModel().endUpdate();
-           na.rootCell = narrativecell;
 
-           //create view
+           //create narrative object and view
+           var na = new Narrative(narrativecell, graph, NASettings.Language.English.newnarrative);
+           this.narratives.push(na);
            this.narrativeaccordionviewscontainer.addAccordionView(na, narrativecell);
    
            this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
