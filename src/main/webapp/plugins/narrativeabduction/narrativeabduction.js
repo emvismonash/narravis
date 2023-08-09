@@ -13,6 +13,9 @@ Draw.loadPlugin(function(ui) {
 });
 
 
+/**
+ * Settings
+ */
 class NASettings{
     //base on https://docs.google.com/document/d/1FByhhJe67pJC6fPdE3lo8lgM6NN7K0_Uivf6n5Io9UE/edit
     static Dictionary = {
@@ -79,6 +82,9 @@ class NASettings{
     }
 }
 
+/**
+ * Narrative class
+ */
 class Narrative {
     #event;
     constructor(){
@@ -89,6 +95,9 @@ class Narrative {
     }
 }
 
+/**
+ * The container view of the accordion views
+ */
 class NarrativeAccordionViewsContainer {
     constructor(){
         this.narrativeaccodionviews = [];
@@ -294,6 +303,9 @@ class NarrativeAccordionView{
     }
 }
 
+/**
+ * The main application
+ */
 class NarrativeAbductionApp {
     #event;
     constructor(ui) {
@@ -385,7 +397,6 @@ class NarrativeAbductionApp {
         ];
     }
 
-
     /**
      * Initialisation 
      */
@@ -433,7 +444,7 @@ class NarrativeAbductionApp {
          /**
      * Hide Mode Shapes button on the Side bar
      */
-     hideMoreShapesButton = function(){
+    hideMoreShapesButton = function(){
         var buttons = document.getElementsByClassName("geSidebarFooter");
         console.log("Buttons", buttons);
         Array.from(buttons).forEach(function(elm){
@@ -442,7 +453,7 @@ class NarrativeAbductionApp {
                 elm.style.display = 'none';
             }
         });
- }
+    }
 
     initRemoveCellHandler = function(){
         var graph = this.editorui.editor.graph;
@@ -499,7 +510,6 @@ class NarrativeAbductionApp {
         });
         
     }
-
    
     /**
      * Show link type option when two nodes are connected
@@ -615,7 +625,6 @@ class NarrativeAbductionApp {
 
     }
 
-
     /**
      * Create NA Panel Window
      */
@@ -698,7 +707,6 @@ class NarrativeAbductionApp {
             console.log("Dev too - show object", result);
         });
 
-
         /// add group
         NAUtil.AddButton("Group nodes", devtoolcontainer, function(){
             console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
@@ -712,6 +720,13 @@ class NarrativeAbductionApp {
             t.newNarrative();
         });
 
+        
+        NAUtil.AddButton("Collapse node", devtoolcontainer, function(){
+            var cells = t.editorui.editor.graph.getSelectionCells();
+            console.log(cells[0]);
+            cells[0].setCollapsed(true);
+        });
+
     }
 
     /**
@@ -723,15 +738,18 @@ class NarrativeAbductionApp {
             var res;
             if(this.naentries[i].type == "node" && this.naentries[i].name != NASettings.Dictionary.CELLS.NARRATIVE){
 
-
+                //get the entry and add title and description label
                 var entry = this.naentries[i];
                 entry.titlename = NAUtil.GetCellChildrenLabels(this.naentries[i].name).title;
                 entry.descname = NAUtil.GetCellChildrenLabels(this.naentries[i].name).description;
 
+                // res is the document item. Once the cell is created, we update the xml and graph entry
                 res = this.createDocumentItem(entry);
                 this.naentries[i].xml = res.xml;
                 this.naentries[i].graph = res.graph;                
-                    entries.push(
+
+                //pus this entry into the sidebar
+                entries.push(
                     this.editorui.sidebar.addDataEntry(
                         this.naentries[i].name, 0, 0, this.naentries[i].name, Graph.compress(this.naentries[i].xml))
                         );
@@ -800,7 +818,12 @@ class NarrativeAbductionApp {
         }
     }
 
-
+    /**
+     * Create the cell of the document item
+     * @param {*} graph 
+     * @param {*} entry 
+     * @returns 
+     */
     createDocumentItemCell = function(graph, entry){
         var itemname = entry.name;
         var titlename = entry.titlename;
@@ -811,30 +834,51 @@ class NarrativeAbductionApp {
         var objna = doc.createElement(itemname);
         objna.setAttribute("natype", itemname);
 
-        var objtitle = doc.createElement(titlename);
-        var objdescription = doc.createElement(descrname);
+        // var objtitle = doc.createElement(titlename);
+        // var objdescription = doc.createElement(descrname);
         
         var parent = graph.getDefaultParent();       
         var nodenaitem;
         try
         {
-            nodenaitem = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
-            nodenaitem.setStyle(style);
-            nodenaitem.natype = itemname;
-            var nodetitle = graph.insertVertex(nodenaitem, null, objtitle, 10, 10, 320, 30);
-            nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
-            nodetitle.value = titlename;
-            nodetitle.setConnectable(false);            
-            var nodedesc = graph.insertVertex(nodenaitem, null, objdescription, 10, 50, 320, 150);
-            nodedesc.setStyle("text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
-            nodedesc.value = "Desription";
-            nodedesc.setConnectable(false);
-            nodedesc.lod = this.settings.lodupdate;
+            nodenaitem = graph.insertVertex(parent, null, objna, 0, 0, 50, 50);
+
             if(entry.iconURL){
-                var nodeicon = graph.insertVertex(nodenaitem, null, "", 10, 300, 100, 100);
+                //var nodeicon = graph.insertVertex(nodenaitem, null, "", 0, 0, 100, 100);
                 var iconstyle = "shape=image;imageAspect=1;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;rotation=0;labelBackgroundColor=#ffffff;labelBorderColor=none;connectable=0;allowArrows=0;recursiveResize=0;expand=0;editable=1;movable=1;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;image=" + entry.iconURL;
-                nodeicon.setStyle(iconstyle);
+                nodenaitem.setStyle(iconstyle);
             }
+            // nodenaitem.setStyle(style);
+            nodenaitem.natype = itemname;
+
+            //create collapsible container
+            var objcontainer = doc.createElement("NarrativeNodeContentContainer");
+            var nodecontainer = graph.insertVertex(nodenaitem, null, objcontainer, 0, 120, 100, 100);
+            nodecontainer.setStyle('swimlane');
+
+            //create HMTL node called content
+            // var objcontent = doc.createElement("NarrativeNodeContent");
+            // objcontent.setAttribute("natype", itemname);
+            // var nodecontent = graph.insertVertex(nodecontainer, null, objcontent, 0, 0, 200, 200); //set the parent to the container
+            // nodecontent.setConnectable(false); //do not allow to connect     
+            // nodecontent.lod = this.settings.lodupdate; //set LOD
+            // nodecontent.setStyle("html=1");
+            // nodecontent.setValue("<div><h1>Content</h1><button>Toggle</button></div>");
+   
+            // var nodetitle = graph.insertVertex(nodenaitem, null, objtitle, 10, 10, 320, 30);
+            // nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
+            // nodetitle.value = titlename;
+            // nodetitle.setConnectable(false);            
+            // var nodedesc = graph.insertVertex(nodenaitem, null, objdescription, 10, 50, 320, 150);
+            // nodedesc.setStyle("text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
+            // nodedesc.value = "Desription";
+            // nodedesc.setConnectable(false);
+            // nodedesc.lod = this.settings.lodupdate;
+            // if(entry.iconURL){
+            //     var nodeicon = graph.insertVertex(nodenaitem, null, "", 10, 300, 100, 100);
+            //     var iconstyle = "shape=image;imageAspect=1;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;rotation=0;labelBackgroundColor=#ffffff;labelBorderColor=none;connectable=0;allowArrows=0;recursiveResize=0;expand=0;editable=1;movable=1;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;image=" + entry.iconURL;
+            //     nodeicon.setStyle(iconstyle);
+            // }
         }
         finally
         {
@@ -977,9 +1021,7 @@ class NarrativeAbductionApp {
             graph: graph,
             cell: nodenaitem
         }
-    }
-
-    
+    } 
 
      /**
      * Show edge type options at position x and y
@@ -1017,9 +1059,11 @@ class NarrativeAbductionApp {
       window.setVisible(true);
 
     }
-
 }
 
+/**
+ * Some utility
+ */
 class NAUtil {
 
     static GetCellChildrenLabels = function(name){
