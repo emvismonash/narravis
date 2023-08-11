@@ -878,15 +878,15 @@ class NarrativeAbductionApp {
         var graph = new mxGraph();
         var parent = graph.getDefaultParent();                           
         graph.getModel().beginUpdate();
-        var nodenaitem;
+        var linkcell;
         try
         {
             var v1 = graph.insertVertex(parent, null, null, 200, 0, 1, 1, 'opacity=0;');        
             var v2 = graph.insertVertex(parent, null, null, 0, 0, 1, 1, 'opacity=0;');        
 
-            nodenaitem = graph.insertEdge(parent, null, '', v2, v1);
-            nodenaitem.setStyle(style);
-            nodenaitem.value = itemname;
+            linkcell = graph.insertEdge(parent, null, '', v2, v1);
+            linkcell.setStyle(style);
+            linkcell.value = itemname;
         }
         finally
         {
@@ -895,11 +895,45 @@ class NarrativeAbductionApp {
         return {
             xml: NAUtil.ModelToXML(graph),
             graph: graph,
-            cell: nodenaitem
+            cell: linkcell
         }
     }
 
 
+    createDocumentItemHTMLCell = function(graph, entry){
+        var itemname = entry.name;
+        var titlename = entry.titlename;
+        var descrname = entry.descrname;
+        var style = entry.style;
+  
+        var doc = mxUtils.createXmlDocument();
+        var objna = doc.createElement(itemname);
+        objna.setAttribute("natype", itemname);
+
+        var parent = graph.getDefaultParent();       
+        var documentcell;
+        try
+        {
+            documentcell = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
+            documentcell.natype = itemname;
+            var htmlContent = '<div style="width: 100%;"><h2>Title Document</h2><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p></div>';
+            documentcell.setStyle("html=1");
+            documentcell.value = htmlContent;
+        }
+        finally
+        {
+            graph.getModel().endUpdate();
+        }        
+
+        return documentcell;
+    }
+
+    /**
+     * Create the cell for a document item
+     * @param {*} graph 
+     * @param {*} entry 
+     * @returns 
+     */
     createDocumentItemCell = function(graph, entry){
         var itemname = entry.name;
         var titlename = entry.titlename;
@@ -914,23 +948,23 @@ class NarrativeAbductionApp {
         var objdescription = doc.createElement(descrname);
         
         var parent = graph.getDefaultParent();       
-        var nodenaitem;
+        var documentcell;
         try
         {
-            nodenaitem = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
-            nodenaitem.setStyle(style);
-            nodenaitem.natype = itemname;
-            var nodetitle = graph.insertVertex(nodenaitem, null, objtitle, 10, 10, 320, 30);
+            documentcell = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
+            documentcell.setStyle(style);
+            documentcell.natype = itemname;
+            var nodetitle = graph.insertVertex(documentcell, null, objtitle, 10, 10, 320, 30);
             nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodetitle.value = titlename;
             nodetitle.setConnectable(false);            
-            var nodedesc = graph.insertVertex(nodenaitem, null, objdescription, 10, 50, 320, 150);
+            var nodedesc = graph.insertVertex(documentcell, null, objdescription, 10, 50, 320, 150);
             nodedesc.setStyle("text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodedesc.value = "Desription";
             nodedesc.setConnectable(false);
             nodedesc.lod = this.settings.lodupdate;
             if(entry.iconURL){
-                var nodeicon = graph.insertVertex(nodenaitem, null, "", 10, 300, 100, 100);
+                var nodeicon = graph.insertVertex(documentcell, null, "", 10, 300, 100, 100);
                 var iconstyle = "shape=image;imageAspect=1;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;rotation=0;labelBackgroundColor=#ffffff;labelBorderColor=none;connectable=0;allowArrows=0;recursiveResize=0;expand=0;editable=1;movable=1;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;image=" + entry.iconURL;
                 nodeicon.setStyle(iconstyle);
             }
@@ -940,7 +974,7 @@ class NarrativeAbductionApp {
             graph.getModel().endUpdate();
         }        
 
-        return nodenaitem;
+        return documentcell;
     }
 
     /**
@@ -950,7 +984,7 @@ class NarrativeAbductionApp {
     createDocumentItem = function(entry){
         var graph = new mxGraph();
 
-        var nodenaitem  = this.createDocumentItemCell(graph, entry);
+        var documentcell  = this.createDocumentItemHTMLCell(graph, entry);
 
         var currgraph = this.editorui.editor.graph;
         // Add on click listener to show the Narrative Item window
@@ -958,13 +992,6 @@ class NarrativeAbductionApp {
             var cellName =  cell.children[0].value;
             var cellDesc = cell.children[1].value;
 
-            console.log("Document item clicked");
-            console.log("Graph", currgraph);
-            console.log("Cell", cell);
-            console.log("Name", cellName);
-            console.log("Description", cellDesc);
-            
-            console.log("Event", evt);
             var x = evt.getProperty('event').x;
             var y = evt.getProperty('event').y;
 
@@ -1074,7 +1101,7 @@ class NarrativeAbductionApp {
         return {
             xml: NAUtil.ModelToXML(graph),
             graph: graph,
-            cell: nodenaitem
+            cell: documentcell
         }
     }
 
