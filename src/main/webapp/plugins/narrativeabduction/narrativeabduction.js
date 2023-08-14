@@ -427,31 +427,31 @@ class NarrativeAbductionApp {
             },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
-                style: "fillColor=#ffff;",
+                style: "swimlane;fillColor=#ffff;",
                 iconURL: "https://thenounproject.com/api/private/icons/5926263/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"            
             },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
-                style: "fillColor=#fad7ac;strokeColor=#b46504;rounded=0;",
+                style: "swimlane;fillColor=#fad7ac;strokeColor=#b46504;rounded=0;",
                 iconURL: "https://thenounproject.com/api/private/icons/4353546/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
             {
                 name: NASettings.Dictionary.CELLS.JOINTCAUSE,
-                style: "fillColor=#ffff;",
+                style: "swimlane;fillColor=#ffff;",
                 iconURL: "https://thenounproject.com/api/private/icons/4493200/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
             {
                 name: NASettings.Dictionary.CELLS.EVIDENCENARRATIVESPECIFIC,
-                style: "fillColor=#fad9d5;strokeColor=#ae4132;rounded=0;",
+                style: "swimlane;fillColor=#fad9d5;strokeColor=#ae4132;rounded=0;",
                 iconURL: "https://thenounproject.com/api/private/icons/4040420/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
             {
                 name: NASettings.Dictionary.CELLS.SUPPORTINGARGUMENT,
-                style: "fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=0;",
+                style: "swimlane;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=0;",
                 iconURL: "https://thenounproject.com/api/private/icons/5741355/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
@@ -502,7 +502,8 @@ class NarrativeAbductionApp {
         this.initNarrativesView();
         this.createNAPanel();
         this.createPalette();     
-        //this.initLODUpdate();
+        //this.installStackedLayout();
+        this.initResponsiveSizeHandler();
         this.initShapePickerHandler();
         this.initNewCellHandler();
         this.initRemoveCellHandler();
@@ -551,7 +552,25 @@ class NarrativeAbductionApp {
                 elm.style.display = 'none';
             }
         });
- }
+    }
+
+    initResponsiveSizeHandler = function(){
+        var graph = this.editorui.editor.graph;
+        // Handle resizing of the cell
+        graph.addListener(mxEvent.RESIZE_CELLS, function(sender, evt) {
+            var cells = evt.getProperty('cells');
+            for (var i = 0; i < cells.length; i++) {
+                var cell = cells[i];
+                var newWidth = cell.geometry.width;
+                var newHeight = cell.geometry.height;
+                console.log("Cell resize", cell);
+                cell.children.forEach(child => {
+                    child.geometry.width = newWidth;
+                    child.geometry.height = newHeight - 20;
+                });
+            }
+            });
+    }
 
     initRemoveCellHandler = function(){
         var graph = this.editorui.editor.graph;
@@ -567,6 +586,36 @@ class NarrativeAbductionApp {
                 t.narrativeaviewscontainer.removeListView(cells[0]);
             }   
           });      
+    }
+
+    installStackedLayout = function(){
+        // Installs auto layout for all levels
+        var graph = this.editorui.editor.graph;
+        var layout = new mxStackLayout(graph, true);
+        layout.border = graph.border;
+        var layoutMgr = new mxLayoutManager(graph);
+        layoutMgr.getLayout = function(cell)
+        {
+            if (!cell.collapsed)
+            {
+                if (cell.parent != graph.model.root)
+                {
+                    layout.resizeParent = true;
+                    layout.horizontal = false;
+                    layout.spacing = 10;
+                }
+                else
+                {
+                    layout.resizeParent = true;
+                    layout.horizontal = true;
+                    layout.spacing = 40;
+                }
+                
+                return layout;
+            }
+            
+            return null;
+        };
     }
 
     /**
@@ -840,7 +889,11 @@ class NarrativeAbductionApp {
             //else{
             //     res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
             // }
-            NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);                   
+            NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);   
+            
+            // Define responsive styles using CSS
+            var css = document.styleSheets[0];
+            css.insertRule('.responsive-content { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }', 0);
     }
 
     /**
@@ -907,24 +960,33 @@ class NarrativeAbductionApp {
         var style = entry.style;
   
         var doc = mxUtils.createXmlDocument();
-        var objna = doc.createElement(itemname);
-        objna.setAttribute("natype", itemname);
+        var docmain = doc.createElement(itemname);
+        var doccontent = doc.createElement("NAHTMLContent");
+        docmain.setAttribute("natype", itemname);
+        doccontent.setAttribute("natype", "NAHTMLContent");
+
 
         var parent = graph.getDefaultParent();       
         var documentcell;
+        var contentcell;
         try
         {
-            documentcell = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
+            documentcell = graph.insertVertex(parent, null, docmain, 200, 150, 350, 150);
             documentcell.natype = itemname;
-            var htmlContent = '<div style="width: 100%;"><h2>Title Document</h2><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p></div>';
-            documentcell.setStyle("html=1");
-            documentcell.value = htmlContent;
+            documentcell.setStyle(style);
+            contentcell = graph.insertVertex(documentcell, null, doccontent,  0, 20, 350, 130);
+            var htmlContent = '<div class="responsive-content">Responsive HTML Content</div>';
+            contentcell.setStyle("html=1;movable=0;editable=0;whiteSpace=wrap;overflow=hidden;");
+            contentcell.value = htmlContent;
+            //disable direct edit
+            contentcell.setConnectable(false); // Disable connecting edges to the cell
+
         }
         finally
         {
             graph.getModel().endUpdate();
-        }        
 
+        }        
         return documentcell;
     }
 
