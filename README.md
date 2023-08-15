@@ -1,6 +1,8 @@
 Customized for Narrative Visualisation Project
 ----
 This repository contains a customized version of draw.io. 
+Currently under development. 
+
 The following is from the original repository.
 
 Current demo: https://kadeksatriadi.github.io/drawio-na/
