@@ -555,6 +555,10 @@ class NarrativeAbductionApp {
     }
 
     initResponsiveSizeHandler = function(){
+         // Define responsive styles using CSS
+         var css = document.styleSheets[0];
+         css.insertRule('.responsive-content { width: 100%; height: 100%; display: inline-block; justify-content: center; align-items: center; }', 0);
+
         var graph = this.editorui.editor.graph;
         // Handle resizing of the cell
         graph.addListener(mxEvent.RESIZE_CELLS, function(sender, evt) {
@@ -564,10 +568,12 @@ class NarrativeAbductionApp {
                 var newWidth = cell.geometry.width;
                 var newHeight = cell.geometry.height;
                 console.log("Cell resize", cell);
-                cell.children.forEach(child => {
-                    child.geometry.width = newWidth;
-                    child.geometry.height = newHeight - 20;
-                });
+                if(cell.children){
+                    cell.children.forEach(child => {
+                        child.geometry.width = newWidth;
+                        child.geometry.height = newHeight - 20;
+                    });
+                }
             }
             });
     }
@@ -889,11 +895,7 @@ class NarrativeAbductionApp {
             //else{
             //     res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
             // }
-            NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);   
-            
-            // Define responsive styles using CSS
-            var css = document.styleSheets[0];
-            css.insertRule('.responsive-content { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }', 0);
+            NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);                          
     }
 
     /**
@@ -975,11 +977,12 @@ class NarrativeAbductionApp {
             documentcell.natype = itemname;
             documentcell.setStyle(style);
             contentcell = graph.insertVertex(documentcell, null, doccontent,  0, 20, 350, 130);
-            var htmlContent = '<div class="responsive-content">Responsive HTML Content</div>';
-            contentcell.setStyle("html=1;movable=0;editable=0;whiteSpace=wrap;overflow=hidden;");
-            contentcell.value = htmlContent;
+            contentcell.setStyle("html=1;movable=0;editable=0;whiteSpace=wrap;overflow=hidden;resizable=0;rotatable=0;deletable=0;locked=0;connectable=0;");
+            //these attributes can be used to visualise the document item
+            contentcell.setAttribute('title', titlename);
+            contentcell.setAttribute('description', descrname);
+            this.updateHTMLDocumentItemAppearance(contentcell); // here is the visualisation happens
             //disable direct edit
-            contentcell.setConnectable(false); // Disable connecting edges to the cell
 
         }
         finally
@@ -1039,18 +1042,151 @@ class NarrativeAbductionApp {
         return documentcell;
     }
 
+
     /**
-     * Create document item cell for the Shape picker and Palette
+     * This function decides how the content of the HTML Document Item is rendered to HTML element
+     * @param {*} contencell 
+     */
+    updateHTMLDocumentItemAppearance = function(contencell){
+        var title = contencell.getAttribute('title');
+        var des = contencell.getAttribute('description');
+        var html = this.getHTMLDocumentItemContent(title, des);
+        contencell.setValue(html);
+    }
+
+    /**
+     * Return the html content of the HTML Document Item
+     * @param {*} title 
+     * @param {*} description 
      * @returns 
      */
-    createDocumentItem = function(entry){
-        var graph = new mxGraph();
+    getHTMLDocumentItemContent = function(title, description){
+        return '<div class="responsive-content"><h2>'+title+'</h2><div>'+description+'</div></div>';
+    }
 
-        var documentcell  = this.createDocumentItemHTMLCell(graph, entry);
+    /**
+     * This is the listener to the new HTML document item, lots of duplicates with insertDocumentItemDoubleClickListener
+     * TODO: remove duplicates
+     * @param {*} entry 
+     */
+    insertHTMLDocumentItemDoubleClickListener = function(entry){
+        var currgraph = this.editorui.editor.graph;
+        var t = this;
+        // Add on click listener to show the Narrative Item window
+        NAUtil.AddNodeDoubleClickListener(currgraph, entry.name, function(cell, evt){
+            if(!cell || !cell.children) return;
 
+            var contentcell =  cell.children[0].value;
+
+            // get x and y position of triggered event
+            var x = evt.getProperty('event').x;
+            var y = evt.getProperty('event').y;
+
+            // create form 
+            var formContainer = document.createElement('div');
+            formContainer.style.width = "150px";
+            formContainer.style.padding = "20px";
+
+            const form = document.createElement('form');
+            form.id = 'narrativeitemform';
+
+            const nameLabel = document.createElement('label');
+            nameLabel.textContent = 'Name:';
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.id = 'name';
+            nameInput.name = 'name';
+            nameInput.required = true;
+            nameInput.value = contentcell.title;
+
+            const br = document.createElement('br');
+
+            const descriptionLabel = document.createElement('label');
+            descriptionLabel.textContent = 'Description:';
+            const descriptionTextarea = document.createElement('textarea');
+            descriptionTextarea.id = 'description';
+            descriptionTextarea.name = 'description';
+            descriptionTextarea.rows = 4;
+            descriptionTextarea.cols = 30;
+            descriptionTextarea.value = contentcell.description;
+
+            const applyButton = document.createElement('button');
+            applyButton.id = 'applyButton';
+            applyButton.type = 'button';
+            applyButton.textContent = 'Apply';
+            applyButton.onclick = applyForm(currgraph, cell, t);
+
+            // Add elements to the form
+            form.appendChild(nameLabel);
+            form.appendChild(nameInput);
+            form.appendChild(br);
+            form.appendChild(descriptionLabel);
+            form.appendChild(descriptionTextarea);
+            form.appendChild(br.cloneNode(false)); // Create a new line break for spacing
+            form.appendChild(applyButton);
+
+            // Add the form to the container
+            formContainer.appendChild(form);
+            var highlight = new mxCellHighlight(currgraph, '#000', 2);
+            formContainer.onmouseenter = function(){
+                highlight.highlight(currgraph.view.getState(cell));
+            }
+            formContainer.onmouseleave = function(){
+                highlight.hide();
+            }
+
+            var wnd = NAUtil.CreateWindow(NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, NASettings.Dictionary.UI.DOCUMENTITEMWINDOW, formContainer, x, y, 250, 200);                
+
+            wnd.setLocation(x, y);
+            wnd.setClosable(true);
+            wnd.setMinimizable(false);
+            wnd.setVisible(true);  
+
+            form.onsubmit =  function(event) {
+                event.preventDefault();
+                return false;
+            }
+            
+            function applyForm(currgraph, c, t, n, d) {
+                return function(){
+
+                    
+                    const nameInput = document.getElementById("name");
+                    const descriptionTextarea = document.getElementById("description");
+
+                    currgraph.getModel().beginUpdate();        
+                    try
+                    {
+                        var html = t.getHTMLDocumentItemContent(nameInput.value, descriptionTextarea.value);
+                        var contentcell = c.children[0];
+
+                        currgraph.model.setValue(contentcell, html);
+                        contentcell.title = nameInput.value;
+                        contentcell.description = descriptionTextarea.value;
+                    }
+                    finally
+                    {
+                        currgraph.getModel().endUpdate();
+                    }
+                    wnd.destroy();
+                    highlight.hide();
+                }
+            };
+
+        });
+    }
+
+    /**
+     * This is listener for the old document item with dedicated nodes for the title and description. Lots of duplicated codes with insertHTMLDocumentItemDoubleClickListener.
+     * TODO: remove duplicates
+     * @param {*} entry 
+     */
+    insertDocumentItemDoubleClickListener = function(entry){
         var currgraph = this.editorui.editor.graph;
         // Add on click listener to show the Narrative Item window
         NAUtil.AddNodeDoubleClickListener(currgraph, entry.name, function(cell, evt){
+            if(!cell || !cell.children) return;
+
             var cellName =  cell.children[0].value;
             var cellDesc = cell.children[1].value;
 
@@ -1157,9 +1293,18 @@ class NarrativeAbductionApp {
                     highlight.hide();
                 }
             };
-      
+
         });
-       
+    }
+
+    /**
+     * Create document item cell for the Shape picker and Palette
+     * @returns 
+     */
+    createDocumentItem = function(entry){
+        var graph = new mxGraph();
+        var documentcell  = this.createDocumentItemHTMLCell(graph, entry);
+        this.insertHTMLDocumentItemDoubleClickListener(entry);       
         return {
             xml: NAUtil.ModelToXML(graph),
             graph: graph,
