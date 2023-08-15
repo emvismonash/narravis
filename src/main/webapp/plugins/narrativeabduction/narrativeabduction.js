@@ -1052,8 +1052,8 @@ class NarrativeAbductionApp {
      */
     updateHTMLDocumentItemAppearance = function(doccell, contencell){
         console.log(doccell);
-        var title = doccell.getAttribute(NASettings.Dictionary.DOCTITLE);
-        var des = doccell.getAttribute(NASettings.Dictionary.DOCDESCRIPTION);
+        var title = doccell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE);
+        var des = doccell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION);
         var html = this.getHTMLDocumentItemContent(title, des);
         contencell.setValue(html);          
     }
