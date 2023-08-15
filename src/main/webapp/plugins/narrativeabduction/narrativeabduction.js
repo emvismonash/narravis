@@ -33,7 +33,13 @@ class NASettings{
             MOTIVATELINK: 'MotivateLink',
             CONFLICTLINK: 'ConflictLink'
         },
+        ATTRIBUTTES: {
+            NATYPE: 'natype',
+            DOCTITLE: 'doctitle',
+            DOCDESCRIPTION: 'docdescription'
+        },
         UI: {
+            NAHTMLCONTENT: 'HTMLDocContent',
             DOCUMENTITEMWINDOW : 'DocumentItemWindow'
         },
         EVENTS:{
@@ -330,7 +336,7 @@ class NarrativeListView{
         if(cell.isVertex()){
             //container of the view
             var container = document.createElement('div');
-            container.innerHTML = cell.natype;
+            container.innerHTML = cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE);
             container.cell = cell;
             container.style.cursor = 'pointer';
             container.classList.add(NASettings.CSSClasses.NarrativeListView.NodeContainer);
@@ -422,7 +428,7 @@ class NarrativeAbductionApp {
         this.naentries = [
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVE,              
-                style: "swimlane;text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;fontStyle=1;",
+                style: "html=1;",
                 type: "node"            
             },
             {
@@ -587,7 +593,7 @@ class NarrativeAbductionApp {
             console.log("Narrative removed", cells[0]);  
 
             //if the cell is narrative, remove the view as well 
-            if(cells[0] && cells[0].natype == NASettings.Dictionary.CELLS.NARRATIVE){  
+            if(cells[0] && cells[0].getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) == NASettings.Dictionary.CELLS.NARRATIVE){  
                 console.log("Narrative removed", cells[0]);  
                 t.narrativeaviewscontainer.removeListView(cells[0]);
             }   
@@ -638,7 +644,7 @@ class NarrativeAbductionApp {
                 t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
             } 
             //if the cell is Narrative, trigger create a new narrative action
-            if(cells[0].natype == NASettings.Dictionary.CELLS.NARRATIVE){
+            if(cells[0].getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) == NASettings.Dictionary.CELLS.NARRATIVE){
                 graph.removeCells([cells[0]]);
                 t.newNarrative();
             }                
@@ -735,9 +741,9 @@ class NarrativeAbductionApp {
        {
             var doc = mxUtils.createXmlDocument();
             var objna = doc.createElement(narrativeentry.name);
+            objna.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.CELLS.NARRATIVE);
             narrativecell = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);       
             narrativecell.value = (NASettings.Language.English.newnarrative);    
-            narrativecell.natype = NASettings.Dictionary.CELLS.NARRATIVE;       
             graph.setCellStyle(narrativeentry.style, [narrativecell]);   
        }
        finally
@@ -963,10 +969,12 @@ class NarrativeAbductionApp {
   
         var doc = mxUtils.createXmlDocument();
         var docmain = doc.createElement(itemname);
-        var doccontent = doc.createElement("NAHTMLContent");
-        docmain.setAttribute("natype", itemname);
-        doccontent.setAttribute("natype", "NAHTMLContent");
-
+        var doccontent = doc.createElement(NASettings.Dictionary.UI.NAHTMLCONTENT);
+        docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, itemname);
+        //these attributes can be used to visualise the document item
+        doccontent.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.UI.NAHTMLCONTENT);
+        docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE, titlename);
+        docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION, descrname);
 
         var parent = graph.getDefaultParent();       
         var documentcell;
@@ -974,14 +982,10 @@ class NarrativeAbductionApp {
         try
         {
             documentcell = graph.insertVertex(parent, null, docmain, 200, 150, 350, 150);
-            documentcell.natype = itemname;
             documentcell.setStyle(style);
             contentcell = graph.insertVertex(documentcell, null, doccontent,  0, 20, 350, 130);
             contentcell.setStyle("html=1;movable=0;editable=0;whiteSpace=wrap;overflow=hidden;resizable=0;rotatable=0;deletable=0;locked=0;connectable=0;");
-            //these attributes can be used to visualise the document item
-            contentcell.setAttribute('title', titlename);
-            contentcell.setAttribute('description', descrname);
-            this.updateHTMLDocumentItemAppearance(contentcell); // here is the visualisation happens
+            this.updateHTMLDocumentItemAppearance(documentcell, contentcell); // here is the visualisation happens
             //disable direct edit
 
         }
@@ -1007,7 +1011,7 @@ class NarrativeAbductionApp {
 
         var doc = mxUtils.createXmlDocument();
         var objna = doc.createElement(itemname);
-        objna.setAttribute("natype", itemname);
+        objna.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, itemname);
 
         var objtitle = doc.createElement(titlename);
         var objdescription = doc.createElement(descrname);
@@ -1018,7 +1022,6 @@ class NarrativeAbductionApp {
         {
             documentcell = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
             documentcell.setStyle(style);
-            documentcell.natype = itemname;
             var nodetitle = graph.insertVertex(documentcell, null, objtitle, 10, 10, 320, 30);
             nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodetitle.value = titlename;
@@ -1047,11 +1050,12 @@ class NarrativeAbductionApp {
      * This function decides how the content of the HTML Document Item is rendered to HTML element
      * @param {*} contencell 
      */
-    updateHTMLDocumentItemAppearance = function(contencell){
-        var title = contencell.getAttribute('title');
-        var des = contencell.getAttribute('description');
+    updateHTMLDocumentItemAppearance = function(doccell, contencell){
+        console.log(doccell);
+        var title = doccell.getAttribute(NASettings.Dictionary.DOCTITLE);
+        var des = doccell.getAttribute(NASettings.Dictionary.DOCDESCRIPTION);
         var html = this.getHTMLDocumentItemContent(title, des);
-        contencell.setValue(html);
+        contencell.setValue(html);          
     }
 
     /**
@@ -1061,7 +1065,7 @@ class NarrativeAbductionApp {
      * @returns 
      */
     getHTMLDocumentItemContent = function(title, description){
-        return '<div class="responsive-content"><h2>'+title+'</h2><div>'+description+'</div></div>';
+        return '<div class="responsive-content"><b>'+title+'</b><br/><div>'+description+'</div></div>';
     }
 
     /**
@@ -1097,7 +1101,7 @@ class NarrativeAbductionApp {
             nameInput.id = 'name';
             nameInput.name = 'name';
             nameInput.required = true;
-            nameInput.value = contentcell.title;
+            nameInput.value = cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE);
 
             const br = document.createElement('br');
 
@@ -1108,7 +1112,7 @@ class NarrativeAbductionApp {
             descriptionTextarea.name = 'description';
             descriptionTextarea.rows = 4;
             descriptionTextarea.cols = 30;
-            descriptionTextarea.value = contentcell.description;
+            descriptionTextarea.value = cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION);
 
             const applyButton = document.createElement('button');
             applyButton.id = 'applyButton';
@@ -1161,8 +1165,8 @@ class NarrativeAbductionApp {
                         var contentcell = c.children[0];
 
                         currgraph.model.setValue(contentcell, html);
-                        contentcell.title = nameInput.value;
-                        contentcell.description = descriptionTextarea.value;
+                        cell.setAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE, nameInput.value);
+                        cell.setAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION, descriptionTextarea.value);
                     }
                     finally
                     {
