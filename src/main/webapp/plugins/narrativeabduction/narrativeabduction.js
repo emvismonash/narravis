@@ -49,7 +49,8 @@ class NASettings{
     }
     static Language = {
         English: {
-            "newnarrative": "New Narrative"
+            "newnarrative": "New Narrative",
+            "loadnarratives": "Load Narratives"
         }
     }
     static Colors = {
@@ -149,14 +150,20 @@ class Narrative {
         var t = this;
         console.log(this.rootCell);
         cells.forEach(element => {
-            t.addCell(element);
+            if(t.isCellValid(element)){
+                t.addCell(element);
+            }
         });
-        console.log("Narrative cells added, new narrative state", this);
-        const children = this.graph.getChildCells(this.rootCell, true, true);
-        console.log("Children", children);
     }
 
 
+    /**
+     * In some cases, the selected cells are part of narrative element, e.g. content cell. This function validates what cell can be added.
+     */
+    isCellValid = function(cell){
+        console.log("isCellValid", cell);
+        return (cell.value.tagName);
+    }
 
 }
 
@@ -408,7 +415,6 @@ class NarrativeListView{
      * @param {*} c 
      */
     unasignCell = function(t, c){
-        t.unhighlightCells([c]);
         t.narrative.removeCell(c);
         t.removeCellView(c);
     }
@@ -552,6 +558,8 @@ class NarrativeAbductionApp {
         this.initRemoveNarrativeCellHandler();
         this.initEdgeDoubleClickEditHandler();
         this.updateMoreShapesButton();
+        this.loadExistingNarratives();
+
     }
 
     /**
@@ -627,7 +635,7 @@ class NarrativeAbductionApp {
      * @returns 
      */
     isCellNarrative = function(cell){
-        return cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVE;
+        return (cell.value != undefined && cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVE);
     }
 
     /**
@@ -746,6 +754,33 @@ class NarrativeAbductionApp {
         NAUtil.AddButton(NASettings.Language.English.newnarrative, container, function(){
            t.newNarrative();
         });
+        // add load narrative buttion
+        // NAUtil.AddButton(NASettings.Language.English.loadnarratives, container, function(){
+        //     t.loadExistingNarratives();
+        //  });
+    }
+
+    /**
+     * Check for existing narrative cells and update the view accordingly
+     */
+    loadExistingNarratives = function(){
+        var t = this;
+        var graph = t.editorui.editor.graph;
+
+        t.editorui.editor.graph.selectAll();
+        var cells = graph.getSelectionCells();
+        console.log("Cells", cells);
+
+        cells.forEach(cell => {
+            if(t.isCellNarrative(cell)){
+                console.log("loadExistingNarratives", cell);
+                var na = new Narrative(cell, graph, NASettings.Language.English.newnarrative, cell.id);
+                this.narratives.push(na);
+                this.narrativeaviewscontainer.addAccordionView(na, cell); //add accordion view
+                
+            }  
+        });
+        t.editorui.editor.graph.removeSelectionCells(cells);
     }
 
     /**
@@ -877,6 +912,15 @@ class NarrativeAbductionApp {
         });
 
 
+        
+        NAUtil.AddButton("Select all", devtoolcontainer, function(){
+            t.editorui.editor.graph.selectAll();
+        });
+
+
+        NAUtil.AddButton("Load narratives", devtoolcontainer, function(){
+            t.loadExistingNarratives();
+        });
 
         /// add group
         NAUtil.AddButton("Group nodes", devtoolcontainer, function(){
