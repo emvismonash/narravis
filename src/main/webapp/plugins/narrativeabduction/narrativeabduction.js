@@ -95,7 +95,6 @@ class Narrative {
         this.cells = [];
         this.graph = graph;
         this.currentGroup;
-        this.rootCell.value.setAttribute("cells","[]");
     }
 
     /**
@@ -117,10 +116,11 @@ class Narrative {
 
     /**
      * Push cell id to the cells attribute of the rootCell. 
-     * @param {*} c 
      */
     saveCell = function(c){
         var cellstring = this.rootCell.value.getAttribute("cells");
+        console.log(cellstring);
+        if(cellstring == null) cellstring = "[]";
         var cellsarr = JSON.parse(cellstring);
 
         cellsarr.push(c.id);
@@ -792,7 +792,7 @@ class NarrativeAbductionApp {
         var parent = graph.getDefaultParent();  
         var doc = mxUtils.createXmlDocument();
         var objna = doc.createElement(narrativeentry.name);    
-       // objna.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, narrativeentry.name);
+        objna.setAttribute("narrativecells", "Yo  testing");
  
         var narrativecell;
        //add the narrative cell
