@@ -94,33 +94,69 @@ class Narrative {
         this.cells = [];
         this.graph = graph;
         this.currentGroup;
+        this.rootCell.value.setAttribute("cells","[]");
     }
 
+    /**
+     * Remove cell from cells list as well as rootCell children. Note that these two arrays are currently redundant. 
+     * @param {*} c 
+     */
     removeCell = function(c){
         var idx = this.cells.indexOf(c);
         this.cells.splice(idx, 1); 
+        this.unsaveCell(c);
     }
 
     addCell = function(c){
          if(!this.cells.includes(c)) {
             this.cells.push(c);
+            this.saveCell(c);
         }
     }
 
-    addCells = function(cells){
-        var t = this;
-        cells.forEach(element => {
-            t.addCell(element);
-        });
-        this.updateGroup();
+    /**
+     * Push cell id to the cells attribute of the rootCell. 
+     * @param {*} c 
+     */
+    saveCell = function(c){
+        var cellstring = this.rootCell.value.getAttribute("cells");
+        var cellsarr = JSON.parse(cellstring);
+
+        cellsarr.push(c.id);
+        cellstring = JSON.stringify(cellsarr);
+        this.rootCell.value.setAttribute("cells", cellstring);
     }
 
     /**
-     * Update related to grouping. This could be setting up the parent of the nodes to the narrative rootNodes. 
+     * Remove cell from the root cell cells attribute
+     * @param {*} c 
      */
-    updateGroup = function(){
-       //TODO
+    unsaveCell = function(c){
+        var cellstring = this.rootCell.value.getAttribute("cells");
+        var cellsarr = JSON.parse(cellstring);
+        var idx = cellsarr.indexOf(c.idx);
+        cellsarr.splice(idx, 1); 
+        cellstring = JSON.stringify(cellsarr);
+        this.rootCell.value.setAttribute("cells", cellstring);
     }
+    
+
+    /**
+     * Add cells into the narrative cell, also add the cells as children of rootcells
+     * @param {*} cells 
+     */
+    addCells = function(cells){
+        var t = this;
+        console.log(this.rootCell);
+        cells.forEach(element => {
+            t.addCell(element);
+        });
+        console.log("Narrative cells added, new narrative state", this);
+        const children = this.graph.getChildCells(this.rootCell, true, true);
+        console.log("Children", children);
+    }
+
+
 
 }
 
@@ -316,13 +352,14 @@ class NarrativeListView{
     }
 
     /**
-     * Assign selected node to the narrative
+     * Assign selected node to the narrative.
+     * The narrative cell should contain the all information necessary to recreate the view, thus, the children cells' ids should be stored in the narrative cell. 
      */
     assignNode = function(t){
         var graph = t.editorui.editor.graph;
         var selectedCells = graph.getSelectionCells();
         if(selectedCells){
-            t.narrative.addCells(selectedCells); //add cell to the narrative object
+            t.narrative.addCells(selectedCells); //add cell to the narrative object, this is where the children cells are added to the root cell
             t.createBodyElements(); //create representaton
         }
     }
@@ -428,7 +465,7 @@ class NarrativeAbductionApp {
         this.naentries = [
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVE,              
-                style: "html=1;",
+                style: "verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.donut;dx=25;",
                 type: "node"            
             },
             {
@@ -504,7 +541,7 @@ class NarrativeAbductionApp {
     /**
      * Initialisation 
      */
-    _init = function(){        
+    _init = function(){      
         this.initNarrativesView();
         this.createNAPanel();
         this.createPalette();     
@@ -512,7 +549,7 @@ class NarrativeAbductionApp {
         this.initResponsiveSizeHandler();
         this.initShapePickerHandler();
         this.initNewCellHandler();
-        this.initRemoveCellHandler();
+        this.initRemoveNarrativeCellHandler();
         this.initEdgeDoubleClickEditHandler();
         this.updateMoreShapesButton();
     }
@@ -546,7 +583,7 @@ class NarrativeAbductionApp {
             });
      }
     
-         /**
+     /**
      * Hide Mode Shapes button on the Side bar
      */
      hideMoreShapesButton = function(){
@@ -584,50 +621,34 @@ class NarrativeAbductionApp {
             });
     }
 
-    initRemoveCellHandler = function(){
+    /**
+     * Is the given cell narrative cell
+     * @param {*} cell 
+     * @returns 
+     */
+    isCellNarrative = function(cell){
+        return cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVE;
+    }
+
+    /**
+     * Remove cell handler
+     */
+    initRemoveNarrativeCellHandler = function(){
         var graph = this.editorui.editor.graph;
         var t = this;
 
         graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt) {
             var cells = evt.getProperty('cells');
-            console.log("Narrative removed", cells[0]);  
+            console.log("Cell removed", cells[0]);  
+            cells.forEach(cell => {
+                //if the cell is narrative, remove the view as well 
+                if(t.isCellNarrative(cell)){  
+                    console.log("Narrative removed", cell);  
+                    t.narrativeaviewscontainer.removeListView(cell);
+                }   
+            });
 
-            //if the cell is narrative, remove the view as well 
-            if(cells[0] && cells[0].getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) == NASettings.Dictionary.CELLS.NARRATIVE){  
-                console.log("Narrative removed", cells[0]);  
-                t.narrativeaviewscontainer.removeListView(cells[0]);
-            }   
           });      
-    }
-
-    installStackedLayout = function(){
-        // Installs auto layout for all levels
-        var graph = this.editorui.editor.graph;
-        var layout = new mxStackLayout(graph, true);
-        layout.border = graph.border;
-        var layoutMgr = new mxLayoutManager(graph);
-        layoutMgr.getLayout = function(cell)
-        {
-            if (!cell.collapsed)
-            {
-                if (cell.parent != graph.model.root)
-                {
-                    layout.resizeParent = true;
-                    layout.horizontal = false;
-                    layout.spacing = 10;
-                }
-                else
-                {
-                    layout.resizeParent = true;
-                    layout.horizontal = true;
-                    layout.spacing = 40;
-                }
-                
-                return layout;
-            }
-            
-            return null;
-        };
     }
 
     /**
@@ -723,7 +744,6 @@ class NarrativeAbductionApp {
         var t = this;
         // add create narrative buttion
         NAUtil.AddButton(NASettings.Language.English.newnarrative, container, function(){
-           console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
            t.newNarrative();
         });
     }
@@ -734,17 +754,17 @@ class NarrativeAbductionApp {
     newNarrative = function(){        
         var narrativeentry = this.getNarrativeEntry(); //get narrative entry from the entries list
         var graph = this.editorui.editor.graph;
-        var parent = graph.getDefaultParent();       
+        var parent = graph.getDefaultParent();  
+        var doc = mxUtils.createXmlDocument();
+        var objna = doc.createElement(narrativeentry.name);    
+       // objna.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, narrativeentry.name);
+ 
         var narrativecell;
        //add the narrative cell
        try
        {
-            var doc = mxUtils.createXmlDocument();
-            var objna = doc.createElement(narrativeentry.name);
-            objna.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.CELLS.NARRATIVE);
-            narrativecell = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);       
-            narrativecell.value = (NASettings.Language.English.newnarrative);    
-            graph.setCellStyle(narrativeentry.style, [narrativecell]);   
+            narrativecell = graph.insertVertex(parent, null, objna, 0, 0, 100, 100);       
+            graph.setCellStyle(narrativeentry.style, [narrativecell]);  
        }
        finally
        {
@@ -763,8 +783,6 @@ class NarrativeAbductionApp {
            });
            dispatchEvent(this.#event);
        }        
-
-
     }
 
     /**
@@ -851,12 +869,13 @@ class NarrativeAbductionApp {
         var t = this;
         NAUtil.AddButton("Show model", devtoolcontainer, function(){
             console.log("Dev tool - show model", t.editorui.editor.graph.getModel());
-            var enc = new mxObjectCodec();
-            var rootNode = t.editorui.editor.graph.getDefaultParent();
-            var result = enc.decode(rootNode);
-
-            console.log("Dev too - show object", result);
         });
+
+
+        NAUtil.AddButton("Show cells detail", devtoolcontainer, function(){
+            console.log("Dev tool - show model", t.editorui.editor.graph.getSelectionCells());
+        });
+
 
 
         /// add group
@@ -1356,6 +1375,7 @@ class NarrativeAbductionApp {
     }
 
 }
+
 
 class NAUtil {
 
