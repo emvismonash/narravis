@@ -36,7 +36,8 @@ class NASettings{
         ATTRIBUTTES: {
             NATYPE: 'natype',
             DOCTITLE: 'doctitle',
-            DOCDESCRIPTION: 'docdescription'
+            DOCDESCRIPTION: 'docdescription',
+            NARRATIVECELLS: 'cells',
         },
         UI: {
             NAHTMLCONTENT: 'HTMLDocContent',
@@ -118,14 +119,22 @@ class Narrative {
      * Push cell id to the cells attribute of the rootCell. 
      */
     saveCell = function(c){
-        var cellstring = this.rootCell.value.getAttribute("cells");
-        console.log(cellstring);
-        if(cellstring == null) cellstring = "[]";
-        var cellsarr = JSON.parse(cellstring);
+        var cellstring = this.rootCell.value.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS);
+        var cellsarr = Narrative.stringCellsToArray(cellstring);
 
         cellsarr.push(c.id);
-        cellstring = JSON.stringify(cellsarr);
-        this.rootCell.value.setAttribute("cells", cellstring);
+        cellstring = Narrative.arrayCellsToString(cellsarr);
+        this.rootCell.value.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS, cellstring);
+    }
+
+    static stringCellsToArray = function(cellstring){
+        if(cellstring == null) cellstring = "[]";
+        var cellsarr = JSON.parse(cellstring);
+        return cellsarr;
+    }
+
+    static arrayCellsToString = function(cellsarr){
+       return JSON.stringify(cellsarr);
     }
 
     /**
@@ -133,12 +142,12 @@ class Narrative {
      * @param {*} c 
      */
     unsaveCell = function(c){
-        var cellstring = this.rootCell.value.getAttribute("cells");
-        var cellsarr = JSON.parse(cellstring);
+        var cellstring = this.rootCell.value.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS);
+        var cellsarr = Narrative.stringCellsToArray(cellstring);
         var idx = cellsarr.indexOf(c.idx);
         cellsarr.splice(idx, 1); 
-        cellstring = JSON.stringify(cellsarr);
-        this.rootCell.value.setAttribute("cells", cellstring);
+        cellstring = Narrative.arrayCellsToString(cellsarr);
+        this.rootCell.value.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS, cellstring);
     }
     
 
@@ -162,7 +171,7 @@ class Narrative {
      */
     isCellValid = function(cell){
         console.log("isCellValid", cell);
-        return (cell.value.tagName);
+        return (cell.value && cell.value.tagName);
     }
 
 }
@@ -213,7 +222,7 @@ class NarrativeListViewContainer {
      * @param {*} na 
      * @param {*} narrativecell 
      */
-    addAccordionView = function(narrative, narrativecell){
+    addNarrativeListView = function(narrative, narrativecell){
         //container of the narrative view
         var container = document.createElement('div');
         container.id = narrativecell.id;
@@ -224,6 +233,8 @@ class NarrativeListViewContainer {
         naaccview.updateView();   
         naaccview.cell = narrativecell;        
         this.narrativealistviews.push(naaccview);
+
+        return naaccview;
     }
 
     /**
@@ -366,9 +377,12 @@ class NarrativeListView{
         var graph = t.editorui.editor.graph;
         var selectedCells = graph.getSelectionCells();
         if(selectedCells){
-            t.narrative.addCells(selectedCells); //add cell to the narrative object, this is where the children cells are added to the root cell
-            t.createBodyElements(); //create representaton
+           t.assignNodes(selectedCells);
         }
+    }
+    assignNodes = function(cells){
+        this.narrative.addCells(cells); //add cell to the narrative object, this is where the children cells are added to the root cell
+        this.createBodyElements(); //create representaton
     }
 
     /**
@@ -376,11 +390,19 @@ class NarrativeListView{
      * @param {*} cell 
      */
     createCellView = function(cell){
-        console.log(cell);
         if(cell.isVertex()){
             //container of the view
-            var container = document.createElement('div');
-            container.innerHTML = cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE);
+            var container = document.createElement('div'); //main container
+            var textcontainer = document.createElement('div');
+            textcontainer.style.display = "inline list-item";
+            var uicontainer = document.createElement('div');
+            uicontainer.style.display = "inline";
+            uicontainer.style.float = "right";
+
+            container.append(textcontainer);
+            container.append(uicontainer);
+
+            textcontainer.innerHTML = cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE);
             container.cell = cell;
             container.style.cursor = 'pointer';
             container.classList.add(NASettings.CSSClasses.NarrativeListView.NodeContainer);
@@ -390,20 +412,19 @@ class NarrativeListView{
             //create unasign button
             var unasignButton = document.createElement('button');
             unasignButton.innerHTML = 'x';
+            unasignButton.style.cursor = 'pointer';
             unasignButton.onclick = this.unasignCell.bind(null, this, cell); //handler to remove this cell from the group
-            container.append(unasignButton);
+            uicontainer.append(unasignButton);
 
             //add the container to the body
             this.bodyContainer.append(container);
-            console.log(container);
             var graph = this.editorui.editor.graph;
             var highlight = new mxCellHighlight(graph, '#000', 2);
-
             //add highlight
-            container.onmouseenter = function(){
+            textcontainer.onmouseenter = function(){
                 highlight.highlight(graph.view.getState(cell));
             }
-            container.onmouseleave = function(){
+            textcontainer.onmouseleave = function(){
                 highlight.hide();
             }
         }
@@ -449,6 +470,12 @@ class NarrativeListView{
         this.createContainers();
         this.createHeadElements();
         this.createBodyElements();
+        this.updateRootCellColor();
+    }
+
+    updateRootCellColor = function(){
+        var style = this.narrative.rootCell.getStyle() +";fillColor="+this.color+";"
+        this.editorui.editor.graph.getModel().setStyle(this.narrative.rootCell, style);
     }
 }
 
@@ -471,7 +498,7 @@ class NarrativeAbductionApp {
         this.naentries = [
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVE,              
-                style: "verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.donut;dx=25;",
+                style: "verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.donut;dx=25;fillColor=#FFFF",
                 type: "node"            
             },
             {
@@ -776,8 +803,18 @@ class NarrativeAbductionApp {
                 console.log("loadExistingNarratives", cell);
                 var na = new Narrative(cell, graph, NASettings.Language.English.newnarrative, cell.id);
                 this.narratives.push(na);
-                this.narrativeaviewscontainer.addAccordionView(na, cell); //add accordion view
+                var nalistview = this.narrativeaviewscontainer.addNarrativeListView(na, cell); //add accordion view
                 
+                //then, we need to re-assign cells to this narrative. These cells ids are store in the cells proprty
+                var cellstring = cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS);
+                var cellsidsarray = Narrative.stringCellsToArray(cellstring);
+                var cellsarray = [];
+                cellsidsarray.forEach(id => {                                        
+                    var cell = graph.getModel().getCell(id);
+                    if(cell) cellsarray.push(cell);
+                });
+                console.log("cellsarray", cellsarray);
+                nalistview.assignNodes(cellsarray);
             }  
         });
         t.editorui.editor.graph.removeSelectionCells(cells);
@@ -792,7 +829,6 @@ class NarrativeAbductionApp {
         var parent = graph.getDefaultParent();  
         var doc = mxUtils.createXmlDocument();
         var objna = doc.createElement(narrativeentry.name);    
-        objna.setAttribute("narrativecells", "Yo  testing");
  
         var narrativecell;
        //add the narrative cell
@@ -807,7 +843,7 @@ class NarrativeAbductionApp {
            //create narrative object and view
            var na = new Narrative(narrativecell, graph, NASettings.Language.English.newnarrative, narrativecell.id);
            this.narratives.push(na);
-           this.narrativeaviewscontainer.addAccordionView(na, narrativecell); //add accordion view
+           this.narrativeaviewscontainer.addNarrativeListView(na, narrativecell); //add accordion view
            
            //trigger new narrative event
            this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
