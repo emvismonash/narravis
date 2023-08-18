@@ -396,8 +396,8 @@ class NarrativeListView{
             var textcontainer = document.createElement('div');
             textcontainer.style.display = "inline list-item";
             var uicontainer = document.createElement('div');
-            uicontainer.style.display = "inline";
-            uicontainer.style.float = "right";
+            uicontainer.style.display = "inline-block";
+            uicontainer.style.marginLeft = "10px";
 
             container.append(textcontainer);
             container.append(uicontainer);
