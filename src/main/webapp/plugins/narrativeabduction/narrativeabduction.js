@@ -503,34 +503,34 @@ class NarrativeAbductionApp {
             },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
-                style: "swimlane;fillColor=#ffff;",
+                style: "rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=none;",
                 iconURL: "https://thenounproject.com/api/private/icons/5926263/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"            
             },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
-                style: "swimlane;fillColor=#fad7ac;strokeColor=#b46504;rounded=0;",
+                style: "rounded=0;whiteSpace=wrap;html=1;",
                 iconURL: "https://thenounproject.com/api/private/icons/4353546/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
-            {
-                name: NASettings.Dictionary.CELLS.JOINTCAUSE,
-                style: "swimlane;fillColor=#ffff;",
-                iconURL: "https://thenounproject.com/api/private/icons/4493200/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
-                type: "node"
-            },
-            {
-                name: NASettings.Dictionary.CELLS.EVIDENCENARRATIVESPECIFIC,
-                style: "swimlane;fillColor=#fad9d5;strokeColor=#ae4132;rounded=0;",
-                iconURL: "https://thenounproject.com/api/private/icons/4040420/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
-                type: "node"
-            },
-            {
-                name: NASettings.Dictionary.CELLS.SUPPORTINGARGUMENT,
-                style: "swimlane;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=0;",
-                iconURL: "https://thenounproject.com/api/private/icons/5741355/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
-                type: "node"
-            },
+            // {
+            //     name: NASettings.Dictionary.CELLS.JOINTCAUSE,
+            //     style: "swimlane;fillColor=#ffff;",
+            //     //iconURL: "https://thenounproject.com/api/private/icons/4493200/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
+            //     type: "node"
+            // },
+            // {
+            //     name: NASettings.Dictionary.CELLS.EVIDENCENARRATIVESPECIFIC,
+            //     style: "swimlane;fillColor=#fad9d5;strokeColor=#ae4132;rounded=0;",
+            //     iconURL: "https://thenounproject.com/api/private/icons/4040420/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
+            //     type: "node"
+            // },
+            // {
+            //     name: NASettings.Dictionary.CELLS.SUPPORTINGARGUMENT,
+            //     style: "swimlane;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=0;",
+            //     iconURL: "https://thenounproject.com/api/private/icons/5741355/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
+            //     type: "node"
+            // },
             {
                 name: NASettings.Dictionary.CELLS.EXPLAINLINK, 
                 style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
@@ -564,7 +564,7 @@ class NarrativeAbductionApp {
             },
             {
                 name: NASettings.Dictionary.CELLS.CONFLICTLINK, 
-                style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+                style: "editable=0;editable=1;endArrow=cross;html=1;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;connectable=1;startArrow=none;startFill=0;endFill=0;strokeWidth=2;strokeColor=#ff0000;",
                 type: "edge"
             }
         ];
@@ -1059,7 +1059,12 @@ class NarrativeAbductionApp {
         }
     }
 
-
+    /**
+     * Create a document node in HTML content format
+     * @param {*} graph 
+     * @param {*} entry 
+     * @returns 
+     */
     createDocumentItemHTMLCell = function(graph, entry){
         var itemname = entry.name;
         var titlename = entry.titlename;
@@ -1097,7 +1102,7 @@ class NarrativeAbductionApp {
     }
 
     /**
-     * Create the cell for a document item
+     * Create the cell for a document item in label + content format
      * @param {*} graph 
      * @param {*} entry 
      * @returns 
@@ -1125,16 +1130,18 @@ class NarrativeAbductionApp {
             nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodetitle.value = titlename;
             nodetitle.setConnectable(false);            
-            var nodedesc = graph.insertVertex(documentcell, null, objdescription, 10, 50, 320, 150);
+            var nodedesc = graph.insertVertex(documentcell, null, objdescription, 10, 50, 320, 100);
             nodedesc.setStyle("text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodedesc.value = "Desription";
             nodedesc.setConnectable(false);
-            nodedesc.lod = this.settings.lodupdate;
-            if(entry.iconURL){
-                var nodeicon = graph.insertVertex(documentcell, null, "", 10, 300, 100, 100);
-                var iconstyle = "shape=image;imageAspect=1;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;rotation=0;labelBackgroundColor=#ffffff;labelBorderColor=none;connectable=0;allowArrows=0;recursiveResize=0;expand=0;editable=1;movable=1;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;image=" + entry.iconURL;
-                nodeicon.setStyle(iconstyle);
-            }
+            //nodedesc.lod = this.settings.lodupdate; //disable LOD for vanila version
+
+            //disable icon for vanila version
+            // if(entry.iconURL){
+            //     var nodeicon = graph.insertVertex(documentcell, null, "", 10, 300, 100, 100);
+            //     var iconstyle = "shape=image;imageAspect=1;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;rotation=0;labelBackgroundColor=#ffffff;labelBorderColor=none;connectable=0;allowArrows=0;recursiveResize=0;expand=0;editable=1;movable=1;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;image=" + entry.iconURL;
+            //     nodeicon.setStyle(iconstyle);
+            // }
         }
         finally
         {
@@ -1144,13 +1151,11 @@ class NarrativeAbductionApp {
         return documentcell;
     }
 
-
     /**
-     * This function decides how the content of the HTML Document Item is rendered to HTML element
+     * This function decides how the content of the HTML Document Item is rendered to HTML element. This function is related to the HTML Document Item format. 
      * @param {*} contencell 
      */
     updateHTMLDocumentItemAppearance = function(doccell, contencell){
-        console.log(doccell);
         var title = doccell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE);
         var des = doccell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION);
         var html = this.getHTMLDocumentItemContent(title, des);
@@ -1406,8 +1411,8 @@ class NarrativeAbductionApp {
      */
     createDocumentItem = function(entry){
         var graph = new mxGraph();
-        var documentcell  = this.createDocumentItemHTMLCell(graph, entry);
-        this.insertHTMLDocumentItemDoubleClickListener(entry);       
+        var documentcell  = this.createDocumentItemCell(graph, entry); //there are two options, HTML Document or Simple label + description. 
+        //this.insertHTMLDocumentItemDoubleClickListener(entry);  //disable double click window editor     
         return {
             xml: NAUtil.ModelToXML(graph),
             graph: graph,
