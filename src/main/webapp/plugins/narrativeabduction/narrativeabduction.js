@@ -953,6 +953,56 @@ class NarrativeAbductionApp {
             t.editorui.editor.graph.selectAll();
         });
 
+        NAUtil.AddButton("Test layout of Narrative 1", devtoolcontainer, function(){
+            // Assuming you have the mxGraph instance and the graph model
+            
+            var graph = t.editorui.editor.graph;
+            var model = graph.getModel();
+            var narrative = t.narratives[0];
+            if(!narrative) return;
+
+            // Identify parent nodes and children (replace with your logic)
+            var parentNodes = narrative.cells; // Array of parent node cells
+
+            // check excluded nodes
+            var excludeNodes = [];
+            
+            graph.selectAll();
+            var selectedCells = graph.getSelectionCells();
+            selectedCells.forEach(cell => {
+                if(!parentNodes.includes(cell) && cell.children != null){
+                    excludeNodes.push({
+                        excell: cell, 
+                        x: cell.geometry.x,
+                        y: cell.geometry.y
+                    });
+                }
+            });
+
+            console.log("excludeNodes", excludeNodes);
+
+            //update excluded cells position
+            model.beginUpdate();
+            try {
+                
+                var layout = new mxHierarchicalLayout(graph);
+                layout.execute(graph.getDefaultParent(), parentNodes);
+
+                excludeNodes.forEach(cell => {
+                    var currentgeometry = model.getGeometry(cell.excell);
+                    currentgeometry.x = cell.x;
+                    currentgeometry.y = cell.y;
+
+                    console.log("currentgeometry", currentgeometry);
+                    console.log("cell", cell);
+
+                    model.setGeometry(cell.excell, currentgeometry);
+               });
+            } finally {
+              model.endUpdate();
+            }
+        });
+
 
         NAUtil.AddButton("Load narratives", devtoolcontainer, function(){
             t.loadExistingNarratives();
