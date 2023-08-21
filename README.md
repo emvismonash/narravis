@@ -1,6 +1,7 @@
 Customized for Narrative Visualisation Project
 ----
-This repository contains a customized version of draw.io. 
+
+This repository contains a customized version of draw.io and a narrativeabduction plugin. 
 
 **Currently under development**. 
 
