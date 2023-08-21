@@ -498,7 +498,7 @@ class NarrativeAbductionApp {
         this.naentries = [
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVE,              
-                style: "verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.donut;dx=25;fillColor=#FFFF",
+                style: "shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;resizable=0;connectable=0;",
                 type: "node"            
             },
             {
