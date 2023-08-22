@@ -17,6 +17,7 @@ class NASettings{
     //base on https://docs.google.com/document/d/1FByhhJe67pJC6fPdE3lo8lgM6NN7K0_Uivf6n5Io9UE/edit
     static Dictionary = {
         CELLS:{
+            NARRATIVELIST: "NarrativeList",
             NARRATIVE: 'Narrative',
             NARRATIVEITEM: 'NarrativeItem',
             NARRATIVEEVIDENCECORE: "NarrativeEvidenceCore",             
@@ -489,13 +490,19 @@ class NarrativeAbductionApp {
         this.settings = {
             lodupdate: 5.5
         };
+        this.narrativelistcell;
         this.myEvent = new CustomEvent("newnarrative", {
             narrative: {},
             bubbles: true,
             cancelable: true,
             composed: false,
           });
-        this.naentries = [
+        this.naentries = [ 
+            {
+                name: NASettings.Dictionary.CELLS.NARRATIVELIST,              
+                style: "swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;",
+                type: "node"            
+            },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVE,              
                 style: "shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;resizable=0;connectable=0;",
@@ -578,6 +585,8 @@ class NarrativeAbductionApp {
         this.initNarrativesView();
         this.createNAPanel();
         this.createPalette();     
+        this.createNarrativeListCell();
+
         //this.installStackedLayout();
         this.initResponsiveSizeHandlerVanilaContent();
         this.initUpdateDocumentSizeAfterDescriptionEdit();
@@ -721,6 +730,27 @@ class NarrativeAbductionApp {
      */
     isCellNarrative = function(cell){
         return (cell.value != undefined && cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVE);
+    }
+
+    /**
+     * Create the container cell that will contain the narrative cells
+     */
+    createNarrativeListCell = function(){
+        var entry = this.getEntryByName(NASettings.Dictionary.CELLS.NARRATIVELIST);
+        var graph = this.editorui.editor.graph;
+        var doc = mxUtils.createXmlDocument();
+        var obj = doc.createElement(entry.name);    
+ 
+        console.log("entry", entry);
+        graph.getModel().beginUpdate();
+        try{
+            var cell = graph.insertVertex(graph.getDefaultParent(), null, obj, 0, 0, 100, 100); 
+            cell.setStyle(entry.style);  
+            this.narrativelistcell = cell;
+            console.log("cell", cell);
+        }finally{
+            graph.getModel().endUpdate();
+        }
     }
 
     /**
@@ -922,6 +952,7 @@ class NarrativeAbductionApp {
         var objna = doc.createElement(narrativeentry.name);    
  
         var narrativecell;
+        graph.getModel().beginUpdate();
        //add the narrative cell
        try
        {
