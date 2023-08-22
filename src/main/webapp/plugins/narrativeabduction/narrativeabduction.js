@@ -171,7 +171,7 @@ class Narrative {
      */
     isCellValid = function(cell){
         console.log("isCellValid", cell);
-        return (cell.value && cell.value.tagName);
+        return (cell.value && cell.value.tagName && cell.value.tagName != NASettings.Dictionary.CELLS.NARRATIVE);
     }
 
 }
