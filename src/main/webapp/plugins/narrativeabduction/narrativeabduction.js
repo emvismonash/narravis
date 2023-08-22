@@ -579,7 +579,8 @@ class NarrativeAbductionApp {
         this.createNAPanel();
         this.createPalette();     
         //this.installStackedLayout();
-        this.initResponsiveSizeHandler();
+        this.initResponsiveSizeHandlerVanilaContent();
+        this.initUpdateDocumentSizeAfterDescriptionEdit();
         this.initShapePickerHandler();
         this.initNewCellHandler();
         this.initRemoveNarrativeCellHandler();
@@ -632,7 +633,10 @@ class NarrativeAbductionApp {
         });
     }
 
-    initResponsiveSizeHandler = function(){
+    /**
+     * This responsive handler is for HTML document title 
+     */
+    initResponsiveSizeHandlerHTMLContent = function(){
          // Define responsive styles using CSS
          var css = document.styleSheets[0];
          css.insertRule('.responsive-content { width: 100%; height: 100%; display: inline-block; justify-content: center; align-items: center; }', 0);
@@ -655,6 +659,60 @@ class NarrativeAbductionApp {
             }
             });
     }
+
+    /**
+     * Handler for when the vanila document item size is updated
+     */
+    initResponsiveSizeHandlerVanilaContent = function(){
+       var graph = this.editorui.editor.graph;
+       // Handle resizing of the cell
+       graph.addListener(mxEvent.RESIZE_CELLS, function(sender, evt) {
+           var cells = evt.getProperty('cells');
+           for (var i = 0; i < cells.length; i++) {
+               var cell = cells[i];
+               console.log("Cell", cell);
+               var newWidth = cell.geometry.width;
+               var newHeight = cell.geometry.height;
+               console.log("Cell resize", cell);
+               if(cell.children){
+                   cell.children.forEach(child => {
+                    console.log("child", child);
+
+                    var natype = child.natype;
+                    if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE){
+                        child.geometry.width = newWidth - 30;
+                    }
+                    if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION){
+                        child.geometry.width = newWidth - 30;
+                        child.geometry.height = newHeight - 50;
+                    }
+                      
+                   });
+               }
+           }
+        });
+   }
+
+   /**
+    * Update the height of the document item to accomodate the description
+    */
+   initUpdateDocumentSizeAfterDescriptionEdit = function(){
+        var graph = this.editorui.editor.graph;
+        graph.addListener(mxEvent.LABEL_CHANGED, function(sender, evt) {
+            var cell = evt.getProperty('cell'); // Get the cell whose label changed
+            var newValue = evt.getProperty('value'); // Get the new label value
+            var natype = cell.natype;
+            console.log("cell", cell);
+            console.log("natype", natype);
+
+            if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION){
+                console.log("cell", cell);
+                console.log("new value", newValue);
+                console.log("geometry", cell.geometry);
+            }
+
+        });
+   }
 
     /**
      * Is the given cell narrative cell
@@ -1168,7 +1226,11 @@ class NarrativeAbductionApp {
         objna.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, itemname);
 
         var objtitle = doc.createElement(titlename);
+        objtitle.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.ATTRIBUTTES.DOCTITLE);
+
         var objdescription = doc.createElement(descrname);
+        objdescription.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION);
+
         
         var parent = graph.getDefaultParent();       
         var documentcell;
@@ -1178,12 +1240,15 @@ class NarrativeAbductionApp {
             documentcell.setStyle(style);
             var nodetitle = graph.insertVertex(documentcell, null, objtitle, 10, 10, 320, 30);
             nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
-            nodetitle.value = titlename;
+            nodetitle.setValue(titlename);
+            nodetitle.natype = NASettings.Dictionary.ATTRIBUTTES.DOCTITLE;
             nodetitle.setConnectable(false);            
             var nodedesc = graph.insertVertex(documentcell, null, objdescription, 10, 50, 320, 100);
-            nodedesc.setStyle("text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
-            nodedesc.value = "Desription";
+            nodedesc.setStyle("text;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;");
+            nodedesc.setValue("Desription");
             nodedesc.setConnectable(false);
+            nodedesc.natype = NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION;
+
             //nodedesc.lod = this.settings.lodupdate; //disable LOD for vanila version
 
             //disable icon for vanila version
