@@ -754,8 +754,20 @@ class NarrativeAbductionApp {
         {
             //if edge, show Contextual Edge Option Menu
             var cells = evt.getProperty('cells');   
+            console.log("new cells", cells);
             if(cells[0] && cells[0].isEdge()){     
-                t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
+                //edge type based on target node
+                var edge = cells[0];
+                var target = edge.target.value.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE);
+                switch(target){
+                    case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
+                        t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
+                        break;
+                    default:
+                        t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
+                        break;
+                }
+               // t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
             } 
             //if the cell is Narrative, trigger create a new narrative action
             if(cells[0].getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) == NASettings.Dictionary.CELLS.NARRATIVE){
@@ -784,9 +796,29 @@ class NarrativeAbductionApp {
         
     }
 
-   
+   /**
+    * Take the edge and turn it into Cause link
+    * @param {*} edge 
+    */
+    setEdgeType = function(edge, target){
+        var graph = this.editorui.editor.graph;
+        var causeLink = this.getEntryByName(target);
+        if(causeLink){
+          graph.getModel().beginUpdate();
+          try
+          {
+              graph.getModel().setValue(edge, target.replace("Link","") + "s");
+              graph.setCellStyle(causeLink.style, [edge]);
+          }
+          finally
+          {
+              graph.getModel().endUpdate();
+          }
+        }      
+    }
+
     /**
-     * Show link type option when two nodes are connected
+     * Show link type option when two nodes are connected. In the vanila version, the default link will be "Cause". 
      */
     initConnectionHandler = function(){
         var graph = this.editorui.editor.graph;
@@ -804,8 +836,9 @@ class NarrativeAbductionApp {
           console.log("Target", target);
           console.log("evt", evt);
 
-          t.showContextualEdgeOptionMenu(edge, event.x, event.y);
-
+          //t.showContextualEdgeOptionMenu(edge, event.x, event.y); //no contextual menu by default
+          //by default the link will be causes link
+          t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);    
         });
     }
 
@@ -1285,6 +1318,18 @@ class NarrativeAbductionApp {
      */
     getHTMLDocumentItemContent = function(title, description){
         return '<div class="responsive-content"><b>'+title+'</b><br/><div>'+description+'</div></div>';
+    }
+
+    getEntryByName = function(name){
+        var ent = null;
+        this.naentries.forEach(element => {
+            if(element.name == name){
+                ent = element;
+                return ent;
+            }
+        });
+
+        return ent;
     }
 
     /**
