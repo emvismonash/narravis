@@ -934,7 +934,7 @@ class NarrativeAbductionApp {
            //create narrative object and view
            var na = new Narrative(narrativecell, graph, NASettings.Language.English.newnarrative, narrativecell.id);
            this.narratives.push(na);
-           this.narrativeaviewscontainer.addNarrativeListView(na, narrativecell); //add accordion view
+           var narrview =  this.narrativeaviewscontainer.addNarrativeListView(na, narrativecell); //add accordion view
            
            //trigger new narrative event
            this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
@@ -944,7 +944,14 @@ class NarrativeAbductionApp {
                }, 
            });
            dispatchEvent(this.#event);
-       }        
+
+            //if objects are selected, add them automatically to the narrative
+            var selectedCells = graph.getSelectionCells();
+            if(selectedCells && narrview){
+                narrview.assignNodes(selectedCells);
+           }   
+       }     
+
     }
 
     /**
