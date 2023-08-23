@@ -256,7 +256,7 @@ class NarrativeListViewContainer {
 class NarrativeListView{
     constructor(narrative, container, editorui, color){
         this.narrative = narrative;
-        this.cellViews = [];
+        this.cellviews = [];
         this.headContainer;
         this.bodyContainer;
         this.container = container;
@@ -336,7 +336,6 @@ class NarrativeListView{
 
         this.headContainer.style.background = this.color;
 
-        this.uinarrativetitle.style.height = '30px';
         this.uinarrativetitle.innerHTML = this.narrative.name;        
         this.uinarrativetitle.classList.add(NASettings.CSSClasses.NarrativeListView.Title);
 
@@ -356,7 +355,6 @@ class NarrativeListView{
 
         var toggleButton = document.createElement('button');
         toggleButton.innerHTML = 'Toggle';
-        toggleButton.style.height = '25px';
 
         toggleButton.onclick = function(){
             if(t.bodyContainer.style.display != 'none'){
@@ -445,6 +443,19 @@ class NarrativeListView{
         this.createBodyElements(); //create representaton
     }
 
+    getTitleCell = function(cell){
+        var children = cell.children;
+        var ret = null;
+        if(children){
+            children.forEach(child  => {
+                if(child.natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE){
+                    ret = child;
+                }
+            });
+        }
+        return ret;
+    }
+
     /**
      * Create representation of the cell/node in the view
      * @param {*} cell 
@@ -456,7 +467,6 @@ class NarrativeListView{
             var container = document.createElement('div'); //main container
             var textcontainer = document.createElement('div');
             textcontainer.style.display = "inline list-item";
-            textcontainer.id = cell.id + "title";
             var uicontainer = document.createElement('div');
             uicontainer.style.display = "inline";
             uicontainer.style.float = "right";
@@ -464,7 +474,8 @@ class NarrativeListView{
             container.append(textcontainer);
             container.append(uicontainer);
 
-            textcontainer.innerHTML = cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE);
+            var titlecell = this.getTitleCell(cell);
+            textcontainer.innerHTML = titlecell.value;
             container.cell = cell;
             container.style.cursor = 'pointer';
             container.classList.add(NASettings.CSSClasses.NarrativeListView.NodeContainer);
@@ -496,7 +507,7 @@ class NarrativeListView{
                 htmluicontainer: uicontainer
             }
 
-            this.cellViews.push(cellView);
+            this.cellviews.push(cellView);
         }
     }
 
@@ -517,7 +528,7 @@ class NarrativeListView{
     removeCellView = function(c){
         var cellView = this.getCellView(c);
         cellView.htmlcontainer.remove();
-        this.cellViews.splice(this.cellViews.indexOf(cellView), 1); 
+        this.cellviews.splice(this.cellviews.indexOf(cellView), 1); 
     }
 
 
@@ -529,7 +540,7 @@ class NarrativeListView{
     getCellView = function(cell){   
         var ret = null;     
         console.log("getCellView");
-        this.cellViews.forEach(view => {
+        this.cellviews.forEach(view => {
             if(view.cell == cell){
                 ret = view;
             }
@@ -544,6 +555,7 @@ class NarrativeListView{
     createBodyElements = function(){
         var t = this;
         this.bodyContainer.innerHTML = "";
+        this.cellviews = [];
         this.narrative.cells.forEach(function(cell){
             t.createCellView(cell);
         });
