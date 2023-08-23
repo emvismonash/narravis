@@ -404,7 +404,7 @@ class NarrativeListView{
         var newValue = evt.getProperty('value'); // Get the new label value
         console.log("cell", cell);
 
-        if(Narrative.isCellNarrative(cell)){
+        if(Narrative.isCellNarrative(cell) && t.narrative.rootCell == cell){
             console.log("Edit title");
             t.uinarrativetitle.innerHTML = newValue;
         }
