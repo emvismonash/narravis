@@ -160,7 +160,7 @@ class Narrative {
         var t = this;
         console.log(this.rootCell);
         cells.forEach(element => {
-            if(t.isCellValid(element)){
+            if(Narrative.isCellValid(element)){
                 t.addCell(element);
             }
         });
@@ -170,11 +170,15 @@ class Narrative {
     /**
      * In some cases, the selected cells are part of narrative element, e.g. content cell. This function validates what cell can be added.
      */
-    isCellValid = function(cell){
+    static isCellValid = function(cell){
         console.log("isCellValid", cell);
-        return (cell.value && cell.value.tagName && cell.value.tagName != NASettings.Dictionary.CELLS.NARRATIVE);
+        return (cell.value && cell.value.tagName && cell.value.tagName != NASettings.Dictionary.CELLS.NARRATIVE && cell.value.tagName != NASettings.Dictionary.CELLS.NARRATIVELIST);
     }
 
+    static isCellNarrative = function(cell){
+        return (cell.value && cell.value.tagName && cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVE);
+
+    }
 }
 
 /**
@@ -258,6 +262,10 @@ class NarrativeListView{
         this.container = container;
         this.editorui = editorui;
         this.color = color;
+        this.uinarrativetitle;
+
+        this.initListenerUpdateNarrativeCellEdit();
+        this.initListenerUpdateDocumentItemTitle();
     }
 
     /**
@@ -320,7 +328,7 @@ class NarrativeListView{
     createContainers = function(){
         this.headContainer = document.createElement('div');
         this.bodyContainer = document.createElement('div');
-        var naNameLabel = document.createElement('div');
+        this.uinarrativetitle = document.createElement('div');
 
         this.container.classList.add(NASettings.CSSClasses.NarrativeListView.Container);
         this.headContainer.classList.add(NASettings.CSSClasses.NarrativeListView.HeadContainer);
@@ -328,22 +336,22 @@ class NarrativeListView{
 
         this.headContainer.style.background = this.color;
 
-        naNameLabel.style.height = '30px';
-        naNameLabel.innerHTML = this.narrative.name;        
-        naNameLabel.classList.add(NASettings.CSSClasses.NarrativeListView.Title);
+        this.uinarrativetitle.style.height = '30px';
+        this.uinarrativetitle.innerHTML = this.narrative.name;        
+        this.uinarrativetitle.classList.add(NASettings.CSSClasses.NarrativeListView.Title);
 
         var t = this;
-        naNameLabel.onmouseenter = function(){            
+        this.uinarrativetitle.onmouseenter = function(){            
             t.highlightCells(t.narrative.cells);
         }
-        naNameLabel.onmouseleave = function(){
+        this.uinarrativetitle.onmouseleave = function(){
             t.unhighlightCells(t.narrative.cells);
         }
 
 
         this.container.append(this.headContainer);
         this.container.append(this.bodyContainer);
-        this.headContainer.appendChild(naNameLabel);
+        this.headContainer.appendChild(this.uinarrativetitle);
 
 
         var toggleButton = document.createElement('button');
@@ -358,6 +366,57 @@ class NarrativeListView{
             }
         }
         this.headContainer.append(toggleButton);
+    }
+
+    
+   /**
+    * Update the narrative list livew
+    */
+   initListenerUpdateNarrativeCellEdit = function(){
+    var graph = this.editorui.editor.graph;
+    var t = this;
+    graph.addListener(mxEvent.LABEL_CHANGED, function(sender, evt) {
+        var cell = evt.getProperty('cell'); // Get the cell whose label changed
+        var newValue = evt.getProperty('value'); // Get the new label value
+        console.log("cell", cell);
+
+        if(Narrative.isCellNarrative(cell)){
+            console.log("Edit title");
+            t.uinarrativetitle.innerHTML = newValue;
+        }
+
+        });
+    }
+
+     /**
+    * Update the narrative list livew
+    */
+   initListenerUpdateDocumentItemTitle = function(){
+    var graph = this.editorui.editor.graph;
+    var t = this;
+    graph.addListener(mxEvent.LABEL_CHANGED, function(sender, evt) {
+        var cell = evt.getProperty('cell'); // Get the cell whose label changed
+        var newValue = evt.getProperty('value'); // Get the new label value
+        var natype = cell.natype;
+        console.log("cell", cell);
+        console.log("natype", natype);
+
+        if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE){
+            //check if the parent is in narrative
+            var parent = cell.parent;
+            console.log("Parent", parent);
+            if(t.narrative.cells.includes(parent)){
+                console.log("Cell in narrative");
+                console.log("Edit title of cell view");
+                var cellview = t.getCellView(parent);
+                console.log("cellview", cellview);
+                if(cellview) cellview.htmltitle.innerHTML = newValue;                
+            }
+
+        }
+        
+
+        });
     }
 
     /**
@@ -392,10 +451,12 @@ class NarrativeListView{
      */
     createCellView = function(cell){
         if(cell.isVertex()){
+            
             //container of the view
             var container = document.createElement('div'); //main container
             var textcontainer = document.createElement('div');
             textcontainer.style.display = "inline list-item";
+            textcontainer.id = cell.id + "title";
             var uicontainer = document.createElement('div');
             uicontainer.style.display = "inline";
             uicontainer.style.float = "right";
@@ -408,7 +469,6 @@ class NarrativeListView{
             container.style.cursor = 'pointer';
             container.classList.add(NASettings.CSSClasses.NarrativeListView.NodeContainer);
             container.id = cell.id;
-            this.cellViews.push(container);
             
             //create unasign button
             var unasignButton = document.createElement('button');
@@ -428,6 +488,15 @@ class NarrativeListView{
             textcontainer.onmouseleave = function(){
                 highlight.hide();
             }
+
+            var cellView = {
+                cell: cell,
+                htmlcontainer: container, 
+                htmltitle: textcontainer, 
+                htmluicontainer: uicontainer
+            }
+
+            this.cellViews.push(cellView);
         }
     }
 
@@ -446,10 +515,27 @@ class NarrativeListView{
      * @param {*} c 
      */
     removeCellView = function(c){
-        var container = document.getElementById(c.id);
-        var idx = this.cellViews.indexOf(container);
-        this.cellViews.splice(idx, 1); 
-        container.remove();
+        var cellView = this.getCellView(c);
+        cellView.htmlcontainer.remove();
+        this.cellViews.splice(this.cellViews.indexOf(cellView), 1); 
+    }
+
+
+    /**
+     * Get cell view from given cell
+     * @param {*} cell 
+     * @returns 
+     */
+    getCellView = function(cell){   
+        var ret = null;     
+        console.log("getCellView");
+        this.cellViews.forEach(view => {
+            if(view.cell == cell){
+                ret = view;
+            }
+        });
+
+        return ret;
     }
 
     /**
@@ -497,6 +583,10 @@ class NarrativeAbductionApp {
             cancelable: true,
             composed: false,
           });
+        this.excludefrompicker = [
+            NASettings.Dictionary.CELLS.NARRATIVELIST,
+            NASettings.Dictionary.CELLS.NARRATIVE
+        ];
         this.naentries = [ 
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVELIST,              
@@ -585,11 +675,9 @@ class NarrativeAbductionApp {
         this.initNarrativesView();
         this.createNAPanel();
         this.createPalette();     
-        this.createNarrativeListCell();
-
         //this.installStackedLayout();
         this.initResponsiveSizeHandlerVanilaContent();
-        this.initUpdateDocumentSizeAfterDescriptionEdit();
+        this.initListenerDocumentSizeAfterDescriptionEdit();
         this.initShapePickerHandler();
         this.initNewCellHandler();
         this.initRemoveNarrativeCellHandler();
@@ -705,7 +793,7 @@ class NarrativeAbductionApp {
    /**
     * Update the height of the document item to accomodate the description
     */
-   initUpdateDocumentSizeAfterDescriptionEdit = function(){
+   initListenerDocumentSizeAfterDescriptionEdit = function(){
         var graph = this.editorui.editor.graph;
         graph.addListener(mxEvent.LABEL_CHANGED, function(sender, evt) {
             var cell = evt.getProperty('cell'); // Get the cell whose label changed
@@ -722,6 +810,8 @@ class NarrativeAbductionApp {
 
         });
    }
+
+
 
     /**
      * Is the given cell narrative cell
@@ -900,12 +990,38 @@ class NarrativeAbductionApp {
         var t = this;
         // add create narrative buttion
         NAUtil.AddButton(NASettings.Language.English.newnarrative, container, function(){
-           t.newNarrative();
+           if(!t.narrativelistcell){
+            t.createNarrativeListCell();
+           }
+           var ret = t.newNarrative();
+           t.addNarrativeCellToList(ret.narrativecell);
+           
         });
         // add load narrative buttion
         // NAUtil.AddButton(NASettings.Language.English.loadnarratives, container, function(){
         //     t.loadExistingNarratives();
         //  });
+    }
+
+    /**
+     * Assign the cell into the list
+     * @param {*} cell 
+     */
+    addNarrativeCellToList = function(cell){
+        if(this.narrativelistcell){
+            console.log("this.narrativelistcell", this.narrativelistcell);
+            var graph = this.editorui.editor.graph;
+            graph.getModel().beginUpdate();
+            try{
+                graph.getModel().add(this.narrativelistcell, cell);
+                var layout = new mxStackLayout(graph, true);
+                layout.execute(this.narrativelistcell);
+               // cell.setParent();
+            }finally{
+                graph.getModel().endUpdate();
+            }
+           
+        }
     }
 
     /**
@@ -952,6 +1068,8 @@ class NarrativeAbductionApp {
         var objna = doc.createElement(narrativeentry.name);    
  
         var narrativecell;
+        var narrview;
+        var na;
         graph.getModel().beginUpdate();
        //add the narrative cell
        try
@@ -963,9 +1081,9 @@ class NarrativeAbductionApp {
        {
            graph.getModel().endUpdate();
            //create narrative object and view
-           var na = new Narrative(narrativecell, graph, NASettings.Language.English.newnarrative, narrativecell.id);
+           na = new Narrative(narrativecell, graph, NASettings.Language.English.newnarrative, narrativecell.id);
            this.narratives.push(na);
-           var narrview =  this.narrativeaviewscontainer.addNarrativeListView(na, narrativecell); //add accordion view
+           narrview =  this.narrativeaviewscontainer.addNarrativeListView(na, narrativecell); //add accordion view
            
            //trigger new narrative event
            this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
@@ -982,7 +1100,11 @@ class NarrativeAbductionApp {
                 narrview.assignNodes(selectedCells);
            }   
        }     
-
+       return{
+        narrative: na, 
+        narrativeview: narrview,
+        narrativecell: narrativecell
+       }
     }
 
     /**
@@ -1153,15 +1275,22 @@ class NarrativeAbductionApp {
     }
 
     /**
+     * check whether or not the entry should be included in the shape picker
+     * @param {*} entry 
+     * @returns 
+     */
+    isValidShapePickerItem = function(entry){
+        return (entry.type == "node" && !this.excludefrompicker.includes(entry.name));
+    }
+
+    /**
      * Create palette for the side bar
      */
     createPalette = function(){
         var entries = []; //all palette entries
         for(var i = 0; i < this.naentries.length;i++){
             var res;
-            if(this.naentries[i].type == "node" && this.naentries[i].name != NASettings.Dictionary.CELLS.NARRATIVE){
-
-
+            if(this.isValidShapePickerItem(this.naentries[i])){
                 var entry = this.naentries[i];
                 entry.titlename = NAUtil.GetCellChildrenLabels(this.naentries[i].name).title;
                 entry.descname = NAUtil.GetCellChildrenLabels(this.naentries[i].name).description;
@@ -1194,7 +1323,7 @@ class NarrativeAbductionApp {
             t.naentries.forEach(function(currentValue, index, arr){
                     console.log("c", currentValue);
                     //only add node items
-                    if(currentValue.type == "node" && currentValue.name != NASettings.Dictionary.CELLS.NARRATIVE){
+                    if(t.isValidShapePickerItem(currentValue)){
                         var cell = NAUtil.GetCellByNodeName(currentValue.graph, currentValue.name);
                         var g = currentValue.graph;
                         g.getModel().setStyle(cell, currentValue.style);
