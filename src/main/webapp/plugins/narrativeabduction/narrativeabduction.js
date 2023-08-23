@@ -67,9 +67,7 @@ class NASettings{
             "#e31a1c",
             "#fdbf6f",
             "#ff7f00",
-            "#cab2d6",
-            "#6a3d9a",
-            "#b15928",
+            "#cab2d6"            
           ]
     }
     static CSSClasses= {
@@ -885,7 +883,7 @@ class NarrativeAbductionApp {
             console.log("Cell removed", cells[0]);  
             cells.forEach(cell => {
                 //if the cell is narrative, remove the view as well 
-                if(t.isCellNarrative(cell)){  
+                if(Narrative.isCellNarrative(cell)){  
                     console.log("Narrative removed", cell);  
                     t.narrativeaviewscontainer.removeListView(cell);
                 }   
@@ -1235,7 +1233,7 @@ class NarrativeAbductionApp {
         
 
         //This part contains some functions for development purposes
-        this.createDevToolPanel(container);
+       // this.createDevToolPanel(container);
     }
 
     /**
