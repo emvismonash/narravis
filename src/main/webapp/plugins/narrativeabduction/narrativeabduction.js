@@ -52,7 +52,9 @@ class NASettings{
     static Language = {
         English: {
             "newnarrative": "New Narrative",
-            "loadnarratives": "Load Narratives"
+            "loadnarratives": "Load Narratives",
+            "assign": "Assign",
+            "unassign": "Unassign"
         }
     }
     static Colors = {
@@ -67,17 +69,23 @@ class NASettings{
             "#ff7f00",
             "#cab2d6",
             "#6a3d9a",
-            "#ffff99",
             "#b15928",
           ]
     }
     static CSSClasses= {
         NarrativeListView:{
-            NodeContainer: 'naAccordionViewNodeContainer',
-            Container: 'naAccordionViewContainer',
-            HeadContainer: 'naAccordionViewHeadContainer',
-            BodyContainer: 'naAccordionViewBodyContainer',
-            Title: 'naAccordionViewTitle'
+            NodeContainer: 'nalv-nodecontainer',
+            Container: 'nalv-container',
+            HeadContainer: 'nalv-headcontainer',
+            HeadTopPart: 'nalv-headtoppart',
+            HeadBottomPart: 'nalv-headbottompar',
+            BodyContainer: 'nalv-bodycontainer',
+            Title: 'nalv-title',
+            ToggleButton: 'nalv-togglebutton',
+            CellViewContainer: 'nalv-cellviewcontainer',
+            CellViewTitle: 'nalv-cellviewtitle',
+            CellViewUnassignButton: 'nalv-cellviewunassignbutton',
+            CellViewUIContainer: 'nalv-cellviewuicontainer'
         },
         Panels:{
             SidePanel: 'naSidePanel'
@@ -324,18 +332,29 @@ class NarrativeListView{
 
     /**
      * Create head, body, and name label
+     * <head
+     *      <top part
+     *          <title
+     *          <toggle
+     *      <bottom part
+     *          <uis
+     * <body
+     *      <cell view
+     *      <cell view
      */
     createContainers = function(){
         this.headContainer = document.createElement('div');
         this.bodyContainer = document.createElement('div');
         this.uinarrativetitle = document.createElement('div');
+        var toppart = document.createElement('div');
+        var botpart = document.createElement('div');
 
         this.container.classList.add(NASettings.CSSClasses.NarrativeListView.Container);
         this.headContainer.classList.add(NASettings.CSSClasses.NarrativeListView.HeadContainer);
+        toppart.classList.add(NASettings.CSSClasses.NarrativeListView.HeadTopPart);
+        botpart.classList.add(NASettings.CSSClasses.NarrativeListView.HeadBottomPart);
         this.bodyContainer.classList.add(NASettings.CSSClasses.NarrativeListView.BodyContainer);
-
         this.headContainer.style.background = this.color;
-
         this.uinarrativetitle.innerHTML = this.narrative.name;        
         this.uinarrativetitle.classList.add(NASettings.CSSClasses.NarrativeListView.Title);
 
@@ -347,23 +366,30 @@ class NarrativeListView{
             t.unhighlightCells(t.narrative.cells);
         }
 
-
-        this.container.append(this.headContainer);
-        this.container.append(this.bodyContainer);
-        this.headContainer.appendChild(this.uinarrativetitle);
-
-
         var toggleButton = document.createElement('button');
-        toggleButton.innerHTML = 'Toggle';
+        toggleButton.classList.add(NASettings.CSSClasses.NarrativeListView.ToggleButton);
+        toggleButton.innerHTML = '▼';
 
         toggleButton.onclick = function(){
             if(t.bodyContainer.style.display != 'none'){
                 t.bodyContainer.style.display = 'none';
+                this.innerHTML = '▲';
+
             }else{
                 t.bodyContainer.style.display = 'block';
+                this.innerHTML = '▼';
             }
         }
-        this.headContainer.append(toggleButton);
+
+        this.container.append(this.headContainer);
+        this.container.append(this.bodyContainer);
+
+        toppart.appendChild(this.uinarrativetitle);
+        toppart.appendChild(toggleButton);
+        this.headContainer.appendChild(toppart);
+        this.headContainer.appendChild(botpart);
+        this.headContainer.toppart = toppart;
+        this.headContainer.bottompart = botpart;
     }
 
     
@@ -422,9 +448,10 @@ class NarrativeListView{
      */
     createAssignNodesButton = function(){
         var buttonAssignNode = document.createElement('button');
-        buttonAssignNode.innerHTML = "Assign Nodes";        
+        buttonAssignNode.innerHTML = "←";  
+        buttonAssignNode.title = NASettings.Language.English["assign"];        
         buttonAssignNode.onclick = this.assignNode.bind(null, this);
-        this.headContainer.append(buttonAssignNode);
+        this.headContainer.bottompart.append(buttonAssignNode);
     }
 
     /**
@@ -466,11 +493,10 @@ class NarrativeListView{
             //container of the view
             var container = document.createElement('div'); //main container
             var textcontainer = document.createElement('div');
-            textcontainer.style.display = "inline list-item";
-            var uicontainer = document.createElement('div');
-            uicontainer.style.display = "inline";
-            uicontainer.style.float = "right";
+            textcontainer.classList.add(NASettings.CSSClasses.NarrativeListView.CellViewTitle);
 
+            var uicontainer = document.createElement('div');
+            uicontainer.classList.add(NASettings.CSSClasses.NarrativeListView.CellViewUIContainer);
             container.append(textcontainer);
             container.append(uicontainer);
 
@@ -478,13 +504,14 @@ class NarrativeListView{
             textcontainer.innerHTML = titlecell.value;
             container.cell = cell;
             container.style.cursor = 'pointer';
-            container.classList.add(NASettings.CSSClasses.NarrativeListView.NodeContainer);
+            container.classList.add(NASettings.CSSClasses.NarrativeListView.CellViewContainer);
             container.id = cell.id;
             
             //create unasign button
             var unasignButton = document.createElement('button');
-            unasignButton.innerHTML = 'x';
-            unasignButton.style.cursor = 'pointer';
+            unasignButton.classList.add(NASettings.CSSClasses.NarrativeListView.CellViewUnassignButton);
+            unasignButton.innerHTML = '→';
+            unasignButton.title = NASettings.Language.English["unassign"];
             unasignButton.onclick = this.unasignCell.bind(null, this, cell); //handler to remove this cell from the group
             uicontainer.append(unasignButton);
 

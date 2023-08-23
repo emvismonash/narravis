@@ -1,16 +1,3 @@
-.naAccordionViewContainer{
-    border: 1px solid #ccc;
-    margin: 2px;
-    padding: 2px;
-}
-
-.naAccordionViewHeadContainer{
-    padding: 5px;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
 .naSidePanel{
     width: 100%;
 }
@@ -26,3 +13,55 @@
 .geSidebarContainer {
     overflow: auto !important;
 }
+
+.nalv-nodecontainer {
+  /* styles for NodeContainer */
+}
+
+.nalv-container {
+  /* styles for Container */
+  border: 1px solid #ccc;
+  margin: 2px;
+  padding: 2px;
+}
+
+.nalv-headcontainer {
+    padding: 5px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;}
+
+.nalv-bodycontainer {
+  /* styles for BodyContainer */
+}
+
+.nalv-title {
+  /* styles for Title */
+}
+
+.nalv-togglebutton {
+    color: darkgray;
+    background: transparent;
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+.nalv-cellviewcontainer, .nalv-headtoppart{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.nalv-cellviewtitle {
+  /* styles for CellViewTitle */
+}
+
+.nalv-cellviewunassignbutton {
+  /* styles for CellViewUnassignButton */
+}
+
+.nalv-cellviewuicontainer {
+
+}
+
