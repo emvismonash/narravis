@@ -853,15 +853,6 @@ class NarrativeAbductionApp {
 
 
     /**
-     * Is the given cell narrative cell
-     * @param {*} cell 
-     * @returns 
-     */
-    isCellNarrative = function(cell){
-        return (cell.value != undefined && cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVE);
-    }
-
-    /**
      * Create the container cell that will contain the narrative cells
      */
     createNarrativeListCell = function(){
@@ -1063,6 +1054,35 @@ class NarrativeAbductionApp {
         }
     }
 
+    getNarrativeCells = function(cells)
+    {
+        var nacells = [];
+        cells.forEach(cell => {
+            if(Narrative.isCellNarrative(cell)) nacells.push(cell);
+        });
+        //not found, they might be inside the narrative list cell
+        if(nacells.length == 0){
+            cells.forEach(cell => {
+                if(this.isCellNarrativeList(cell)) {
+                    console.log("Narrative list", cell);
+                    var children = cell.children;
+                    if(children){
+                        children.forEach(child => {
+                            if(Narrative.isCellNarrative(child)) nacells.push(child);
+                        });
+                    }
+                }
+            });
+        }
+
+        return nacells;
+    }
+
+    isCellNarrativeList = function(cell){
+        return (cell.value && cell.value.tagName && cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVELIST);
+    }
+
+
     /**
      * Check for existing narrative cells and update the view accordingly
      */
@@ -1074,8 +1094,12 @@ class NarrativeAbductionApp {
         var cells = graph.getSelectionCells();
         console.log("Cells", cells);
 
-        cells.forEach(cell => {
-            if(t.isCellNarrative(cell)){
+        var nacells = this.getNarrativeCells(cells);
+        console.log("nacells", nacells);
+
+        nacells.forEach(cell => {
+            
+            if(Narrative.isCellNarrative(cell)){
                 console.log("loadExistingNarratives", cell);
                 var na = new Narrative(cell, graph, NASettings.Language.English.newnarrative, cell.id);
                 this.narratives.push(na);
