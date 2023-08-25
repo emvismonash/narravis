@@ -702,6 +702,7 @@ class NarrativeAbductionApp {
                 type: "edge"
             }
         ];
+        this.documentitemminwidth = 250;
     }
 
 
@@ -715,6 +716,7 @@ class NarrativeAbductionApp {
         //this.installStackedLayout();
         this.initResponsiveSizeHandlerVanilaContent();
         this.initListenerDocumentSizeAfterDescriptionEdit();
+        this.initListenerConvertValueString();
         this.initShapePickerHandler();
         this.initNewCellHandler();
         this.initRemoveNarrativeCellHandler();
@@ -794,11 +796,27 @@ class NarrativeAbductionApp {
             });
     }
 
+    
+    
+    updateDescriptionHeightBasedOnContent = function(descell){
+         //get html
+         var html = document.getElementById(descell.id+"-description");
+         if(html){
+            console.log("html", html);
+            console.log("html.height", html.getBoundingClientRect().height);
+             console.log(" descell.geometry.height",  descell.geometry.height);
+             var height = html.offsetHeight;
+             descell.geometry.height = height;
+             console.log(" descell.geometry.height",  descell.geometry.height);
+         }
+    }
+
     /**
      * Handler for when the vanila document item size is updated
      */
     initResponsiveSizeHandlerVanilaContent = function(){
        var graph = this.editorui.editor.graph;
+       var t = this;
        // Handle resizing of the cell
        graph.addListener(mxEvent.RESIZE_CELLS, function(sender, evt) {
            var cells = evt.getProperty('cells');
@@ -808,23 +826,45 @@ class NarrativeAbductionApp {
                var newWidth = cell.geometry.width;
                var newHeight = cell.geometry.height;
                console.log("Cell resize", cell);
+               //update children size
                if(cell.children){
                    cell.children.forEach(child => {
                     console.log("child", child);
 
                     var natype = child.natype;
+                    // this is a title
                     if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE){
-                        child.geometry.width = newWidth - 30;
+                        child.geometry.width = newWidth;
                     }
+                    //this is a description
                     if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION){
-                        child.geometry.width = newWidth - 30;
-                        child.geometry.height = newHeight - 50;
+                        child.geometry.width = newWidth;
+                        //get html
+                        t.updateDescriptionHeightBasedOnContent(child);
                     }
                       
                    });
                }
+
+               //make sure to follow minimum width
+               cell.geometry.width = Math.max(newWidth, t.documentitemminwidth);
            }
         });
+   }
+
+
+   initListenerConvertValueString = function(){
+        var graph = this.editorui.editor.graph;        
+        graph.convertValueToString = function(cell)
+        {
+            if(cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE)){
+                return "";
+            }else{
+                var value = cell.value;
+                var htmlvalue = "<div id ='"+cell.id+"-description' style='background:#eee;border-radius:5px;width:100%height:100%;'>" + value + "</div>";
+                return htmlvalue;
+            }
+        }
    }
 
    /**
@@ -1500,12 +1540,12 @@ class NarrativeAbductionApp {
             documentcell = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
             documentcell.setStyle(style);
             var nodetitle = graph.insertVertex(documentcell, null, objtitle, 10, 10, 320, 30);
-            nodetitle.setStyle("text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
+            nodetitle.setStyle("html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
             nodetitle.setValue(titlename);
             nodetitle.natype = NASettings.Dictionary.ATTRIBUTTES.DOCTITLE;
             nodetitle.setConnectable(false);            
             var nodedesc = graph.insertVertex(documentcell, null, objdescription, 10, 50, 320, 100);
-            nodedesc.setStyle("text;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;");
+            nodedesc.setStyle("html=1;text;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;");
             nodedesc.setValue("Desription");
             nodedesc.setConnectable(false);
             nodedesc.natype = NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION;
