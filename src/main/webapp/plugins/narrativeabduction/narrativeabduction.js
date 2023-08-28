@@ -54,7 +54,8 @@ class NASettings{
             "newnarrative": "New Narrative",
             "loadnarratives": "Load Narratives",
             "assign": "Assign",
-            "unassign": "Unassign"
+            "unassign": "Unassign",
+            "description": "Description"
         }
     }
     static Colors = {
@@ -702,7 +703,15 @@ class NarrativeAbductionApp {
                 type: "edge"
             }
         ];
+        this.documentcellwidth = 350;
+        this.documentcellheight = 200;
         this.documentitemminwidth = 250;
+        this.documentitemminheight = 100;
+        this.titlecellstyle = "html=1;text;moveable=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;";
+        this.descriptioncellstyle = "html=1;text;moveable=0;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;";
+        this.titlecellheight = 50;
+        this.titlecellcontenthmtlstyle = "padding:5px;padding-left:15px;background:#eee;border-radius:5px;";
+        this.descriptioncellcontenthtmlstyle = "padding:5px;padding-left:15px;background:#eee;border-radius:5px;";
     }
 
 
@@ -710,365 +719,20 @@ class NarrativeAbductionApp {
      * Initialisation 
      */
     _init = function(){      
-        this.initNarrativesView();
+        this.createNarrativesView();
         this.createNAPanel();
         this.createPalette();     
         //this.installStackedLayout();
-        this.initResponsiveSizeHandlerVanilaContent();
+        this.initListenerResponsiveSizeHandlerVanilaContent();
         this.initListenerDocumentSizeAfterDescriptionEdit();
-        this.initListenerConvertValueString();
-        this.initShapePickerHandler();
-        this.initNewCellHandler();
+        this.initOverrideConvertValueString();
+        this.initOverrideShapePickerHandler();
+        this.initOverrrideNewCellHandler();
         this.initRemoveNarrativeCellHandler();
-        this.initEdgeDoubleClickEditHandler();
+        this.initListenerEdgeDoubleClickEditHandler();
         this.updateMoreShapesButton();
         this.loadExistingNarratives();
 
-    }
-
-    /**
-     * Return the narrative entry
-     */
-    getNarrativeEntry = function(){
-        var res = null;
-        this.naentries.forEach(function(elem){
-            if(elem.name == NASettings.Dictionary.CELLS.NARRATIVE){
-                res = elem;
-            }
-        })
-        return res;
-    };
-
-    /**
-     * Update position of more shape button
-     */
-    updateMoreShapesButton = function(){
-            var buttons = document.getElementsByClassName("geSidebarFooter");
-            console.log("Buttons", buttons);
-            var t = this;
-            Array.from(buttons).forEach(function(elm){
-                console.log("Element", elm.innerHTML);
-                if(elm.innerHTML.includes('More Shapes')){
-                    elm.style.position = 'relative';
-                    t.panelwindow.append(elm);
-                }
-            });
-     }
-    
-     /**
-     * Hide Mode Shapes button on the Side bar
-     */
-     hideMoreShapesButton = function(){
-        var buttons = document.getElementsByClassName("geSidebarFooter");
-        console.log("Buttons", buttons);
-        Array.from(buttons).forEach(function(elm){
-            console.log("Element", elm.innerHTML);
-            if(elm.innerHTML.includes('More Shapes')){
-                elm.style.display = 'none';
-            }
-        });
-    }
-
-    /**
-     * This responsive handler is for HTML document title 
-     */
-    initResponsiveSizeHandlerHTMLContent = function(){
-         // Define responsive styles using CSS
-         var css = document.styleSheets[0];
-         css.insertRule('.responsive-content { width: 100%; height: 100%; display: inline-block; justify-content: center; align-items: center; }', 0);
-
-        var graph = this.editorui.editor.graph;
-        // Handle resizing of the cell
-        graph.addListener(mxEvent.RESIZE_CELLS, function(sender, evt) {
-            var cells = evt.getProperty('cells');
-            for (var i = 0; i < cells.length; i++) {
-                var cell = cells[i];
-                var newWidth = cell.geometry.width;
-                var newHeight = cell.geometry.height;
-                console.log("Cell resize", cell);
-                if(cell.children){
-                    cell.children.forEach(child => {
-                        child.geometry.width = newWidth;
-                        child.geometry.height = newHeight - 20;
-                    });
-                }
-            }
-            });
-    }
-
-    
-    
-    updateDescriptionHeightBasedOnContent = function(descell){
-         //get html
-         var html = document.getElementById(descell.id+"-description");
-         if(html){
-            console.log("html", html);
-            console.log("html.height", html.getBoundingClientRect().height);
-             console.log(" descell.geometry.height",  descell.geometry.height);
-             var height = html.offsetHeight;
-             descell.geometry.height = height;
-             console.log(" descell.geometry.height",  descell.geometry.height);
-         }
-    }
-
-    /**
-     * Handler for when the vanila document item size is updated
-     */
-    initResponsiveSizeHandlerVanilaContent = function(){
-       var graph = this.editorui.editor.graph;
-       var t = this;
-       // Handle resizing of the cell
-       graph.addListener(mxEvent.RESIZE_CELLS, function(sender, evt) {
-           var cells = evt.getProperty('cells');
-           for (var i = 0; i < cells.length; i++) {
-               var cell = cells[i];
-               console.log("Cell", cell);
-               var newWidth = cell.geometry.width;
-               var newHeight = cell.geometry.height;
-               console.log("Cell resize", cell);
-               //update children size
-               if(cell.children){
-                   cell.children.forEach(child => {
-                    console.log("child", child);
-
-                    var natype = child.natype;
-                    // this is a title
-                    if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE){
-                        child.geometry.width = newWidth;
-                    }
-                    //this is a description
-                    if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION){
-                        child.geometry.width = newWidth;
-                        //get html
-                        t.updateDescriptionHeightBasedOnContent(child);
-                    }
-                      
-                   });
-               }
-
-               //make sure to follow minimum width
-               cell.geometry.width = Math.max(newWidth, t.documentitemminwidth);
-           }
-        });
-   }
-
-
-   initListenerConvertValueString = function(){
-        var graph = this.editorui.editor.graph;        
-        graph.convertValueToString = function(cell)
-        {
-            if(cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE)){
-                return "";
-            }else{
-                var value = cell.value;
-                var htmlvalue = "<div id ='"+cell.id+"-description' style='background:#eee;border-radius:5px;width:100%height:100%;'>" + value + "</div>";
-                return htmlvalue;
-            }
-        }
-   }
-
-   /**
-    * Update the height of the document item to accomodate the description
-    */
-   initListenerDocumentSizeAfterDescriptionEdit = function(){
-        var graph = this.editorui.editor.graph;
-        graph.addListener(mxEvent.LABEL_CHANGED, function(sender, evt) {
-            var cell = evt.getProperty('cell'); // Get the cell whose label changed
-            var newValue = evt.getProperty('value'); // Get the new label value
-            var natype = cell.natype;
-            console.log("cell", cell);
-            console.log("natype", natype);
-
-            if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION){
-                console.log("cell", cell);
-                console.log("new value", newValue);
-                console.log("geometry", cell.geometry);
-            }
-
-        });
-   }
-
-
-
-    /**
-     * Create the container cell that will contain the narrative cells
-     */
-    createNarrativeListCell = function(){
-        var entry = this.getEntryByName(NASettings.Dictionary.CELLS.NARRATIVELIST);
-        var graph = this.editorui.editor.graph;
-        var doc = mxUtils.createXmlDocument();
-        var obj = doc.createElement(entry.name);    
- 
-        console.log("entry", entry);
-        graph.getModel().beginUpdate();
-        try{
-            var cell = graph.insertVertex(graph.getDefaultParent(), null, obj, 0, 0, 100, 100); 
-            cell.setStyle(entry.style);  
-            this.narrativelistcell = cell;
-            console.log("cell", cell);
-        }finally{
-            graph.getModel().endUpdate();
-        }
-    }
-
-    /**
-     * Remove cell handler
-     */
-    initRemoveNarrativeCellHandler = function(){
-        var graph = this.editorui.editor.graph;
-        var t = this;
-
-        graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt) {
-            var cells = evt.getProperty('cells');
-            console.log("Cell removed", cells[0]);  
-            cells.forEach(cell => {
-                //if the cell is narrative, remove the view as well 
-                if(Narrative.isCellNarrative(cell)){  
-                    console.log("Narrative removed", cell);  
-                    t.narrativeaviewscontainer.removeListView(cell);
-                }   
-            });
-
-          });      
-    }
-
-    /**
-     * Trigger custom functions everytime a new cell is added
-     */
-    initNewCellHandler = function(){
-        var graph = this.editorui.editor.graph;
-        var t = this;
-        graph.addListener(mxEvent.CELLS_ADDED, function(sender, evt)
-        {
-            //if edge, show Contextual Edge Option Menu
-            var cells = evt.getProperty('cells');   
-            console.log("new cells", cells);
-            if(cells[0] && cells[0].isEdge()){     
-                //edge type based on target node
-                var edge = cells[0];
-                var target = edge.target.value.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE);
-                switch(target){
-                    case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
-                        t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
-                        break;
-                    default:
-                        t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
-                        break;
-                }
-               // t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
-            } 
-            //if the cell is Narrative, trigger create a new narrative action
-            if(cells[0].getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) == NASettings.Dictionary.CELLS.NARRATIVE){
-                graph.removeCells([cells[0]]);
-                t.newNarrative();
-            }                
-        });
-    }
-
-    /**
-     * Prevent editing with double click
-     */
-    initEdgeDoubleClickEditHandler = function(){
-        var graph = this.editorui.editor.graph;
-        var t = this;
-        graph.addListener(mxEvent.DOUBLE_CLICK, function(sender, evt)
-        {
-            //if edge, show Contextual Edge Option Menu
-            var cell = evt.getProperty('cell');   
-            if(cell != null && cell.isEdge())
-            {    
-                var event = evt.getProperty('event');
-                t.showContextualEdgeOptionMenu(cell , event.x, event.y);
-            }                 
-        });
-        
-    }
-
-   /**
-    * Take the edge and turn it into Cause link
-    * @param {*} edge 
-    */
-    setEdgeType = function(edge, target){
-        var graph = this.editorui.editor.graph;
-        var causeLink = this.getEntryByName(target);
-        if(causeLink){
-          graph.getModel().beginUpdate();
-          try
-          {
-              graph.getModel().setValue(edge, target.replace("Link","") + "s");
-              graph.setCellStyle(causeLink.style, [edge]);
-          }
-          finally
-          {
-              graph.getModel().endUpdate();
-          }
-        }      
-    }
-
-    /**
-     * Show link type option when two nodes are connected. In the vanila version, the default link will be "Cause". 
-     */
-    initConnectionHandler = function(){
-        var graph = this.editorui.editor.graph;
-        var t = this;
-
-        graph.connectionHandler.addListener(mxEvent.CONNECT, function(sender, evt)
-        {
-          var edge = evt.getProperty('cell');
-          var source = graph.getModel().getTerminal(edge, true);
-          var target = graph.getModel().getTerminal(edge, false);
-          var event = evt.getProperty('event');
-                  
-          console.log("Connected");
-          console.log("Source", source);
-          console.log("Target", target);
-          console.log("evt", evt);
-
-          //t.showContextualEdgeOptionMenu(edge, event.x, event.y); //no contextual menu by default
-          //by default the link will be causes link
-          t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);    
-        });
-    }
-
-    /**
-     * Update graph model base on LOD if specified
-     */
-    initLODUpdate = function(){
- 			// Links level of detail to zoom level but can be independent of zoom
-             var t = this;
-             this.editorui.editor.graph.isCellVisible = function(cell)
-             {
-                //  console.log("Zooming", t.editorui.editor.graph.view.scale);
-                //  console.log("Cell LOD", cell.lod);     
-                 return cell.lod == null || cell.lod / 2 < t.editorui.editor.graph.view.scale;
-             };
-    }
-
-    /**
-     * Create narrativesviewer window/panel
-     */
-    initNarrativesView = function(){
-        this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives);
-        this.narrativeaviewscontainer.app = this;
-        var container = document.createElement('div');
-        this.editorui.sidebar.container.append(container);
-        this.narrativeaviewscontainer.container = container;
-        container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
-
-        var t = this;
-        // add create narrative buttion
-        NAUtil.AddButton(NASettings.Language.English.newnarrative, container, function(){
-           if(!t.narrativelistcell){
-            t.createNarrativeListCell();
-           }
-           var ret = t.newNarrative();
-           t.addNarrativeCellToList(ret.narrativecell);
-           
-        });
-        // add load narrative buttion
-        // NAUtil.AddButton(NASettings.Language.English.loadnarratives, container, function(){
-        //     t.loadExistingNarratives();
-        //  });
     }
 
     /**
@@ -1092,131 +756,143 @@ class NarrativeAbductionApp {
         }
     }
 
-    getNarrativeCells = function(cells)
-    {
-        var nacells = [];
-        cells.forEach(cell => {
-            if(Narrative.isCellNarrative(cell)) nacells.push(cell);
-        });
-        //not found, they might be inside the narrative list cell
-        if(nacells.length == 0){
-            cells.forEach(cell => {
-                if(this.isCellNarrativeList(cell)) {
-                    console.log("Narrative list", cell);
-                    var children = cell.children;
-                    if(children){
-                        children.forEach(child => {
-                            if(Narrative.isCellNarrative(child)) nacells.push(child);
-                        });
-                    }
-                }
-            });
+        /**
+     * Create link. This is still not working well as it creates two empty nodes 
+     * @param {*} itemname 
+     * @param {*} style 
+     * @returns 
+     */
+        createLinkItem = function(itemname, style){
+
+            var graph = new mxGraph();
+            var parent = graph.getDefaultParent();                           
+            graph.getModel().beginUpdate();
+            var linkcell;
+            try
+            {
+                var v1 = graph.insertVertex(parent, null, null, 200, 0, 1, 1, 'opacity=0;');        
+                var v2 = graph.insertVertex(parent, null, null, 0, 0, 1, 1, 'opacity=0;');        
+    
+                linkcell = graph.insertEdge(parent, null, '', v2, v1);
+                linkcell.setStyle(style);
+                linkcell.value = itemname;
+            }
+            finally
+            {
+                graph.getModel().endUpdate();
+            }
+            return {
+                xml: NAUtil.ModelToXML(graph),
+                graph: graph,
+                cell: linkcell
+            }
         }
-
-        return nacells;
-    }
-
-    isCellNarrativeList = function(cell){
-        return (cell.value && cell.value.tagName && cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVELIST);
-    }
-
-
-    /**
-     * Check for existing narrative cells and update the view accordingly
-     */
-    loadExistingNarratives = function(){
-        var t = this;
-        var graph = t.editorui.editor.graph;
-
-        t.editorui.editor.graph.selectAll();
-        var cells = graph.getSelectionCells();
-        console.log("Cells", cells);
-
-        var nacells = this.getNarrativeCells(cells);
-        console.log("nacells", nacells);
-
-        nacells.forEach(cell => {
+    
+        /**
+         * Create a document node in HTML content format
+         * @param {*} graph 
+         * @param {*} entry 
+         * @returns 
+         */
+        createDocumentItemHTMLCell = function(graph, entry){
+            var itemname = entry.name;
+            var titlename = entry.titlename;
+            var descrname = entry.descrname;
+            var style = entry.style;
+      
+            var doc = mxUtils.createXmlDocument();
+            var docmain = doc.createElement(itemname);
+            var doccontent = doc.createElement(NASettings.Dictionary.UI.NAHTMLCONTENT);
+            docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, itemname);
+            //these attributes can be used to visualise the document item
+            doccontent.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.UI.NAHTMLCONTENT);
+            docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE, titlename);
+            docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION, descrname);
+    
+            var parent = graph.getDefaultParent();       
+            var documentcell;
+            var contentcell;
+            try
+            {
+                documentcell = graph.insertVertex(parent, null, docmain, 200, 150, 350, 150);
+                documentcell.setStyle(style);
+                contentcell = graph.insertVertex(documentcell, null, doccontent,  0, 20, 350, 130);
+                contentcell.setStyle("html=1;movable=0;editable=0;whiteSpace=wrap;overflow=hidden;resizable=0;rotatable=0;deletable=0;locked=0;connectable=0;");
+                this.updateHTMLDocumentItemAppearance(documentcell, contentcell); // here is the visualisation happens
+                //disable direct edit
+    
+            }
+            finally
+            {
+                graph.getModel().endUpdate();
+    
+            }        
+            return documentcell;
+        }
+    
+        /**
+         * Create the cell for a document item in label + content format
+         * @param {*} graph 
+         * @param {*} entry 
+         * @returns 
+         */
+        createDocumentItemCell = function(graph, entry){
+            var itemname = entry.name;
+            var titlename = entry.titlename;
+            var descrname = entry.descrname;
+            var style = entry.style;
+    
+            var doc = mxUtils.createXmlDocument();
+            var objna = doc.createElement(itemname);
+            objna.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, itemname);
+    
+            var objtitle = doc.createElement(titlename);
+            objtitle.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.ATTRIBUTTES.DOCTITLE);
+    
+            var objdescription = doc.createElement(descrname);
+            objdescription.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION);
+    
             
-            if(Narrative.isCellNarrative(cell)){
-                console.log("loadExistingNarratives", cell);
-                var na = new Narrative(cell, graph, NASettings.Language.English.newnarrative, cell.id);
-                this.narratives.push(na);
-                var nalistview = this.narrativeaviewscontainer.addNarrativeListView(na, cell); //add accordion view
-                
-                //then, we need to re-assign cells to this narrative. These cells ids are store in the cells proprty
-                var cellstring = cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS);
-                var cellsidsarray = Narrative.stringCellsToArray(cellstring);
-                var cellsarray = [];
-                cellsidsarray.forEach(id => {                                        
-                    var cell = graph.getModel().getCell(id);
-                    if(cell) cellsarray.push(cell);
-                });
-                console.log("cellsarray", cellsarray);
-                nalistview.assignNodes(cellsarray);
-            }  
-        });
-        t.editorui.editor.graph.removeSelectionCells(cells);
-    }
+            var parent = graph.getDefaultParent();       
+            var documentcell;
+            try
+            {
+                documentcell = graph.insertVertex(parent, null, objna, 200, 150, this.documentcellwidth, this.documentcellheight);
+                documentcell.setStyle(style);
+                var nodetitle = graph.insertVertex(documentcell, null, objtitle, 0, 0, this.documentcellwidth, this.titlecellheight);
+                nodetitle.setStyle(this.titlecellstyle);
+                nodetitle.setValue(titlename);
+                nodetitle.natype = NASettings.Dictionary.ATTRIBUTTES.DOCTITLE;
+                nodetitle.setConnectable(false);            
+                var nodedesc = graph.insertVertex(documentcell, null, objdescription, 0, this.titlecellheight, this.documentcellwidth, this.documentcellheight - this.titlecellheight);
+                nodedesc.setStyle(this.descriptioncellstyle);
+                nodedesc.setValue(NASettings.Language.English["description"]);
+                nodedesc.setConnectable(false);
+                nodedesc.natype = NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION;
+            }
+            finally
+            {
+                graph.getModel().endUpdate();
+            }        
+    
+            return documentcell;
+        }
+    
 
     /**
-     * Create a new narrative, trigger create narrative view and narrative cell
+     * Create document item cell for the Shape picker and Palette
+     * @returns 
      */
-    newNarrative = function(){        
-        var narrativeentry = this.getNarrativeEntry(); //get narrative entry from the entries list
-        var graph = this.editorui.editor.graph;
-        var parent = graph.getDefaultParent();  
-        var doc = mxUtils.createXmlDocument();
-        var objna = doc.createElement(narrativeentry.name);    
- 
-        var narrativecell;
-        var narrview;
-        var na;
-        graph.getModel().beginUpdate();
-       //add the narrative cell
-       try
-       {
-            narrativecell = graph.insertVertex(parent, null, objna, 0, 0, 100, 100);       
-            graph.setCellStyle(narrativeentry.style, [narrativecell]);  
-       }
-       finally
-       {
-           graph.getModel().endUpdate();
-           //create narrative object and view
-           na = new Narrative(narrativecell, graph, NASettings.Language.English.newnarrative, narrativecell.id);
-           this.narratives.push(na);
-           narrview =  this.narrativeaviewscontainer.addNarrativeListView(na, narrativecell); //add accordion view
-           
-           //trigger new narrative event
-           this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
-               detail: {
-                   narrative: na, 
-                   narrativecell: narrativecell
-               }, 
-           });
-           dispatchEvent(this.#event);
-
-            //if objects are selected, add them automatically to the narrative
-            var selectedCells = graph.getSelectionCells();
-            if(selectedCells && narrview){
-                narrview.assignNodes(selectedCells);
-           }   
-       }     
-       return{
-        narrative: na, 
-        narrativeview: narrview,
-        narrativecell: narrativecell
-       }
+    createDocumentItem = function(entry){
+        var graph = new mxGraph();
+        var documentcell  = this.createDocumentItemCell(graph, entry); //there are two options, HTML Document or Simple label + description. 
+        //this.insertListenerHTMLDocumentItemDoubleClick(entry);  //disable double click window editor     
+        return {
+            xml: NAUtil.ModelToXML(graph),
+            graph: graph,
+            cell: documentcell
+        }
     }
-
-    /**
-     * Remove narrative from the list
-     * @param {*} narrative 
-     */
-    deleteNarrative = function(narrative){
-        this.narratives.splice(this.narratives.indexOf(narrative), 1);
-    }
-
-
     /**
      * Create NA Panel Window
      */
@@ -1375,47 +1051,303 @@ class NarrativeAbductionApp {
 
     }
 
-    /**
-     * check whether or not the entry should be included in the shape picker
-     * @param {*} entry 
-     * @returns 
+        /**
+     * Create palette for the side bar
      */
-    isValidShapePickerItem = function(entry){
-        return (entry.type == "node" && !this.excludefrompicker.includes(entry.name));
+        createPalette = function(){
+            var entries = []; //all palette entries
+            for(var i = 0; i < this.naentries.length;i++){
+                var res;
+                if(this.isValidShapePickerItem(this.naentries[i])){
+                    var entry = this.naentries[i];
+                    entry.titlename = NAUtil.GetCellChildrenLabels(this.naentries[i].name).title;
+                    entry.descname = NAUtil.GetCellChildrenLabels(this.naentries[i].name).description;
+    
+                    res = this.createDocumentItem(entry);
+                    this.naentries[i].xml = res.xml;
+                    this.naentries[i].graph = res.graph;                
+                        entries.push(
+                        this.editorui.sidebar.addDataEntry(
+                            this.naentries[i].name, 0, 0, this.naentries[i].name, Graph.compress(this.naentries[i].xml))
+                            );
+                    }
+                    console.log("Entires", entries);
+                } 
+                //else{
+                //     res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
+                // }
+                NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);                          
+        }
+    
+
+    /**
+     * Create the container cell that will contain the narrative cells
+     */
+    createNarrativeListCell = function(){
+        var entry = this.getEntryByName(NASettings.Dictionary.CELLS.NARRATIVELIST);
+        var graph = this.editorui.editor.graph;
+        var doc = mxUtils.createXmlDocument();
+        var obj = doc.createElement(entry.name);    
+ 
+        console.log("entry", entry);
+        graph.getModel().beginUpdate();
+        try{
+            var cell = graph.insertVertex(graph.getDefaultParent(), null, obj, 0, 0, 100, 100); 
+            cell.setStyle(entry.style);  
+            this.narrativelistcell = cell;
+            console.log("cell", cell);
+        }finally{
+            graph.getModel().endUpdate();
+        }
     }
 
     /**
-     * Create palette for the side bar
+     * Create narrativesviewer window/panel
      */
-    createPalette = function(){
-        var entries = []; //all palette entries
-        for(var i = 0; i < this.naentries.length;i++){
-            var res;
-            if(this.isValidShapePickerItem(this.naentries[i])){
-                var entry = this.naentries[i];
-                entry.titlename = NAUtil.GetCellChildrenLabels(this.naentries[i].name).title;
-                entry.descname = NAUtil.GetCellChildrenLabels(this.naentries[i].name).description;
+    createNarrativesView = function(){
+        this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives);
+        this.narrativeaviewscontainer.app = this;
+        var container = document.createElement('div');
+        this.editorui.sidebar.container.append(container);
+        this.narrativeaviewscontainer.container = container;
+        container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
 
-                res = this.createDocumentItem(entry);
-                this.naentries[i].xml = res.xml;
-                this.naentries[i].graph = res.graph;                
-                    entries.push(
-                    this.editorui.sidebar.addDataEntry(
-                        this.naentries[i].name, 0, 0, this.naentries[i].name, Graph.compress(this.naentries[i].xml))
-                        );
+        var t = this;
+        // add create narrative buttion
+        NAUtil.AddButton(NASettings.Language.English.newnarrative, container, function(){
+           if(!t.narrativelistcell){
+            t.createNarrativeListCell();
+           }
+           var ret = t.newNarrative();
+           t.addNarrativeCellToList(ret.narrativecell);
+           
+        });
+        // add load narrative buttion
+        // NAUtil.AddButton(NASettings.Language.English.loadnarratives, container, function(){
+        //     t.loadExistingNarratives();
+        //  });
+    }
+
+    /**
+     * Remove narrative from the list
+     * @param {*} narrative 
+     */
+    deleteNarrative = function(narrative){
+        this.narratives.splice(this.narratives.indexOf(narrative), 1);
+    }
+       
+    /**
+     * Return the narrative entry
+     */
+    getNarrativeEntry = function(){
+        var res = null;
+        this.naentries.forEach(function(elem){
+            if(elem.name == NASettings.Dictionary.CELLS.NARRATIVE){
+                res = elem;
+            }
+        })
+        return res;
+    };
+
+    getNarrativeCells = function(cells)
+    {
+        var nacells = [];
+        cells.forEach(cell => {
+            if(Narrative.isCellNarrative(cell)) nacells.push(cell);
+        });
+        //not found, they might be inside the narrative list cell
+        if(nacells.length == 0){
+            cells.forEach(cell => {
+                if(this.isCellNarrativeList(cell)) {
+                    console.log("Narrative list", cell);
+                    var children = cell.children;
+                    if(children){
+                        children.forEach(child => {
+                            if(Narrative.isCellNarrative(child)) nacells.push(child);
+                        });
+                    }
                 }
-                console.log("Entires", entries);
-            } 
-            //else{
-            //     res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
-            // }
-            NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);                          
+            });
+        }
+
+        return nacells;
+    }
+
+   /**
+     * Return the html content of the HTML Document Item
+     * @param {*} title 
+     * @param {*} description 
+     * @returns 
+     */
+   getHTMLDocumentItemContent = function(title, description){
+        return '<div class="responsive-content"><b>'+title+'</b><br/><div>'+description+'</div></div>';
+    }
+
+    getEntryByName = function(name){
+        var ent = null;
+        this.naentries.forEach(element => {
+            if(element.name == name){
+                ent = element;
+                return ent;
+            }
+        });
+
+        return ent;
+    }
+
+
+     /**
+     * Hide Mode Shapes button on the Side bar
+     */
+     hideMoreShapesButton = function(){
+        var buttons = document.getElementsByClassName("geSidebarFooter");
+        console.log("Buttons", buttons);
+        Array.from(buttons).forEach(function(elm){
+            console.log("Element", elm.innerHTML);
+            if(elm.innerHTML.includes('More Shapes')){
+                elm.style.display = 'none';
+            }
+        });
+    }
+
+
+    
+    
+    updateDescriptionHeightBasedOnContent = function(descell){
+         //get html
+         var html = document.getElementById(descell.id+"-description");
+         if(html){
+            console.log("html", html);
+            console.log("html.height", html.getBoundingClientRect().height);
+             console.log(" descell.geometry.height",  descell.geometry.height);
+             var height = html.offsetHeight;
+             descell.geometry.height = height;
+             console.log(" descell.geometry.height",  descell.geometry.height);
+         }
+    }
+
+    /**
+     * This responsive handler is for HTML document title 
+     */
+    initListenerResponsiveSizeHandlerHTMLContent = function(){
+        // Define responsive styles using CSS
+        var css = document.styleSheets[0];
+        css.insertRule('.responsive-content { width: 100%; height: 100%; display: inline-block; justify-content: center; align-items: center; }', 0);
+
+       var graph = this.editorui.editor.graph;
+       // Handle resizing of the cell
+       graph.addListener(mxEvent.RESIZE_CELLS, function(sender, evt) {
+           var cells = evt.getProperty('cells');
+           for (var i = 0; i < cells.length; i++) {
+               var cell = cells[i];
+               var newWidth = cell.geometry.width;
+               var newHeight = cell.geometry.height;
+               console.log("Cell resize", cell);
+               if(cell.children){
+                   cell.children.forEach(child => {
+                       child.geometry.width = newWidth;
+                       child.geometry.height = newHeight - 20;
+                   });
+               }
+           }
+           });
+   }
+
+
+    /**
+     * Handler for when the vanila document item size is updated
+     */
+    initListenerResponsiveSizeHandlerVanilaContent = function(){
+       var graph = this.editorui.editor.graph;
+       var t = this;
+       // Handle resizing of the cell
+       graph.addListener(mxEvent.RESIZE_CELLS, function(sender, evt) {
+           var cells = evt.getProperty('cells');
+           for (var i = 0; i < cells.length; i++) {
+               var cell = cells[i];
+               console.log("Cell", cell);
+               var newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
+               var newHeight = Math.max(cell.geometry.height, t.documentitemminheight);               
+               //make sure to follow minimum width
+               cell.geometry.width = newWidth;
+               cell.geometry.height = newHeight;
+
+               //update children size
+               if(cell.children){
+                   cell.children.forEach(child => {
+                    console.log("child", child);
+
+                    var natype = child.natype;
+                    // this is a title
+                    if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE){
+                        child.geometry.width = newWidth;
+                        child.geometry.top = 0;
+                        child.geometry.left = 0;
+                    }
+                    //this is a description
+                    if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION){
+                        child.geometry.width = newWidth;
+                        child.geometry.height = newHeight - t.titlecellheight;
+                        child.geometry.y = t.titlecellheight;
+                        //get html
+                       // t.updateDescriptionHeightBasedOnContent(child);
+                    }
+                      
+                   });
+               }
+
+           }
+        });
+   }
+
+
+
+   /**
+    * Update the height of the document item to accomodate the description
+    */
+   initListenerDocumentSizeAfterDescriptionEdit = function(){
+        var graph = this.editorui.editor.graph;
+        graph.addListener(mxEvent.LABEL_CHANGED, function(sender, evt) {
+            var cell = evt.getProperty('cell'); // Get the cell whose label changed
+            var newValue = evt.getProperty('value'); // Get the new label value
+            var natype = cell.natype;
+            console.log("cell", cell);
+            console.log("natype", natype);
+
+            if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION){
+                console.log("cell", cell);
+                console.log("new value", newValue);
+                console.log("geometry", cell.geometry);
+            }
+
+        });
+   }
+
+    /**
+     * Remove cell handler
+     */
+    initRemoveNarrativeCellHandler = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+
+        graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt) {
+            var cells = evt.getProperty('cells');
+            console.log("Cell removed", cells[0]);  
+            cells.forEach(cell => {
+                //if the cell is narrative, remove the view as well 
+                if(Narrative.isCellNarrative(cell)){  
+                    console.log("Narrative removed", cell);  
+                    t.narrativeaviewscontainer.removeListView(cell);
+                }   
+            });
+
+          });      
     }
 
     /**
      * Shape-picker override to show NA cells
      */
-    initShapePickerHandler = function(){
+    initOverrideShapePickerHandler = function(){
         //override
         var t = this;
         this.editorui.getCellsForShapePicker = function(cell, hovering, showEdges){
@@ -1435,177 +1367,155 @@ class NarrativeAbductionApp {
             return newcells;
         };
     }
-
-    /**
-     * Create link. This is still not working well as it creates two empty nodes 
-     * @param {*} itemname 
-     * @param {*} style 
-     * @returns 
-     */
-    createLinkItem = function(itemname, style){
-
-        var graph = new mxGraph();
-        var parent = graph.getDefaultParent();                           
-        graph.getModel().beginUpdate();
-        var linkcell;
-        try
+    
+   /**
+    * Override label presentation of the narrative document item
+    */
+   initOverrideConvertValueString = function(){
+        var graph = this.editorui.editor.graph;     
+        var t = this;   
+        graph.convertValueToString = function(cell)
         {
-            var v1 = graph.insertVertex(parent, null, null, 200, 0, 1, 1, 'opacity=0;');        
-            var v2 = graph.insertVertex(parent, null, null, 0, 0, 1, 1, 'opacity=0;');        
-
-            linkcell = graph.insertEdge(parent, null, '', v2, v1);
-            linkcell.setStyle(style);
-            linkcell.value = itemname;
-        }
-        finally
-        {
-            graph.getModel().endUpdate();
-        }
-        return {
-            xml: NAUtil.ModelToXML(graph),
-            graph: graph,
-            cell: linkcell
-        }
-    }
-
-    /**
-     * Create a document node in HTML content format
-     * @param {*} graph 
-     * @param {*} entry 
-     * @returns 
-     */
-    createDocumentItemHTMLCell = function(graph, entry){
-        var itemname = entry.name;
-        var titlename = entry.titlename;
-        var descrname = entry.descrname;
-        var style = entry.style;
-  
-        var doc = mxUtils.createXmlDocument();
-        var docmain = doc.createElement(itemname);
-        var doccontent = doc.createElement(NASettings.Dictionary.UI.NAHTMLCONTENT);
-        docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, itemname);
-        //these attributes can be used to visualise the document item
-        doccontent.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.UI.NAHTMLCONTENT);
-        docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE, titlename);
-        docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION, descrname);
-
-        var parent = graph.getDefaultParent();       
-        var documentcell;
-        var contentcell;
-        try
-        {
-            documentcell = graph.insertVertex(parent, null, docmain, 200, 150, 350, 150);
-            documentcell.setStyle(style);
-            contentcell = graph.insertVertex(documentcell, null, doccontent,  0, 20, 350, 130);
-            contentcell.setStyle("html=1;movable=0;editable=0;whiteSpace=wrap;overflow=hidden;resizable=0;rotatable=0;deletable=0;locked=0;connectable=0;");
-            this.updateHTMLDocumentItemAppearance(documentcell, contentcell); // here is the visualisation happens
-            //disable direct edit
-
-        }
-        finally
-        {
-            graph.getModel().endUpdate();
-
-        }        
-        return documentcell;
-    }
-
-    /**
-     * Create the cell for a document item in label + content format
-     * @param {*} graph 
-     * @param {*} entry 
-     * @returns 
-     */
-    createDocumentItemCell = function(graph, entry){
-        var itemname = entry.name;
-        var titlename = entry.titlename;
-        var descrname = entry.descrname;
-        var style = entry.style;
-
-        var doc = mxUtils.createXmlDocument();
-        var objna = doc.createElement(itemname);
-        objna.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, itemname);
-
-        var objtitle = doc.createElement(titlename);
-        objtitle.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.ATTRIBUTTES.DOCTITLE);
-
-        var objdescription = doc.createElement(descrname);
-        objdescription.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION);
-
-        
-        var parent = graph.getDefaultParent();       
-        var documentcell;
-        try
-        {
-            documentcell = graph.insertVertex(parent, null, objna, 200, 150, 350, 150);
-            documentcell.setStyle(style);
-            var nodetitle = graph.insertVertex(documentcell, null, objtitle, 10, 10, 320, 30);
-            nodetitle.setStyle("html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;movable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;");
-            nodetitle.setValue(titlename);
-            nodetitle.natype = NASettings.Dictionary.ATTRIBUTTES.DOCTITLE;
-            nodetitle.setConnectable(false);            
-            var nodedesc = graph.insertVertex(documentcell, null, objdescription, 10, 50, 320, 100);
-            nodedesc.setStyle("html=1;text;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;movable=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;");
-            nodedesc.setValue("Desription");
-            nodedesc.setConnectable(false);
-            nodedesc.natype = NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION;
-
-            //nodedesc.lod = this.settings.lodupdate; //disable LOD for vanila version
-
-            //disable icon for vanila version
-            // if(entry.iconURL){
-            //     var nodeicon = graph.insertVertex(documentcell, null, "", 10, 300, 100, 100);
-            //     var iconstyle = "shape=image;imageAspect=1;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;rotation=0;labelBackgroundColor=#ffffff;labelBorderColor=none;connectable=0;allowArrows=0;recursiveResize=0;expand=0;editable=1;movable=1;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;image=" + entry.iconURL;
-            //     nodeicon.setStyle(iconstyle);
-            // }
-        }
-        finally
-        {
-            graph.getModel().endUpdate();
-        }        
-
-        return documentcell;
-    }
-
-    /**
-     * This function decides how the content of the HTML Document Item is rendered to HTML element. This function is related to the HTML Document Item format. 
-     * @param {*} contencell 
-     */
-    updateHTMLDocumentItemAppearance = function(doccell, contencell){
-        var title = doccell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE);
-        var des = doccell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION);
-        var html = this.getHTMLDocumentItemContent(title, des);
-        contencell.setValue(html);          
-    }
-
-    /**
-     * Return the html content of the HTML Document Item
-     * @param {*} title 
-     * @param {*} description 
-     * @returns 
-     */
-    getHTMLDocumentItemContent = function(title, description){
-        return '<div class="responsive-content"><b>'+title+'</b><br/><div>'+description+'</div></div>';
-    }
-
-    getEntryByName = function(name){
-        var ent = null;
-        this.naentries.forEach(element => {
-            if(element.name == name){
-                ent = element;
-                return ent;
+            //if the cell is document item, return empty string
+            if(cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE)){
+                return "";
+            }else{ //check title or description
+                if(cell.natype){
+                    switch(cell.natype){
+                        case NASettings.Dictionary.ATTRIBUTTES.DOCTITLE:
+                            var value = cell.value;
+                            var htmlvalue = "<div id ='"+cell.id+"-title' style='"+t.titlecellcontenthmtlstyle+"'>" + value + "</div>";
+                            return htmlvalue;
+                        break;
+                        case NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION:
+                            var value = cell.value;
+                            var htmlvalue = "<div id ='"+cell.id+"-description' style='"+t.descriptioncellcontenthtmlstyle+"'>" + value + "</div>";
+                            return htmlvalue;
+                        break;                       
+                        default:
+                            return cell.value;
+                    }                   
+                }else{
+                    return cell.value;
+                }
             }
-        });
-
-        return ent;
+        }
     }
 
     /**
-     * This is the listener to the new HTML document item, lots of duplicates with insertDocumentItemDoubleClickListener
+     * Trigger custom functions everytime a new cell is added
+     */
+    initOverrrideNewCellHandler = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+        graph.addListener(mxEvent.CELLS_ADDED, function(sender, evt)
+        {
+            //if edge, show Contextual Edge Option Menu
+            var cells = evt.getProperty('cells');   
+            console.log("new cells", cells);
+            if(cells[0] && cells[0].isEdge()){     
+                //edge type based on target node
+                var edge = cells[0];
+                var target = edge.target.value.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE);
+                switch(target){
+                    case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
+                        t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
+                        break;
+                    default:
+                        t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
+                        break;
+                }
+               // t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
+            } 
+            //if the cell is Narrative, trigger create a new narrative action
+            if(cells[0].getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) == NASettings.Dictionary.CELLS.NARRATIVE){
+                graph.removeCells([cells[0]]);
+                t.newNarrative();
+            }                
+        });
+    }
+
+    /**
+     * Prevent editing with double click
+     */
+    initListenerEdgeDoubleClickEditHandler = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+        graph.addListener(mxEvent.DOUBLE_CLICK, function(sender, evt)
+        {
+            //if edge, show Contextual Edge Option Menu
+            var cell = evt.getProperty('cell');   
+            if(cell != null && cell.isEdge())
+            {    
+                var event = evt.getProperty('event');
+                t.showContextualEdgeOptionMenu(cell , event.x, event.y);
+            }                 
+        });
+        
+    }
+
+
+    /**
+     * Show link type option when two nodes are connected. In the vanila version, the default link will be "Cause". 
+     */
+    initListenerConnectionHandler = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+
+        graph.connectionHandler.addListener(mxEvent.CONNECT, function(sender, evt)
+        {
+          var edge = evt.getProperty('cell');
+          var source = graph.getModel().getTerminal(edge, true);
+          var target = graph.getModel().getTerminal(edge, false);
+          var event = evt.getProperty('event');
+                  
+          console.log("Connected");
+          console.log("Source", source);
+          console.log("Target", target);
+          console.log("evt", evt);
+
+          //t.showContextualEdgeOptionMenu(edge, event.x, event.y); //no contextual menu by default
+          //by default the link will be causes link
+          t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);    
+        });
+    }
+
+    /**
+     * Update graph model base on LOD if specified
+     */
+    initOverrideLODUpdate = function(){
+ 			// Links level of detail to zoom level but can be independent of zoom
+             var t = this;
+             this.editorui.editor.graph.isCellVisible = function(cell)
+             {
+                //  console.log("Zooming", t.editorui.editor.graph.view.scale);
+                //  console.log("Cell LOD", cell.lod);     
+                 return cell.lod == null || cell.lod / 2 < t.editorui.editor.graph.view.scale;
+             };
+    }
+
+
+    isCellNarrativeList = function(cell){
+        return (cell.value && cell.value.tagName && cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVELIST);
+    }
+
+    /**
+     * check whether or not the entry should be included in the shape picker
+     * @param {*} entry 
+     * @returns 
+     */
+    isValidShapePickerItem = function(entry){
+        return (entry.type == "node" && !this.excludefrompicker.includes(entry.name));
+    }
+
+
+
+    /**
+     * This is the listener to the new HTML document item, lots of duplicates with insertListenerDocumentItemDoubleClick
      * TODO: remove duplicates
      * @param {*} entry 
      */
-    insertHTMLDocumentItemDoubleClickListener = function(entry){
+    insertListenerHTMLDocumentItemDoubleClick = function(entry){
         var currgraph = this.editorui.editor.graph;
         var t = this;
         // Add on click listener to show the Narrative Item window
@@ -1713,11 +1623,11 @@ class NarrativeAbductionApp {
     }
 
     /**
-     * This is listener for the old document item with dedicated nodes for the title and description. Lots of duplicated codes with insertHTMLDocumentItemDoubleClickListener.
+     * This is listener for the old document item with dedicated nodes for the title and description. Lots of duplicated codes with insertListenerHTMLDocumentItemDoubleClick.
      * TODO: remove duplicates
      * @param {*} entry 
      */
-    insertDocumentItemDoubleClickListener = function(entry){
+    insertListenerDocumentItemDoubleClick = function(entry){
         var currgraph = this.editorui.editor.graph;
         // Add on click listener to show the Narrative Item window
         NAUtil.AddNodeDoubleClickListener(currgraph, entry.name, function(cell, evt){
@@ -1834,21 +1744,113 @@ class NarrativeAbductionApp {
     }
 
     /**
-     * Create document item cell for the Shape picker and Palette
-     * @returns 
+     * Check for existing narrative cells and update the view accordingly
      */
-    createDocumentItem = function(entry){
-        var graph = new mxGraph();
-        var documentcell  = this.createDocumentItemCell(graph, entry); //there are two options, HTML Document or Simple label + description. 
-        //this.insertHTMLDocumentItemDoubleClickListener(entry);  //disable double click window editor     
-        return {
-            xml: NAUtil.ModelToXML(graph),
-            graph: graph,
-            cell: documentcell
-        }
+    loadExistingNarratives = function(){
+        var t = this;
+        var graph = t.editorui.editor.graph;
+
+        t.editorui.editor.graph.selectAll();
+        var cells = graph.getSelectionCells();
+        console.log("Cells", cells);
+
+        var nacells = this.getNarrativeCells(cells);
+        console.log("nacells", nacells);
+
+        nacells.forEach(cell => {
+            
+            if(Narrative.isCellNarrative(cell)){
+                console.log("loadExistingNarratives", cell);
+                var na = new Narrative(cell, graph, NASettings.Language.English.newnarrative, cell.id);
+                this.narratives.push(na);
+                var nalistview = this.narrativeaviewscontainer.addNarrativeListView(na, cell); //add accordion view
+                
+                //then, we need to re-assign cells to this narrative. These cells ids are store in the cells proprty
+                var cellstring = cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS);
+                var cellsidsarray = Narrative.stringCellsToArray(cellstring);
+                var cellsarray = [];
+                cellsidsarray.forEach(id => {                                        
+                    var cell = graph.getModel().getCell(id);
+                    if(cell) cellsarray.push(cell);
+                });
+                console.log("cellsarray", cellsarray);
+                nalistview.assignNodes(cellsarray);
+            }  
+        });
+        t.editorui.editor.graph.removeSelectionCells(cells);
     }
 
-    
+    /**
+     * Create a new narrative, trigger create narrative view and narrative cell
+     */
+    newNarrative = function(){        
+        var narrativeentry = this.getNarrativeEntry(); //get narrative entry from the entries list
+        var graph = this.editorui.editor.graph;
+        var parent = graph.getDefaultParent();  
+        var doc = mxUtils.createXmlDocument();
+        var objna = doc.createElement(narrativeentry.name);    
+ 
+        var narrativecell;
+        var narrview;
+        var na;
+        graph.getModel().beginUpdate();
+       //add the narrative cell
+       try
+       {
+            narrativecell = graph.insertVertex(parent, null, objna, 0, 0, 100, 100);       
+            graph.setCellStyle(narrativeentry.style, [narrativecell]);  
+       }
+       finally
+       {
+           graph.getModel().endUpdate();
+           //create narrative object and view
+           na = new Narrative(narrativecell, graph, NASettings.Language.English.newnarrative, narrativecell.id);
+           this.narratives.push(na);
+           narrview =  this.narrativeaviewscontainer.addNarrativeListView(na, narrativecell); //add accordion view
+           
+           //trigger new narrative event
+           this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, { 
+               detail: {
+                   narrative: na, 
+                   narrativecell: narrativecell
+               }, 
+           });
+           dispatchEvent(this.#event);
+
+            //if objects are selected, add them automatically to the narrative
+            var selectedCells = graph.getSelectionCells();
+            if(selectedCells && narrview){
+                narrview.assignNodes(selectedCells);
+           }   
+       }     
+       return{
+        narrative: na, 
+        narrativeview: narrview,
+        narrativecell: narrativecell
+       }
+    }
+
+   /**
+    * Take the edge and turn it into Cause link
+    * @param {*} edge 
+    */
+   setEdgeType = function(edge, target){
+        var graph = this.editorui.editor.graph;
+        var causeLink = this.getEntryByName(target);
+        if(causeLink){
+        graph.getModel().beginUpdate();
+        try
+        {
+            graph.getModel().setValue(edge, target.replace("Link","") + "s");
+            graph.setCellStyle(causeLink.style, [edge]);
+        }
+        finally
+        {
+            graph.getModel().endUpdate();
+        }
+        }      
+    }
+
 
      /**
      * Show edge type options at position x and y
@@ -1886,6 +1888,38 @@ class NarrativeAbductionApp {
       window.setVisible(true);
 
     }
+
+
+
+    /**
+     * This function decides how the content of the HTML Document Item is rendered to HTML element. This function is related to the HTML Document Item format. 
+     * @param {*} contencell 
+     */
+    updateHTMLDocumentItemAppearance = function(doccell, contencell){
+        var title = doccell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE);
+        var des = doccell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION);
+        var html = this.getHTMLDocumentItemContent(title, des);
+        contencell.setValue(html);          
+    }
+
+
+
+    /**
+     * Update position of more shape button
+     */
+    updateMoreShapesButton = function(){
+        var buttons = document.getElementsByClassName("geSidebarFooter");
+        console.log("Buttons", buttons);
+        var t = this;
+        Array.from(buttons).forEach(function(elm){
+            console.log("Element", elm.innerHTML);
+            if(elm.innerHTML.includes('More Shapes')){
+                elm.style.position = 'relative';
+                t.panelwindow.append(elm);
+            }
+        });
+    }
+    
 
 }
 
