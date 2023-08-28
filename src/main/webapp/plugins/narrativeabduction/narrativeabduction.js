@@ -706,7 +706,7 @@ class NarrativeAbductionApp {
         this.documentcellwidth = 350;
         this.documentcellheight = 200;
         this.documentitemminwidth = 250;
-        this.documentitemminheight = 100;
+        this.documentitemminheight = 150;
         this.titlecellstyle = "html=1;text;moveable=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;";
         this.descriptioncellstyle = "html=1;text;moveable=0;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;";
         this.titlecellheight = 50;
@@ -1196,6 +1196,61 @@ class NarrativeAbductionApp {
     }
 
 
+    /**
+     * Get the description cell child from a cell
+     * @param {*} parentcell 
+     */
+    getDescriptionCell = function(parentcell){
+        var res = null;
+        if(parentcell.children){
+            parentcell.children.forEach(child => {            
+                var natype = child.natype;
+                if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION){
+                    res = child;
+                }                  
+            });
+        }
+        return res;
+    }
+
+    /**
+     * Get the title cell from a cell
+     * @param {*} parentcell 
+     * @returns 
+     */
+    getTitleCell = function(parentcell){
+        var res = null;
+        if(parentcell.children){
+            parentcell.children.forEach(child => {            
+                var natype = child.natype;
+                if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE){
+                    res = child;
+                }                  
+            });
+        }
+        return res;
+    }
+
+
+    getDescriptionCellContentHTML = function(descell){
+        return document.getElementById(descell.id+"-description");
+    }
+
+    /**
+     * Get the height of the html description cell content
+     */
+    getDescriptionCellContentHeight = function(descell){
+        var res = null;
+        if(descell){
+         //get html
+         var html = document.getElementById(descell.id+"-description");
+         if(html){
+            res = html.offsetHeight;         
+         }
+        }
+        return res;
+    }
+
      /**
      * Hide Mode Shapes button on the Side bar
      */
@@ -1209,9 +1264,6 @@ class NarrativeAbductionApp {
             }
         });
     }
-
-
-    
     
     updateDescriptionHeightBasedOnContent = function(descell){
          //get html
@@ -1255,47 +1307,49 @@ class NarrativeAbductionApp {
 
 
     /**
-     * Handler for when the vanila document item size is updated
+     * Handler for when the vanila document item size is updated.
+     * The requirement is that the height can't be manually adjusted. The height is adjusted based on the content of the description.
      */
     initListenerResponsiveSizeHandlerVanilaContent = function(){
        var graph = this.editorui.editor.graph;
        var t = this;
        // Handle resizing of the cell
        graph.addListener(mxEvent.RESIZE_CELLS, function(sender, evt) {
+        console.log("evt", evt);
            var cells = evt.getProperty('cells');
            for (var i = 0; i < cells.length; i++) {
                var cell = cells[i];
                console.log("Cell", cell);
+               //the width can be manually adjusted, so the this be
                var newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
-               var newHeight = Math.max(cell.geometry.height, t.documentitemminheight);               
-               //make sure to follow minimum width
                cell.geometry.width = newWidth;
-               cell.geometry.height = newHeight;
 
-               //update children size
-               if(cell.children){
-                   cell.children.forEach(child => {
-                    console.log("child", child);
+               //the height, however, is based on the height of the description cell. 
+               //the problem is, we need to wait until the HTML content inside the description cell to be updated before getting the final height. 
+               //thus, the height of the document item can only be adjusted after the next frame animation
+               var descell = t.getDescriptionCell(cell);
+               if(descell){
+                descell.geometry.width = newWidth;
 
-                    var natype = child.natype;
-                    // this is a title
-                    if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE){
-                        child.geometry.width = newWidth;
-                        child.geometry.top = 0;
-                        child.geometry.left = 0;
-                    }
-                    //this is a description
-                    if(natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION){
-                        child.geometry.width = newWidth;
-                        child.geometry.height = newHeight - t.titlecellheight;
-                        child.geometry.y = t.titlecellheight;
-                        //get html
-                       // t.updateDescriptionHeightBasedOnContent(child);
-                    }
-                      
-                   });
+                  //now update the height according to the new height
+                var htmlcontent = t.getDescriptionCellContentHTML(descell);
+
+                requestAnimationFrame(() => {
+                    console.log("htmlcontent 2",htmlcontent);
+                    console.log("New height 2", htmlcontent.scrollHeight);
+                    var htmlheight = htmlcontent.clientHeight;
+                    descell.geometry.height = htmlheight;
+                    descell.geometry.y = t.titlecellheight;
+    
+                    cell.geometry.height = htmlheight + t.titlecellheight;
+                    graph.refresh();
+                });          
                }
 
+               var titlecell = t.getTitleCell(cell);
+               if(titlecell){
+                titlecell.geometry.width = newWidth;
+               }      
            }
         });
    }
@@ -1389,7 +1443,7 @@ class NarrativeAbductionApp {
                         break;
                         case NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION:
                             var value = cell.value;
-                            var htmlvalue = "<div id ='"+cell.id+"-description' style='"+t.descriptioncellcontenthtmlstyle+"'>" + value + "</div>";
+                            var htmlvalue = "<div id ='"+cell.id+"-description' style='"+t.descriptioncellcontenthtmlstyle+"'>" + value + "</div>";                           
                             return htmlvalue;
                         break;                       
                         default:
