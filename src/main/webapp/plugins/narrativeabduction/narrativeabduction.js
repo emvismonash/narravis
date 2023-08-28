@@ -707,11 +707,11 @@ class NarrativeAbductionApp {
         this.documentcellheight = 200;
         this.documentitemminwidth = 250;
         this.documentitemminheight = 150;
-        this.titlecellstyle = "html=1;text;moveable=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;";
+        this.titlecellstyle = "html=1;text;moveable=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;fixedWidth=1;";
         this.descriptioncellstyle = "html=1;text;moveable=0;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;";
         this.titlecellheight = 50;
-        this.titlecellcontenthmtlstyle = "padding:5px;padding-left:15px;background:#eee;border-radius:5px;";
-        this.descriptioncellcontenthtmlstyle = "padding:5px;padding-left:15px;background:#eee;border-radius:5px;";
+        this.titlecellcontenthmtlstyle = "padding:5px;padding-left:15px;border-radius:5px;text-align:center;";
+        this.descriptioncellcontenthtmlstyle = "padding:5px;padding-left:15px;background:#eee;border-radius:5px;min-height:150px;";
     }
 
 
@@ -1438,7 +1438,7 @@ class NarrativeAbductionApp {
                     switch(cell.natype){
                         case NASettings.Dictionary.ATTRIBUTTES.DOCTITLE:
                             var value = cell.value;
-                            var htmlvalue = "<div id ='"+cell.id+"-title' style='"+t.titlecellcontenthmtlstyle+"'>" + value + "</div>";
+                            var htmlvalue = "<div id ='"+cell.id+"-title' style='"+t.titlecellcontenthmtlstyle+"'><h3>" + value + "</h3></div>";
                             return htmlvalue;
                         break;
                         case NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION:
