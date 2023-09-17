@@ -639,33 +639,13 @@ class NarrativeAbductionApp {
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
                 style: "editable=0;rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=none;",
-                iconURL: "https://thenounproject.com/api/private/icons/5926263/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"            
             },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
                 style: "editable=0;rounded=0;whiteSpace=wrap;html=1;",
-                iconURL: "https://thenounproject.com/api/private/icons/4353546/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
                 type: "node"
             },
-            // {
-            //     name: NASettings.Dictionary.CELLS.JOINTCAUSE,
-            //     style: "swimlane;fillColor=#ffff;",
-            //     //iconURL: "https://thenounproject.com/api/private/icons/4493200/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
-            //     type: "node"
-            // },
-            // {
-            //     name: NASettings.Dictionary.CELLS.EVIDENCENARRATIVESPECIFIC,
-            //     style: "swimlane;fillColor=#fad9d5;strokeColor=#ae4132;rounded=0;",
-            //     iconURL: "https://thenounproject.com/api/private/icons/4040420/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
-            //     type: "node"
-            // },
-            // {
-            //     name: NASettings.Dictionary.CELLS.SUPPORTINGARGUMENT,
-            //     style: "swimlane;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=0;",
-            //     iconURL: "https://thenounproject.com/api/private/icons/5741355/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0",
-            //     type: "node"
-            // },
             {
                 name: NASettings.Dictionary.CELLS.EXPLAINLINK, 
                 style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
@@ -710,8 +690,8 @@ class NarrativeAbductionApp {
         this.titlecellstyle = "html=1;text;moveable=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;fixedWidth=1;";
         this.descriptioncellstyle = "html=1;text;moveable=0;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;";
         this.titlecellheight = 50;
-        this.titlecellcontenthmtlstyle = "padding:5px;padding-left:15px;border-radius:5px;text-align:center;";
-        this.descriptioncellcontenthtmlstyle = "padding:5px;padding-left:15px;background:#eee;border-radius:5px;min-height:150px;";
+        this.titlecellcontenthmtlstyle = "padding:5px;padding-left:15px;text-align:center;";
+        this.descriptioncellcontenthtmlstyle = "padding:5px;padding-left:15px;min-height:150px;";
     }
 
 
