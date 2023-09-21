@@ -628,7 +628,7 @@ class NarrativeAbductionApp {
         this.naentries = [ 
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVELIST,              
-                style: "swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;",
+                style: "swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;connectable=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;",
                 type: "node"            
             },
             {
@@ -638,22 +638,22 @@ class NarrativeAbductionApp {
             },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEITEM,              
-                style: "editable=0;rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=none;",
+                style: "editable=1;rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=none;",
                 type: "node"            
             },
             {
                 name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
-                style: "editable=0;rounded=0;whiteSpace=wrap;html=1;",
+                style: "editable=1;rounded=0;whiteSpace=wrap;html=1;",
                 type: "node"
             },
             {
                 name: NASettings.Dictionary.CELLS.EXPLAINLINK, 
-                style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+                style: "editable=1;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
                 type: "edge"
             },
             {
                 name: NASettings.Dictionary.CELLS.CAUSELINK, 
-                style: "editable=0;endArrow=classic;html=1;rounded=1;strokeWidth=3;",
+                style: "editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;",
                 type: "edge"
             },
             {
@@ -881,9 +881,7 @@ class NarrativeAbductionApp {
         container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
         this.panelwindow = container;
 
-
         this.editorui.sidebar.container.append(container);
-
 
         //This part is to add link type buttons 
         var setlinktypecontainer = document.createElement('div');
@@ -919,17 +917,14 @@ class NarrativeAbductionApp {
                                 graph.getModel().endUpdate();
                             }
                         }
-                    })
-                   
-        
+                    })                          
                 });
-            }
-           
+            }           
         });
         
 
         //This part contains some functions for development purposes
-       // this.createDevToolPanel(container);
+       this.createDevToolPanel(container);
     }
 
     /**
@@ -1034,7 +1029,7 @@ class NarrativeAbductionApp {
         /**
      * Create palette for the side bar
      */
-        createPalette = function(){
+    createPalette = function(){
             var entries = []; //all palette entries
             for(var i = 0; i < this.naentries.length;i++){
                 var res;
@@ -1358,54 +1353,100 @@ class NarrativeAbductionApp {
    }
 
     /**
-     * Remove cell handler
+     * Prevent editing with double click
      */
-    initRemoveNarrativeCellHandler = function(){
+    initListenerEdgeDoubleClickEditHandler = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+        graph.addListener(mxEvent.DOUBLE_CLICK, function(sender, evt)
+        {
+            //if edge, show Contextual Edge Option Menu
+            var cell = evt.getProperty('cell');   
+            if(cell != null && cell.isEdge())
+            {    
+                var event = evt.getProperty('event');
+                t.showContextualEdgeOptionMenu(cell , event.x, event.y);
+            }                 
+        });
+        
+    }
+
+
+    /**
+     * Show link type option when two nodes are connected. In the vanila version, the default link will be "Cause". 
+     */
+    initListenerConnectionHandler = function(){
         var graph = this.editorui.editor.graph;
         var t = this;
 
-        graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt) {
-            var cells = evt.getProperty('cells');
-            console.log("Cell removed", cells[0]);  
-            cells.forEach(cell => {
-                //if the cell is narrative, remove the view as well 
-                if(Narrative.isCellNarrative(cell)){  
-                    console.log("Narrative removed", cell);  
-                    t.narrativeaviewscontainer.removeListView(cell);
-                }   
-            });
+        graph.connectionHandler.addListener(mxEvent.CONNECT, function(sender, evt)
+        {
+          var edge = evt.getProperty('cell');
+          var source = graph.getModel().getTerminal(edge, true);
+          var target = graph.getModel().getTerminal(edge, false);
+          var event = evt.getProperty('event');
+                  
+          console.log("Connected");
+          console.log("Source", source);
+          console.log("Target", target);
+          console.log("evt", evt);
 
-          });      
+          //t.showContextualEdgeOptionMenu(edge, event.x, event.y); //no contextual menu by default
+          //by default the link will be causes link
+          t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);    
+        });
     }
+
+ 
+  /**
+     * Remove cell handler
+     */
+  initRemoveNarrativeCellHandler = function(){
+    var graph = this.editorui.editor.graph;
+    var t = this;
+
+    graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt) {
+        var cells = evt.getProperty('cells');
+        console.log("Cell removed", cells[0]);  
+        cells.forEach(cell => {
+            //if the cell is narrative, remove the view as well 
+            if(Narrative.isCellNarrative(cell)){  
+                console.log("Narrative removed", cell);  
+                t.narrativeaviewscontainer.removeListView(cell);
+            }   
+        });
+
+      });      
+}
+
+/**
+ * Shape-picker override to show NA cells
+ */
+initOverrideShapePickerHandler = function(){
+    //override
+    var t = this;
+    this.editorui.getCellsForShapePicker = function(cell, hovering, showEdges){
+        //somehow the style fails, we need to override it. This might not be the case anymore, need to revisit this again later
+        var newcells = [];
+        t.naentries.forEach(function(currentValue, index, arr){
+                console.log("c", currentValue);
+                //only add node items
+                if(t.isValidShapePickerItem(currentValue)){
+                    var cell = NAUtil.GetCellByNodeName(currentValue.graph, currentValue.name);
+                    var g = currentValue.graph;
+                    g.getModel().setStyle(cell, currentValue.style);
+                    newcells.push(cell);  
+                }
+         });
+        console.log("Shape-picker new cells", newcells);
+        return newcells;
+    };
+}
 
     /**
-     * Shape-picker override to show NA cells
-     */
-    initOverrideShapePickerHandler = function(){
-        //override
-        var t = this;
-        this.editorui.getCellsForShapePicker = function(cell, hovering, showEdges){
-            //somehow the style fails, we need to override it. This might not be the case anymore, need to revisit this again later
-            var newcells = [];
-            t.naentries.forEach(function(currentValue, index, arr){
-                    console.log("c", currentValue);
-                    //only add node items
-                    if(t.isValidShapePickerItem(currentValue)){
-                        var cell = NAUtil.GetCellByNodeName(currentValue.graph, currentValue.name);
-                        var g = currentValue.graph;
-                        g.getModel().setStyle(cell, currentValue.style);
-                        newcells.push(cell);  
-                    }
-             });
-            console.log("Shape-picker new cells", newcells);
-            return newcells;
-        };
-    }
-    
-   /**
     * Override label presentation of the narrative document item
     */
-   initOverrideConvertValueString = function(){
+    initOverrideConvertValueString = function(){
         var graph = this.editorui.editor.graph;     
         var t = this;   
         graph.convertValueToString = function(cell)
@@ -1459,58 +1500,13 @@ class NarrativeAbductionApp {
                         t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
                         break;
                 }
-               // t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
+            // t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
             } 
             //if the cell is Narrative, trigger create a new narrative action
             if(cells[0].getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) == NASettings.Dictionary.CELLS.NARRATIVE){
                 graph.removeCells([cells[0]]);
                 t.newNarrative();
             }                
-        });
-    }
-
-    /**
-     * Prevent editing with double click
-     */
-    initListenerEdgeDoubleClickEditHandler = function(){
-        var graph = this.editorui.editor.graph;
-        var t = this;
-        graph.addListener(mxEvent.DOUBLE_CLICK, function(sender, evt)
-        {
-            //if edge, show Contextual Edge Option Menu
-            var cell = evt.getProperty('cell');   
-            if(cell != null && cell.isEdge())
-            {    
-                var event = evt.getProperty('event');
-                t.showContextualEdgeOptionMenu(cell , event.x, event.y);
-            }                 
-        });
-        
-    }
-
-
-    /**
-     * Show link type option when two nodes are connected. In the vanila version, the default link will be "Cause". 
-     */
-    initListenerConnectionHandler = function(){
-        var graph = this.editorui.editor.graph;
-        var t = this;
-
-        graph.connectionHandler.addListener(mxEvent.CONNECT, function(sender, evt)
-        {
-          var edge = evt.getProperty('cell');
-          var source = graph.getModel().getTerminal(edge, true);
-          var target = graph.getModel().getTerminal(edge, false);
-          var event = evt.getProperty('event');
-                  
-          console.log("Connected");
-          console.log("Source", source);
-          console.log("Target", target);
-          console.log("evt", evt);
-
-          //t.showContextualEdgeOptionMenu(edge, event.x, event.y); //no contextual menu by default
-          //by default the link will be causes link
-          t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);    
         });
     }
 
