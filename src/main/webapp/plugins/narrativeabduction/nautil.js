@@ -1,0 +1,102 @@
+class NAUtil {
+    static GetCellChildrenLabels = function (name) {
+      return {
+        title: name + "Title",
+        description: name + "Description",
+      };
+    };
+  
+    static ModelToXML = function (graph) {
+      var encoder = new mxCodec();
+      var result = encoder.encode(graph.getModel());
+      var xml = mxUtils.getXml(result);
+  
+      return xml;
+    };
+  
+    static GetCellByNodeName = function (graph, name) {
+      console.log("Graph", graph);
+      var cells = graph.model.getCells();
+      console.log("Celss", graph.model.getCells());
+      for (var i = 0; i < cells.length; i++) {
+        console.log("Cell", cells[i]);
+        if (!cells[i].value) continue;
+        if (cells[i].value.nodeName == name) {
+          console.log(cells[i].style);
+          return cells[i];
+        }
+      }
+    };
+  
+    static Decycle = function (obj, stack = []) {
+      if (!obj || typeof obj !== "object") return obj;
+  
+      if (stack.includes(obj)) return null;
+  
+      let s = stack.concat([obj]);
+  
+      return Array.isArray(obj)
+        ? obj.map((x) => NAUtil.Decycle(x, s))
+        : Object.fromEntries(
+            Object.entries(obj).map(([k, v]) => [k, NAUtil.Decycle(v, s)])
+          );
+    };
+  
+    static AddNodeClickListener = function (graph, name, f) {
+      graph.addListener(mxEvent.CLICK, function (sender, evt) {
+        var cell = evt.getProperty("cell"); // cell may be null
+        if (cell != null && cell.value != null && cell.value.nodeName == name) {
+          f(cell, evt);
+        }
+        evt.consume();
+      });
+    };
+  
+    static AddNodeDoubleClickListener = function (graph, name, f) {
+      graph.addListener(mxEvent.DOUBLE_CLICK, function (sender, evt) {
+        var cell = evt.getProperty("cell"); // cell may be null
+        if (cell != null && cell.value != null && cell.value.nodeName == name) {
+          f(cell, evt);
+        }
+        evt.consume();
+      });
+    };
+  
+    static AddPalette = function (sidebar, name, nodes) {
+      //  var nodes = [sidebar.addDataEntry("Test", 0, 0, name, Graph.compress(xml))];
+      //mxResources.get("narrativeabduction")
+      sidebar.setCurrentSearchEntryLibrary("narrative", "abduction");
+      sidebar.addPaletteFunctions("narrativeabduction", name, !1, nodes);
+      sidebar.setCurrentSearchEntryLibrary();
+    };
+  
+    /**
+     * Create window if the id does not exist in registry, otherwise return existing one
+     * @param {*} id
+     * @param {*} title
+     * @param {*} content
+     * @param {*} x
+     * @param {*} y
+     * @param {*} width
+     * @param {*} height
+     * @returns
+     */
+    static CreateWindow = function (id, title, content, x, y, width, height) {
+      var wnd = new mxWindow(title, content, x, y, width, height, true, true);
+      wnd.id = id;
+      return wnd;
+    };
+  
+    static AddButton = function (label, container, funct) {
+      var btn = document.createElement("div");
+      btn.innerHTML = label;
+      btn.classList.add(NASettings.CSSClasses.NAUtils.Button);
+  
+      mxEvent.addListener(btn, "click", function (evt) {
+        funct();
+        mxEvent.consume(evt);
+      });
+  
+      container.appendChild(btn);
+    };
+  }
