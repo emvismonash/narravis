@@ -1258,6 +1258,21 @@ class NarrativeAbductionApp {
   };
 
   /**
+   * Get value (label) of the narrative cell, check isCellNarrativeCell first
+   * @param {*} cell 
+   * @returns 
+   */
+  getNarrativeCellValue = function(cell){
+    let val = "";
+    let cellvalue =  this.editorui.editor.graph.model.getValue(cell);
+    if (cellvalue != null) val = cellvalue.getAttribute('label');
+    if(val == null) val = cellvalue.innerHTML;
+
+    return val;
+  }
+
+
+  /**
    * Return the html content of the HTML Document Item
    * @param {*} title
    * @param {*} description
@@ -1533,6 +1548,7 @@ class NarrativeAbductionApp {
     };
   };
 
+
   /**
    * Override label presentation of the narrative document items
    */
@@ -1546,11 +1562,7 @@ class NarrativeAbductionApp {
         return "";
       } else if (t.isCellNarrativeCell(cell)){
         console.log("Narrative");
-        let val = "";
-        let cellvalue =  this.model.getValue(cell);
-        if (cellvalue != null) val = cellvalue.getAttribute('label');
-        if(val == null) val = cellvalue.innerHTML;
-        
+        let val = t.getNarrativeCellValue(cell);
         console.log("val", val);
  
         return val;        
@@ -1958,10 +1970,12 @@ class NarrativeAbductionApp {
     nacells.forEach((cell) => {
       if (Narrative.isCellNarrative(cell)) {
         console.log("loadExistingNarratives", cell);
+        let val = t.getNarrativeCellValue(cell);
+        if(val == "") val = NASettings.Language.English.newnarrative;
         var na = new Narrative(
           cell,
           graph,
-          NASettings.Language.English.newnarrative,
+          val,
           cell.id
         );
         this.narratives.push(na);
