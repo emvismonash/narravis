@@ -1382,35 +1382,38 @@ class NarrativeAbductionApp {
       for (var i = 0; i < cells.length; i++) {
         var cell = cells[i];
         console.log("Cell", cell);
-        //the width can be manually adjusted, so the this be
-        var newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
-        cell.geometry.width = newWidth;
 
-        //the height, however, is based on the height of the description cell.
-        //the problem is, we need to wait until the HTML content inside the description cell to be updated before getting the final height.
-        //thus, the height of the document item can only be adjusted after the next frame animation
-        var descell = t.getDescriptionCell(cell);
-        if (descell) {
-          descell.geometry.width = newWidth;
+        if(isCellDocumentItem(cell)){
+            //the width can be manually adjusted, so the this be
+            var newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
+            cell.geometry.width = newWidth;
 
-          //now update the height according to the new height
-          var htmlcontent = t.getDescriptionCellContentHTML(descell);
+            //the height, however, is based on the height of the description cell.
+            //the problem is, we need to wait until the HTML content inside the description cell to be updated before getting the final height.
+            //thus, the height of the document item can only be adjusted after the next frame animation
+            var descell = t.getDescriptionCell(cell);
+            if (descell) {
+            descell.geometry.width = newWidth;
 
-          requestAnimationFrame(() => {
-            console.log("htmlcontent 2", htmlcontent);
-            console.log("New height 2", htmlcontent.scrollHeight);
-            var htmlheight = htmlcontent.clientHeight;
-            descell.geometry.height = htmlheight;
-            descell.geometry.y = t.titlecellheight;
+            //now update the height according to the new height
+            var htmlcontent = t.getDescriptionCellContentHTML(descell);
 
-            cell.geometry.height = htmlheight + t.titlecellheight;
-            graph.refresh();
-          });
-        }
+            requestAnimationFrame(() => {
+                console.log("htmlcontent 2", htmlcontent);
+                console.log("New height 2", htmlcontent.scrollHeight);
+                var htmlheight = htmlcontent.clientHeight;
+                descell.geometry.height = htmlheight;
+                descell.geometry.y = t.titlecellheight;
 
-        var titlecell = t.getTitleCell(cell);
-        if (titlecell) {
-          titlecell.geometry.width = newWidth;
+                cell.geometry.height = htmlheight + t.titlecellheight;
+                graph.refresh();
+            });
+            }
+
+            var titlecell = t.getTitleCell(cell);
+            if (titlecell) {
+            titlecell.geometry.width = newWidth;
+            }
         }
       }
     });
@@ -1543,7 +1546,14 @@ class NarrativeAbductionApp {
         return "";
       } else if (t.isCellNarrativeCell(cell)){
         console.log("Narrative");
-        return cell.value.innerHTML;        
+        let val = "";
+        let cellvalue =  this.model.getValue(cell);
+        if (cellvalue != null) val = cellvalue.getAttribute('label');
+        if(val == null) val = cellvalue.innerHTML;
+        
+        console.log("val", val);
+ 
+        return val;        
     } else {
         //check title or description
         if (cell.natype) {
