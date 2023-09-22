@@ -1540,7 +1540,6 @@ class NarrativeAbductionApp {
         console.log("initOverrideConvertValueString cell", cell);
       //if the cell is document item, return empty string
       if (t.isCellDocumentItem(cell)) {
-        console.log("Document item");
         return "";
       } else if (t.isCellNarrativeCell(cell)){
         console.log("Narrative");
@@ -1577,8 +1576,8 @@ class NarrativeAbductionApp {
               return cell.value;
           }
         } else {
-            console.log("Other");
-          return cell.value;
+            let val = cell.value ? cell.value : cell.innerHTML;          
+            return val;
         }
       }
     };
