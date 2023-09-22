@@ -1,4 +1,3 @@
-
 /**
  * The container object of all narrative accordion views
  */
@@ -52,8 +51,9 @@ class NarrativeListViewContainer {
       //container of the narrative view
       var container = document.createElement("div");
       container.id = narrativecell.id;
+      container.setAttribute("draggable", true);
   
-      this.container.append(container);
+      this.listcontainer.append(container);
       var color = this.getColor();
       var naaccview = new NarrativeListView(
         narrative,

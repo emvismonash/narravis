@@ -421,10 +421,13 @@ class NarrativeListView {
       this.updateRootCellColor();
     };
   
+    /**
+     * Update the colour of the narrative cell
+     */
     updateRootCellColor = function () {
       var style =
-        this.narrative.rootCell.getStyle() + ";fillColor=" + this.color + ";";
-      this.editorui.editor.graph
+        this.narrative.rootCell.getStyle() + ";fontColor=" + this.color + ";";
+        this.editorui.editor.graph
         .getModel()
         .setStyle(this.narrative.rootCell, style);
     };

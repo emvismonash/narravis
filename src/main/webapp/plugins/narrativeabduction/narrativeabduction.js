@@ -1,24 +1,25 @@
 /**
  * Narrative Abduction plugin contains custom functionalities to support narrative abduction workflow.
  * The registration of this plugin still requires modification of the original app (e.g., app.js, App.js, etc.).
+ * External libraries: Sortable.js https://github.com/SortableJS/Sortable
  */
 // load plugin
 Draw.loadPlugin(function (ui) {
-    mxscript("plugins/narrativeabduction/narrative.js", function(){
-        mxscript("plugins/narrativeabduction/nasettings.js", function(){
-            mxscript("plugins/narrativeabduction/narrativelistviewcontainer.js", function(){
-                mxscript("plugins/narrativeabduction/narrativelistview.js", function(){
-                    mxscript("plugins/narrativeabduction/nautil.js", function(){
-                        console.log("EditorUi", ui);
-                        console.log("Sidebar", ui.sidebar.graph);
-                        console.log("Editor", ui.editor);            
-                        var na = new NarrativeAbductionApp(ui);
-                        na._init();
+        mxscript("plugins/narrativeabduction/narrative.js", function(){
+            mxscript("plugins/narrativeabduction/nasettings.js", function(){
+                mxscript("plugins/narrativeabduction/narrativelistviewcontainer.js", function(){
+                    mxscript("plugins/narrativeabduction/narrativelistview.js", function(){
+                        mxscript("plugins/narrativeabduction/nautil.js", function(){
+                            console.log("EditorUi", ui);
+                            console.log("Sidebar", ui.sidebar.graph);
+                            console.log("Editor", ui.editor);            
+                            var na = new NarrativeAbductionApp(ui);
+                            na._init();                      
+                        });
                     });
                 });
-            });
-        });   
-    });
+            });   
+        });
 });
 
 
@@ -53,7 +54,7 @@ class NarrativeAbductionApp {
       {
         name: NASettings.Dictionary.CELLS.NARRATIVE,
         style:
-          "shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;resizable=0;connectable=0;",
+          "text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=35;connectable=0;",
         type: "node",
       },
       {
@@ -576,16 +577,27 @@ class NarrativeAbductionApp {
       NASettings.Colors.Narratives
     );
     this.narrativeaviewscontainer.app = this;
-    var container = document.createElement("div");
+
+    var menucontainer = document.createElement("div");
+    var listcontainer = document.createElement("div");
+    var container = document.createElement("div");    
+    listcontainer.id = "naListContainer";
+    container.append(menucontainer);
+    container.append(listcontainer);
+
+    container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
+
     this.editorui.sidebar.container.append(container);
     this.narrativeaviewscontainer.container = container;
-    container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
+    this.narrativeaviewscontainer.menucontainer = menucontainer;
+    this.narrativeaviewscontainer.listcontainer = listcontainer;
 
     var t = this;
     // add create narrative buttion
-    NAUtil.AddButton(NASettings.Language.English.newnarrative, container, () => {
-        if (!t.narrativelistcell) t.createNarrativeListCell();
-        t.addNarrativeCellToList(t.newNarrative().narrativecell);
+    NAUtil.AddButton(NASettings.Language.English.newnarrative, menucontainer, () => {
+        t.newNarrative();
+        //if (!t.narrativelistcell) t.createNarrativeListCell();
+        //t.addNarrativeCellToList(t.newNarrative().narrativecell);
       });
       
     // add load narrative buttion
@@ -827,6 +839,8 @@ class NarrativeAbductionApp {
       console.log("cell", cell);
       console.log("natype", natype);
 
+      if(!cell.natype) return;
+
       if (natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION) {
         console.log("cell", cell);
         console.log("new value", newValue);
@@ -976,11 +990,20 @@ class NarrativeAbductionApp {
               return htmlvalue;
               break;
             default:
-              return cell.value;
+                if (cell.value != null) {
+                    // Here, you can customize how the cell's value is displayed as a string
+                    return cell.value.toString(); // Example: Convert the value to a string
+                  } else {
+                    return ''; // Return an empty string if the value is null or undefined
+                }
           }
         } else {
-            let val = cell.value ? cell.value : cell.innerHTML;          
-            return val;
+            if (cell.value != null) {
+                // Here, you can customize how the cell's value is displayed as a string
+                return cell.value.toString(); // Example: Convert the value to a string
+              } else {
+                return ''; // Return an empty string if the value is null or undefined
+            }
         }
       }
     };
@@ -1399,6 +1422,7 @@ class NarrativeAbductionApp {
     //add the narrative cell
     try {
       narrativecell = graph.insertVertex(parent, null, objna, 0, 0, 100, 100);
+      narrativecell.value.setAttribute('label', NASettings.Language.English.newnarrative);
       graph.setCellStyle(narrativeentry.style, [narrativecell]);
     } finally {
       graph.getModel().endUpdate();
@@ -1430,6 +1454,9 @@ class NarrativeAbductionApp {
         narrview.assignNodes(selectedCells);
       }
     }
+
+
+
     return {
       narrative: na,
       narrativeview: narrview,
