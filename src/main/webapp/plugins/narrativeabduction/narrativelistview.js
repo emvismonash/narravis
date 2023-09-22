@@ -12,9 +12,10 @@ class NarrativeListView {
       this.editorui = editorui;
       this.color = color;
       this.uinarrativetitle;
-  
+
       this.initListenerUpdateNarrativeCellEdit();
       this.initListenerUpdateDocumentItemTitle();
+      this.initListenerClickRemoveHighlight();
     }
   
     /**
@@ -49,16 +50,52 @@ class NarrativeListView {
       } finally {
         graph.getModel().endUpdate();
       }
+      graph.refresh();
     };
+
+    selectCells = function(){
+        var graph = this.editorui.editor.graph;
+        graph.getModel().beginUpdate();
+        try {
+            graph.setSelectionCells(this.narrative.cells);          
+        } finally {
+          graph.getModel().endUpdate();
+        }
+        graph.refresh();
+    }
   
+    isAllCellsSelected = function(){
+        var graph = this.editorui.editor.graph;
+        var selectedCells = graph.getSelectionCells();
+        var docitems = [];
+        selectedCells.forEach(cell => {
+            if(NarrativeAbductionApp.isCellDocumentItem(cell)){
+                docitems.push(cell);
+            }
+        });
+
+        
+        console.log("graph.getSelectionCells()", docitems);
+        console.log("this.narrative.cells", this.narrative.cells);
+
+        if(NAUtil.arraysContainSameItems(docitems, this.narrative.cells)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /**
      * Unhighilight the children cells
      * @param {*} cellsToUnhighlight
      */
     unhighlightCells = function (cellsToUnhighlight) {
+        var graph = this.editorui.editor.graph;
+      console.log("isAllCellsSelected", this.isAllCellsSelected());
+      if(this.isAllCellsSelected()) return;
+
       var highlightStyle = this.getHighlightStyle();
   
-      var graph = this.editorui.editor.graph;
       graph.getModel().beginUpdate();
       try {
         for (let cell of cellsToUnhighlight) {
@@ -66,8 +103,9 @@ class NarrativeListView {
           graph.setCellStyle(style, [cell]);
         }
       } finally {
-        graph.getModel().endUpdate();
+         graph.getModel().endUpdate();
       }
+      graph.refresh();
     };
   
     /**
@@ -104,17 +142,23 @@ class NarrativeListView {
       );
       this.headContainer.style.background = this.color;
       this.uinarrativetitle.innerHTML = this.narrative.name;
+      this.uinarrativetitle.title = "Click to select items"; //ToDO move to dictionary
       this.uinarrativetitle.classList.add(
         NASettings.CSSClasses.NarrativeListView.Title
       );
   
       var t = this;
+      //#region narrative title event listeners
       this.uinarrativetitle.onmouseenter = function () {
         t.highlightCells(t.narrative.cells);
       };
       this.uinarrativetitle.onmouseleave = function () {
         t.unhighlightCells(t.narrative.cells);
       };
+      this.uinarrativetitle.onclick = function(){
+        t.selectCells();
+      }
+      //#endregion
   
       var toggleButton = document.createElement("button");
       toggleButton.classList.add(
@@ -160,6 +204,17 @@ class NarrativeListView {
         }
       });
     };
+
+    initListenerClickRemoveHighlight = function(){
+        var graph = this.editorui.editor.graph;
+        var t = this;
+        graph.addListener(mxEvent.CLICK, function (sender, evt) {
+            console.log("Click", t.isAllCellsSelected());
+            if(!t.isAllCellsSelected()){
+                t.unhighlightCells(t.narrative.cells);
+            }
+        });
+    }
   
     /**
      * Update the narrative list livew
@@ -199,6 +254,20 @@ class NarrativeListView {
       buttonAssignNode.onclick = this.assignNode.bind(null, this);
       this.headContainer.bottompart.append(buttonAssignNode);
     };
+
+    createLayoutButton = function(){
+        var buttonLayout = document.createElement("button");
+        buttonLayout.innerHTML = "L";
+        buttonLayout.title = "Apply layout"; //todo
+        buttonLayout.onclick = this.applyLayout.bind(null, this);
+        this.headContainer.bottompart.append(buttonLayout);       
+    }
+
+    applyLayout = function(t){
+        if(t.narrative){
+            t.narrative.applyLayout();
+        }
+    }
   
     /**
      * Assign selected node to the narrative.
@@ -342,6 +411,7 @@ class NarrativeListView {
   
     createHeadElements = function () {
       this.createAssignNodesButton();
+      this.createLayoutButton();
     };
   
     updateView = function () {

@@ -1,4 +1,17 @@
 class NAUtil {
+
+    static arraysContainSameItems = function(arr1, arr2) {
+        if (arr1.length !== arr2.length) {
+          return false; // If the arrays have different lengths, they can't contain the same items
+        }
+      
+        const set1 = new Set(arr1);
+        const set2 = new Set(arr2);
+      
+        // Check if both sets have the same size and every element from set1 is in set2
+        return arr1.length === arr2.length && arr1.every(item => set2.has(item));
+      }
+
     static GetCellChildrenLabels = function (name) {
       return {
         title: name + "Title",

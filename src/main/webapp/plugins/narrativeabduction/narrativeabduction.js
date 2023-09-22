@@ -779,7 +779,7 @@ class NarrativeAbductionApp {
         var cell = cells[i];
         console.log("Cell", cell);
 
-        if(isCellDocumentItem(cell)){
+        if(NarrativeAbductionApp.isCellDocumentItem(cell)){
             //the width can be manually adjusted, so the this be
             var newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
             cell.geometry.width = newWidth;
@@ -937,9 +937,9 @@ class NarrativeAbductionApp {
     var graph = this.editorui.editor.graph;
     var t = this;
     graph.convertValueToString = function (cell) {
-        console.log("initOverrideConvertValueString cell", cell);
+        //console.log("initOverrideConvertValueString cell", cell);
       //if the cell is document item, return empty string
-      if (t.isCellDocumentItem(cell)) {
+      if (NarrativeAbductionApp.isCellDocumentItem(cell)) {
         return "";
       } else if (t.isCellNarrativeCell(cell)){
         console.log("Narrative");
@@ -991,7 +991,7 @@ class NarrativeAbductionApp {
    * @param {*} cell 
    * @returns 
    */
-  isCellDocumentItem = function(cell){
+  static isCellDocumentItem = function(cell){
     return (cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE));
   }
 
