@@ -12,10 +12,11 @@ class NarrativeListView {
       this.editorui = editorui;
       this.color = color;
       this.uinarrativetitle;
+      this.ishighlight = false;
 
       this.initListenerUpdateNarrativeCellEdit();
       this.initListenerUpdateDocumentItemTitle();
-      this.initListenerClickRemoveHighlight();
+      //this.initListenerClickRemoveHighlight();
     }
   
     /**
@@ -91,9 +92,6 @@ class NarrativeListView {
      */
     unhighlightCells = function (cellsToUnhighlight) {
         var graph = this.editorui.editor.graph;
-      console.log("isAllCellsSelected", this.isAllCellsSelected());
-      if(this.isAllCellsSelected()) return;
-
       var highlightStyle = this.getHighlightStyle();
   
       graph.getModel().beginUpdate();
@@ -209,9 +207,11 @@ class NarrativeListView {
         var graph = this.editorui.editor.graph;
         var t = this;
         graph.addListener(mxEvent.CLICK, function (sender, evt) {
+            console.log("evt", evt);
             console.log("Click", t.isAllCellsSelected());
             if(!t.isAllCellsSelected()){
                 t.unhighlightCells(t.narrative.cells);
+                graph.refresh();
             }
         });
     }
@@ -263,6 +263,26 @@ class NarrativeListView {
         this.headContainer.bottompart.append(buttonLayout);       
     }
 
+    createToggleHighlightButton = function(){
+        var buttonToggle = document.createElement("button");
+        buttonToggle.innerHTML = "H";
+        buttonToggle.title = "Toggle highlight"; //todo
+        buttonToggle.onclick = this.toggleHighlight.bind(null, this);
+        this.headContainer.bottompart.append(buttonToggle);       
+    }
+
+    toggleHighlight = function(t){
+        if(t.narrative){
+            if(t.ishighlight){
+                t.unhighlightCells(t.narrative.cells);
+                t.ishighlight = false;
+            }else{
+                t.highlightCells(t.narrative.cells);
+                t.ishighlight = true;
+            }
+        }
+    }
+
     applyLayout = function(t){
         if(t.narrative){
             t.narrative.applyLayout();
@@ -283,6 +303,10 @@ class NarrativeListView {
     assignNodes = function (cells) {
       this.narrative.addCells(cells); //add cell to the narrative object, this is where the children cells are added to the root cell
       this.createBodyElements(); //create representaton
+      if(this.ishighlight) {
+            this.unhighlightCells(this.narrative.cells);
+            this.highlightCells(this.narrative.cells);
+        }
     };
   
     getTitleCell = function (cell) {
@@ -412,6 +436,7 @@ class NarrativeListView {
     createHeadElements = function () {
       this.createAssignNodesButton();
       this.createLayoutButton();
+      this.createToggleHighlightButton();
     };
   
     updateView = function () {

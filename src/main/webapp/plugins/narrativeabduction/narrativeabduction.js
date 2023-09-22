@@ -60,7 +60,7 @@ class NarrativeAbductionApp {
       {
         name: NASettings.Dictionary.CELLS.NARRATIVEITEM,
         style:
-          "editable=1;rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=none;",
+          "editable=1;rounded=1;whiteSpace=wrap;html=1;fontColor=#333333;strokeColor=none;",
         type: "node",
       },
       {
@@ -70,7 +70,7 @@ class NarrativeAbductionApp {
       },
       {
         name: NASettings.Dictionary.CELLS.EXPLAINLINK,
-        style: "editable=1;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+        style: "editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;",
         type: "edge",
       },
       {
@@ -113,7 +113,7 @@ class NarrativeAbductionApp {
     this.documentitemminwidth = 250;
     this.documentitemminheight = 150;
     this.titlecellstyle =
-      "html=1;text;moveable=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;fixedWidth=1;";
+      "html=1;text;moveable=0;strokeColor=none;fillColor=none;overflow=fill;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;fixedWidth=1;";
     this.descriptioncellstyle =
       "html=1;text;moveable=0;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;";
     this.titlecellheight = 50;
