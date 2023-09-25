@@ -400,6 +400,7 @@ class NarrativeListView {
      */
     removeCellView = function (c) {
       var cellView = this.getCellView(c);
+      this.unhighlightCells([c]);
       cellView.htmlcontainer.remove();
       this.cellviews.splice(this.cellviews.indexOf(cellView), 1);
     };
