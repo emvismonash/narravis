@@ -85,59 +85,7 @@ class Narrative {
       });
     };
 
-    applyLayout = function(){
-        //update excluded cells position
-        var model = this.graph.model;
-        var graph = this.graph;
-
-          // Identify parent nodes and children (replace with your logic)
-          var parentNodes = this.cells; // Array of parent node cells
-
-          // check excluded nodes
-          var excludeNodes = [];
-  
-          graph.selectAll();
-          var selectedCells = graph.getSelectionCells();
-          selectedCells.forEach((cell) => {
-            if (!parentNodes.includes(cell) && cell.children != null) {
-              excludeNodes.push({
-                excell: cell,
-                x: cell.geometry.x,
-                y: cell.geometry.y,
-              });
-            }
-          });
-  
-          console.log("excludeNodes", excludeNodes);
-
-        model.beginUpdate();
-        try {
-            // Create an mxHierarchicalLayout instance
-            var layout = new mxHierarchicalLayout(graph);
-
-            // Configure the layout as horizontal
-            layout.orientation = mxConstants.DIRECTION_WEST;
-            layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
-            console.log("layout", layout);
-            
-            layout.execute(graph.getDefaultParent(), parentNodes);
-
-            excludeNodes.forEach((cell) => {
-                var currentgeometry = model.getGeometry(cell.excell);
-                currentgeometry.x = cell.x;
-                currentgeometry.y = cell.y;
-
-                console.log("currentgeometry", currentgeometry);
-                console.log("cell", cell);
-
-                model.setGeometry(cell.excell, currentgeometry);
-            });
-        } finally {
-            model.endUpdate();
-            graph.clearSelection();
-        }      
-    }
-  
+   
     /**
      * In some cases, the selected cells are part of narrative element, e.g. content cell. This function validates what cell can be added.
      */

@@ -47,7 +47,7 @@ class NarrativeListViewContainer {
      * @param {*} na
      * @param {*} narrativecell
      */
-    addNarrativeListView = function (narrative, narrativecell) {
+    addNarrativeListView = function (narrative, narrativecell, naabduction) {
       //container of the narrative view
       var container = document.createElement("div");
       container.id = narrativecell.id;
@@ -59,10 +59,13 @@ class NarrativeListViewContainer {
         narrative,
         container,
         this.app.editorui,
-        color
+        color,
+        naabduction
       ); //create view
       naaccview.updateView();
       naaccview.cell = narrativecell;
+      console.log("naabduction", naabduction);
+      
       this.narrativealistviews.push(naaccview);
   
       return naaccview;

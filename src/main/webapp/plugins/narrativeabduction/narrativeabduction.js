@@ -10,11 +10,13 @@ Draw.loadPlugin(function (ui) {
                 mxscript("plugins/narrativeabduction/narrativelistviewcontainer.js", function(){
                     mxscript("plugins/narrativeabduction/narrativelistview.js", function(){
                         mxscript("plugins/narrativeabduction/nautil.js", function(){
+                          mxscript("plugins/narrativeabduction/narrativelayout.js", function(){
                             console.log("EditorUi", ui);
                             console.log("Sidebar", ui.sidebar.graph);
                             console.log("Editor", ui.editor);            
                             var na = new NarrativeAbductionApp(ui);
                             na._init();                      
+                          });                  
                         });
                     });
                 });
@@ -30,6 +32,10 @@ class NarrativeAbductionApp {
     this.panelwindow;
     this.narrativeaviewscontainer;
     this.narratives = [];
+    this.narrativelayout = new NarrativeLayout();
+    this.narrativelayout.narrativeabduction = this;
+    this.narrativelayout.graph = ui.editor.graph;
+
     this.settings = {
       lodupdate: 5.5,
     };
@@ -430,6 +436,10 @@ class NarrativeAbductionApp {
 
     NAUtil.AddButton("Select all", devtoolcontainer, function () {
       t.editorui.editor.graph.selectAll();
+    });
+
+    NAUtil.AddButton("Apply test layou all", devtoolcontainer, function () {
+      t.narrativelayout.applyLayoutNarrativeCellsNaive();
     });
 
     NAUtil.AddButton(
@@ -1385,7 +1395,8 @@ class NarrativeAbductionApp {
         this.narratives.push(na);
         var nalistview = this.narrativeaviewscontainer.addNarrativeListView(
           na,
-          cell
+          cell,
+          this
         ); //add accordion view
 
         //then, we need to re-assign cells to this narrative. These cells ids are store in the cells proprty
@@ -1434,9 +1445,11 @@ class NarrativeAbductionApp {
         narrativecell.id
       );
       this.narratives.push(na);
+      console.log("naabduction", this);
       narrview = this.narrativeaviewscontainer.addNarrativeListView(
         na,
-        narrativecell
+        narrativecell,
+        this
       ); //add accordion view
 
       //trigger new narrative event

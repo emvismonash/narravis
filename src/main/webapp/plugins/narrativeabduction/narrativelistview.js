@@ -3,8 +3,9 @@
  * Accordion View of a narrative
  */
 class NarrativeListView {
-    constructor(narrative, container, editorui, color) {
+    constructor(narrative, container, editorui, color, naabduction) {
       this.narrative = narrative;
+      this.narrativeabduction = naabduction;
       this.cellviews = [];
       this.headContainer;
       this.bodyContainer;
@@ -333,7 +334,8 @@ class NarrativeListView {
 
     applyLayout = function(t){
         if(t.narrative){
-            t.narrative.applyLayout();
+          console.log(t);
+            t.narrativeabduction.narrativelayout.applyLayout(t.narrative);
         }
     }
   
