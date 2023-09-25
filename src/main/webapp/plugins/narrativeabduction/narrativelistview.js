@@ -485,7 +485,7 @@ class NarrativeListView {
     createHeadElements = function () {
       this.createAssignNodesButton();
       this.createLayoutButton();
-      this.createToggleHighlightButton();
+      //this.createToggleHighlightButton();
       this.createToggleVisibilityButton();
     };
   
@@ -494,6 +494,7 @@ class NarrativeListView {
       this.createHeadElements();
       this.createBodyElements();
       this.updateRootCellColor();
+      this.toggleHighlight(this); //always highlight all cells
     };
   
     /**
