@@ -31,7 +31,7 @@ class NarrativeLayout {
             cells.forEach((cell, idx) => {
                 var geom = cell.geometry;
                 geom.x = 0; 
-                geom.y = idx * 200;
+                geom.y = idx * 500;
                 model.setGeometry(cell, geom);
             });
         }finally{
@@ -63,18 +63,11 @@ class NarrativeLayout {
             try{
                 var layout = new mxStackLayout(graph, false, 50);
                 layout.execute(graph.getDefaultParent(), cells);
-                morph.cells = cells;
-
-                console.log("layout", layout);
-    
+                morph.cells = cells;    
                 excludeNodes.forEach((cell) => {
                     var currentgeometry = model.getGeometry(cell.excell);
                     currentgeometry.x = cell.x;
-                    currentgeometry.y = cell.y;
-    
-                    console.log("currentgeometry", currentgeometry);
-                    console.log("cell", cell);
-    
+                    currentgeometry.y = cell.y;    
                     model.setGeometry(cell.excell, currentgeometry);
                 });
     
@@ -82,7 +75,6 @@ class NarrativeLayout {
                 morph.addListener(mxEvent.DONE, function()
                 {
                     model.endUpdate();
-                    graph.refresh();
                 });      
                 morph.startAnimation();
             }
@@ -122,8 +114,6 @@ class NarrativeLayout {
           // check excluded nodes
           var excludeNodes = this.getExcludedCells(parentNodes);
   
-        console.log("excludeNodes", excludeNodes);
-
         model.beginUpdate();
         //the first update is to set the offset of the layout to a value, such as narrative cell position
         try{
@@ -151,10 +141,6 @@ class NarrativeLayout {
                   var currentgeometry = model.getGeometry(cell.excell);
                   currentgeometry.x = cell.x;
                   currentgeometry.y = cell.y;
-
-                  console.log("currentgeometry", currentgeometry);
-                  console.log("cell", cell);
-
                   model.setGeometry(cell.excell, currentgeometry);
               });
           } finally {

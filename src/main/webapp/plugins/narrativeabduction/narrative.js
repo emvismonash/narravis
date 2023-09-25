@@ -7,6 +7,8 @@ class Narrative {
       this.cells = [];
       this.graph = graph;
       this.currentGroup;
+      this.ishighlight = false;
+      this.isvisible = true;
     }
   
     /**
@@ -77,7 +79,6 @@ class Narrative {
      */
     addCells = function (cells) {
       var t = this;
-      console.log(this.rootCell);
       cells.forEach((element) => {
         if (Narrative.isCellValid(element)) {
           t.addCell(element);
@@ -90,7 +91,6 @@ class Narrative {
      * In some cases, the selected cells are part of narrative element, e.g. content cell. This function validates what cell can be added.
      */
     static isCellValid = function (cell) {
-      console.log("isCellValid", cell);
       return (
         cell.value &&
         cell.value.tagName &&

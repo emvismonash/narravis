@@ -13,8 +13,7 @@ class NarrativeListView {
       this.editorui = editorui;
       this.color = color;
       this.uinarrativetitle;
-      this.ishighlight = false;
-      this.isvisible = true;
+
 
       this.initListenerUpdateNarrativeCellEdit();
       this.initListenerUpdateDocumentItemTitle();
@@ -25,7 +24,6 @@ class NarrativeListView {
      * Remove the list view
      */
     remove = function () {
-      console.log("Removing accordion view", this);
       this.container.remove();
     };
   
@@ -76,11 +74,6 @@ class NarrativeListView {
                 docitems.push(cell);
             }
         });
-
-        
-        console.log("graph.getSelectionCells()", docitems);
-        console.log("this.narrative.cells", this.narrative.cells);
-
         if(NAUtil.arraysContainSameItems(docitems, this.narrative.cells)){
             return true;
         }else{
@@ -210,11 +203,8 @@ class NarrativeListView {
       var t = this;
       graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
         var cell = evt.getProperty("cell"); // Get the cell whose label changed
-        var newValue = evt.getProperty("value"); // Get the new label value
-        console.log("cell", cell);
-  
+        var newValue = evt.getProperty("value"); // Get the new label value  
         if (Narrative.isCellNarrative(cell) && t.narrative.rootCell == cell) {
-          console.log("Edit title", newValue);
           t.uinarrativetitle.innerHTML = newValue;
         }
       });
@@ -224,8 +214,6 @@ class NarrativeListView {
         var graph = this.editorui.editor.graph;
         var t = this;
         graph.addListener(mxEvent.CLICK, function (sender, evt) {
-            console.log("evt", evt);
-            console.log("Click", t.isAllCellsSelected());
             if(!t.isAllCellsSelected()){
                 t.unhighlightCells(t.narrative.cells);
                 graph.refresh();
@@ -242,19 +230,12 @@ class NarrativeListView {
       graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
         var cell = evt.getProperty("cell"); // Get the cell whose label changed
         var newValue = evt.getProperty("value"); // Get the new label value
-        var natype = cell.natype;
-        console.log("cell", cell);
-        console.log("natype", natype);
-  
+        var natype = cell.natype;  
         if (natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE) {
           //check if the parent is in narrative
           var parent = cell.parent;
-          console.log("Parent", parent);
           if (t.narrative.cells.includes(parent)) {
-            console.log("Cell in narrative");
-            console.log("Edit title of cell view");
             var cellview = t.getCellView(parent);
-            console.log("cellview", cellview);
             if (cellview) cellview.htmltitle.innerHTML = newValue;
           }
         }
@@ -307,34 +288,33 @@ class NarrativeListView {
      */
     toggleVisibility = function(t){
       if(t.narrative){
-        if(t.isvisible){
+        if(t.narrative.isvisible){
           t.toggleCellsVisibility(t.narrative.cells, false);
-          t.isvisible = false;
+          t.narrative.isvisible = false;
           t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.hiddenImage);
 
         }else{
           t.toggleCellsVisibility(t.narrative.cells, true);
           t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.visibleImage);
-          t.isvisible = true;
+          t.narrative.isvisible = true;
         }        
       }
     }
 
     toggleHighlight = function(t){
         if(t.narrative){
-            if(t.ishighlight){
+            if(t.narrative.ishighlight){
                 t.unhighlightCells(t.narrative.cells);
-                t.ishighlight = false;
+                t.narrative.ishighlight = false;
             }else{
                 t.highlightCells(t.narrative.cells);
-                t.ishighlight = true;
+                t.narrative.ishighlight = true;
             }
         }
     }
 
     applyLayout = function(t){
         if(t.narrative){
-          console.log(t);
             t.narrativeabduction.narrativelayout.applyLayout(t.narrative);
         }
     }
@@ -353,7 +333,7 @@ class NarrativeListView {
     assignNodes = function (cells) {
       this.narrative.addCells(cells); //add cell to the narrative object, this is where the children cells are added to the root cell
       this.createBodyElements(); //create representaton
-      if(this.ishighlight) {
+      if(this.narrative.ishighlight) {
             this.unhighlightCells(this.narrative.cells);
             this.highlightCells(this.narrative.cells);
         }
@@ -462,7 +442,6 @@ class NarrativeListView {
      */
     getCellView = function (cell) {
       var ret = null;
-      console.log("getCellView");
       this.cellviews.forEach((view) => {
         if (view.cell == cell) {
           ret = view;

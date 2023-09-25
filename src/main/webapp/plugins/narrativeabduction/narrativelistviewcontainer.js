@@ -32,10 +32,7 @@ class NarrativeListViewContainer {
     getListViewByNarrative = function (narrative) {
       var ret = null;
       this.narrativealistviews.forEach((element) => {
-        console.log("Narrative id", narrative.id);
         if (element.narrative.id == narrative.id) {
-          console.log("Found");
-          console.log(element);
           ret = element;
         }
       });
@@ -63,9 +60,7 @@ class NarrativeListViewContainer {
         naabduction
       ); //create view
       naaccview.updateView();
-      naaccview.cell = narrativecell;
-      console.log("naabduction", naabduction);
-      
+      naaccview.cell = narrativecell;      
       this.narrativealistviews.push(naaccview);
   
       return naaccview;
