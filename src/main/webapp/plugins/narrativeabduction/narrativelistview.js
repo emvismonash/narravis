@@ -13,6 +13,7 @@ class NarrativeListView {
       this.color = color;
       this.uinarrativetitle;
       this.ishighlight = false;
+      this.isvisible = true;
 
       this.initListenerUpdateNarrativeCellEdit();
       this.initListenerUpdateDocumentItemTitle();
@@ -91,7 +92,7 @@ class NarrativeListView {
      * @param {*} cellsToUnhighlight
      */
     unhighlightCells = function (cellsToUnhighlight) {
-        var graph = this.editorui.editor.graph;
+      var graph = this.editorui.editor.graph;
       var highlightStyle = this.getHighlightStyle();
   
       graph.getModel().beginUpdate();
@@ -106,6 +107,21 @@ class NarrativeListView {
       graph.refresh();
     };
   
+    /**
+     * Hide provided cells
+     * @param {*} cellsToHide 
+     */
+    toggleCellsVisibility = function(cellsToHide, status){
+      var graph = this.editorui.editor.graph;  
+      graph.getModel().beginUpdate();
+      try {
+         graph.cellsToggled(cellsToHide, status);
+      } finally {
+         graph.getModel().endUpdate();
+      }
+      graph.refresh();
+    }
+
     /**
      * Create head, body, and name label
      * <head
@@ -269,6 +285,38 @@ class NarrativeListView {
         buttonToggle.title = "Toggle highlight"; //todo
         buttonToggle.onclick = this.toggleHighlight.bind(null, this);
         this.headContainer.bottompart.append(buttonToggle);       
+    }
+
+    createToggleVisibilityButton = function(){
+      var buttonToggle = document.createElement("button");
+      buttonToggle.title = "Toggle highlight"; //todo
+      buttonToggle.onclick = this.toggleVisibility.bind(null, this);
+      var img = document.createElement('img');
+			img.setAttribute('src', Editor.visibleImage);
+      buttonToggle.append(img);
+      this.headContainer.bottompart.buttonvisibility = buttonToggle;
+      this.headContainer.bottompart.buttonvisibility.img = img;
+      this.headContainer.bottompart.append(buttonToggle);  
+    }
+
+
+
+    /**
+     * Toggle the visibility of the narrative in the view. This also changes the visibility of the cells. 
+     */
+    toggleVisibility = function(t){
+      if(t.narrative){
+        if(t.isvisible){
+          t.toggleCellsVisibility(t.narrative.cells, false);
+          t.isvisible = false;
+          t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.hiddenImage);
+
+        }else{
+          t.toggleCellsVisibility(t.narrative.cells, true);
+          t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.visibleImage);
+          t.isvisible = true;
+        }        
+      }
     }
 
     toggleHighlight = function(t){
@@ -438,6 +486,7 @@ class NarrativeListView {
       this.createAssignNodesButton();
       this.createLayoutButton();
       this.createToggleHighlightButton();
+      this.createToggleVisibilityButton();
     };
   
     updateView = function () {
