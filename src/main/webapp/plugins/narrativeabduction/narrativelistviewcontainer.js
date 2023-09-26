@@ -2,10 +2,37 @@
  * The container object of all narrative accordion views
  */
 class NarrativeListViewContainer {
-    constructor(colors) {
+    constructor(colors, app) {
       this.narrativealistviews = [];
-      this.app;
+      this.app = app;
       this.colors = colors;
+      this.container;
+      this.listcontainer;
+
+      /**
+       * Container 
+       *  - Menu container
+       *  - List container
+       */
+      var menucontainer = document.createElement("div");
+      var listcontainer = document.createElement("div");
+      var container = document.createElement("div");    
+      listcontainer.id = "naListContainer";
+      container.append(menucontainer);
+      container.append(listcontainer);
+      container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
+      this.app.editorui.sidebar.container.append(container);
+      this.container = container;
+      this.menucontainer = menucontainer;
+      this.listcontainer = listcontainer;
+
+          // add create narrative buttion
+      var t = this;
+      NAUtil.AddButton(NASettings.Language.English.newnarrative, this.menucontainer, () => {
+        t.app.newNarrative();
+      });
+      
+
     }
   
     /**
@@ -25,6 +52,7 @@ class NarrativeListViewContainer {
       this.app.deleteNarrative(narrative); //delete the narrative object
     };
   
+    
     /**
      * Get the view by narrative
      * @param {*} narrative
@@ -72,5 +100,48 @@ class NarrativeListViewContainer {
     getColor = function () {
       return this.colors.pop();
     };
+
+
+    updateViewsOrder = function(){
+      this.narrativealistviews
+    }
+
+    moveUp = function(narrative){
+      var listView = this.getListViewByNarrative(narrative);
+      console.log("this.narrativealistviews", this.narrativealistviews);
+      var currentIdx = this.narrativealistviews.indexOf(listView);
+      var targetIdx = currentIdx - 1;        
+      if(this.narrativealistviews[targetIdx]){
+        this.swapElementsPositions(listView, this.narrativealistviews[targetIdx]);
+        this.app.narrativelayout.updateLayout();
+      }
+    }
+
+    moveDown = function(narrative){
+      var listView = this.getListViewByNarrative(narrative);
+      console.log("this.narrativealistviews", this.narrativealistviews);
+      var currentIdx = this.narrativealistviews.indexOf(listView);
+      var targetIdx = currentIdx + 1;        
+
+      if(this.narrativealistviews[targetIdx]){
+        this.swapElementsPositions(this.narrativealistviews[targetIdx], listView);
+        this.app.narrativelayout.updateLayout();
+      }    
+    }
+    
+
+   swapElementsPositions = function(firstlistview, secondlistview) {
+      //swap views
+      var firstElm = firstlistview.container;
+      var secondElm = secondlistview.container;
+      firstElm.parentNode.insertBefore(firstElm, secondElm);
+      //swap array
+      var tmp = firstlistview;
+      var firstIdx = this.narrativealistviews.indexOf(firstlistview);
+      var secondIdx = this.narrativealistviews.indexOf(secondlistview);
+      this.narrativealistviews[firstIdx] = secondlistview;
+      this.narrativealistviews[secondIdx] = tmp;
   }
+
+}
   

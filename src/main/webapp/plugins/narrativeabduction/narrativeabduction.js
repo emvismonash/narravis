@@ -32,8 +32,7 @@ class NarrativeAbductionApp {
     this.panelwindow;
     this.narrativeaviewscontainer;
     this.narratives = [];
-    this.narrativelayout = new NarrativeLayout();
-    this.narrativelayout.narrativeabduction = this;
+    this.narrativelayout = new NarrativeLayout(this);
     this.narrativelayout.graph = ui.editor.graph;
 
     this.settings = {
@@ -589,32 +588,9 @@ class NarrativeAbductionApp {
    */
   createNarrativesView = () => {
     this.narrativeaviewscontainer = new NarrativeListViewContainer(
-      NASettings.Colors.Narratives
-    );
-    this.narrativeaviewscontainer.app = this;
-
-    var menucontainer = document.createElement("div");
-    var listcontainer = document.createElement("div");
-    var container = document.createElement("div");    
-    listcontainer.id = "naListContainer";
-    container.append(menucontainer);
-    container.append(listcontainer);
-
-    container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
-
-    this.editorui.sidebar.container.append(container);
-    this.narrativeaviewscontainer.container = container;
-    this.narrativeaviewscontainer.menucontainer = menucontainer;
-    this.narrativeaviewscontainer.listcontainer = listcontainer;
-
-    var t = this;
-    // add create narrative buttion
-    NAUtil.AddButton(NASettings.Language.English.newnarrative, menucontainer, () => {
-        t.newNarrative();
-        //if (!t.narrativelistcell) t.createNarrativeListCell();
-        //t.addNarrativeCellToList(t.newNarrative().narrativecell);
-      });
-      
+      NASettings.Colors.Narratives,
+      this
+    );  
     // add load narrative buttion
     // NAUtil.AddButton(NASettings.Language.English.loadnarratives, container, function(){
     //     t.loadExistingNarratives();

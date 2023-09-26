@@ -2,8 +2,8 @@
  * A class to handle the layou
  */
 class NarrativeLayout {
-    constructor(){
-        this.narrativeabduction;
+    constructor(app){
+        this.app = app;
         this.graph;
         this.narrativecellslayout = [];
         this.margin = 600;
@@ -14,35 +14,22 @@ class NarrativeLayout {
     }
 
     updateNarrativeCellsLayout = function(){
-        var temp = [];
-
-        //visible cells on top
-        var i = 0;
-        this.narrativeabduction.narratives.forEach(na => {
-            if(na.isvisible){
-                temp.push({
-                    nacell: na.rootCell,
-                    order: i,
-                    positionY: i * this.margin
-                });
-                i++;
-            }
-        });
-        this.narrativeabduction.narratives.forEach(na => {
-            if(!na.isvisible){
-                temp.push({
-                    nacell: na.rootCell,
-                    order: i,
-                    positionY: i * this.margin
-                });
-                i++;
-            }
-        });
-
-        console.log("temp", temp);
-
         this.narrativecellslayout = [];
-        this.narrativecellslayout = Array.from(temp);
+        var narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;
+        narrativeListViews.forEach((listView,i) => {
+            var na = listView.narrative;
+            this.narrativecellslayout.push({
+                nacell: na.rootCell,
+                order: i,
+                positionY: i * this.margin
+            });
+        });
+    }
+
+    updateLayout = function(){
+        this.applyLayoutNarrativeCellsNaive(()=>{
+            this.updateNarrativeCellsYPositions();
+        })
     }
 
     updateNarrativeCellsYPositions = function(){
@@ -54,16 +41,15 @@ class NarrativeLayout {
          model.beginUpdate();
          try{
              var morph = new mxMorphing(graph);
-             this.narrativeabduction.narratives.forEach(narrative =>{
+             this.app.narratives.forEach(narrative =>{
                 narrative.cells.forEach(cell => {
                     var geom = cell.geometry;
                     geom.x = geom.x;
-                    var newY = t.getNarrativeCellYPosition(narrative.rootCell);
-                    console.log("current geom", geom);
-
-                    console.log("narrative cell", graph.getView().getState(narrative.rootCell, false));
-                    console.log("narrative cell geom", narrative.rootCell.geometry);
-                    geom.y = geom.y + (newY - geom.y);
+                    var naCellPos = t.getNarrativeCellLayout(narrative.rootCell);
+                    console.log("geom Y", geom.y);     
+                    console.log("Layout pos", naCellPos);    
+                    var dy = naCellPos.positionY;
+                    geom.y = dy;
                     model.setGeometry(cell, geom);
                 })
              });            
@@ -144,6 +130,16 @@ class NarrativeLayout {
     //         }
     //     }
     // }
+
+    getNarrativeCellLayout = function(nacell){
+        var res;
+        this.narrativecellslayout.forEach(element => {
+            if(nacell == element.nacell){
+                res = element;
+            }
+        });
+        return res;
+    }
 
     getNarrativeCellYPosition = function(nacell){
         var pos;

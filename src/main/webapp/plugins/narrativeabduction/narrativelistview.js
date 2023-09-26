@@ -3,9 +3,9 @@
  * Accordion View of a narrative
  */
 class NarrativeListView {
-    constructor(narrative, container, editorui, color, naabduction) {
+    constructor(narrative, container, editorui, color, app) {
       this.narrative = narrative;
-      this.narrativeabduction = naabduction;
+      this.app = app;
       this.cellviews = [];
       this.headContainer;
       this.bodyContainer;
@@ -282,6 +282,27 @@ class NarrativeListView {
     }
 
 
+    createUpDownButtons = function(){
+      var upButton = document.createElement("button");
+      upButton.title = "Move up";
+      upButton.innerHTML = "↑";
+      upButton.onclick = this.moveUp.bind(null, this);
+      this.headContainer.bottompart.append(upButton);
+
+      var downButton = document.createElement("button");
+      downButton.title = "Move down";
+      downButton.innerHTML = "↓";
+      downButton.onclick = this.moveDown.bind(null, this);
+      this.headContainer.bottompart.append(downButton);
+    }
+
+    moveUp = function(t){
+        t.app.narrativeaviewscontainer.moveUp(t.narrative);
+    }
+
+    moveDown = function(t){
+      t.app.narrativeaviewscontainer.moveDown(t.narrative);
+    }
 
     /**
      * Toggle the visibility of the narrative in the view. This also changes the visibility of the cells. 
@@ -298,8 +319,9 @@ class NarrativeListView {
           t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.visibleImage);
           t.narrative.isvisible = true;
         }        
-        t.narrativeabduction.narrativelayout.applyLayoutNarrativeCellsNaive();
-        t.narrativeabduction.narrativelayout.updateNarrativeCellsYPositions();
+        t.app.narrativelayout.applyLayoutNarrativeCellsNaive(() => {
+          t.app.narrativelayout.updateNarrativeCellsYPositions();
+        });
 
       }
     }
@@ -318,7 +340,7 @@ class NarrativeListView {
 
     applyLayout = function(t){
         if(t.narrative){
-            t.narrativeabduction.narrativelayout.applyLayout(t.narrative);
+            t.app.narrativelayout.applyLayout(t.narrative);
         }
     }
   
@@ -471,6 +493,7 @@ class NarrativeListView {
       this.createLayoutButton();
       //this.createToggleHighlightButton();
       this.createToggleVisibilityButton();
+      this.createUpDownButtons();
     };
   
     updateView = function () {
