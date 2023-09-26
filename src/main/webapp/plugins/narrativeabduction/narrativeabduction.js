@@ -154,7 +154,7 @@ class NarrativeAbductionApp {
    */
   addNarrativeCellToList = function (cell) {
     if (this.narrativelistcell) {
-      console.log("this.narrativelistcell", this.narrativelistcell);
+      //console.log("this.narrativelistcell", this.narrativelistcell);
       var graph = this.editorui.editor.graph;
       graph.getModel().beginUpdate();
       try {
@@ -431,6 +431,7 @@ class NarrativeAbductionApp {
 
     NAUtil.AddButton("Apply test layou all", devtoolcontainer, function () {
       t.narrativelayout.applyLayoutNarrativeCellsNaive();
+      
     });
 
 
@@ -970,9 +971,9 @@ class NarrativeAbductionApp {
       if (NarrativeAbductionApp.isCellDocumentItem(cell)) {
         return "";
       } else if (t.isCellNarrativeCell(cell)){
-        console.log("Narrative");
+        //console.log("Narrative");
         let val = t.getNarrativeCellValue(cell);
-        console.log("val", val);
+       // console.log("val", val);
  
         return val;        
     } else {

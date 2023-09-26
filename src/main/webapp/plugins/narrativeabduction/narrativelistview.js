@@ -298,6 +298,9 @@ class NarrativeListView {
           t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.visibleImage);
           t.narrative.isvisible = true;
         }        
+        t.narrativeabduction.narrativelayout.applyLayoutNarrativeCellsNaive();
+        t.narrativeabduction.narrativelayout.updateNarrativeCellsYPositions();
+
       }
     }
 
