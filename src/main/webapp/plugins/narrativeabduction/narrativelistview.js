@@ -322,10 +322,6 @@ class NarrativeListView {
           t.headContainer.bottompart.buttonvisibility.innerHTML = "👁";
           t.narrative.isvisible = true;
         }        
-        t.app.narrativelayout.applyLayoutNarrativeCellsNaive(() => {
-          t.app.narrativelayout.updateNarrativeCellsYPositions();
-        });
-
       }
     }
 

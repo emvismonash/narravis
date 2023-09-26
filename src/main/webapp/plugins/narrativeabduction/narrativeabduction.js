@@ -1450,6 +1450,8 @@ class NarrativeAbductionApp {
     }
 
 
+    //update layout
+    this.narrativelayout.updateLayout();
 
     return {
       narrative: na,

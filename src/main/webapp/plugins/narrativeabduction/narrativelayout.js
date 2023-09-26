@@ -7,6 +7,7 @@ class NarrativeLayout {
         this.graph;
         this.narrativecellslayout = [];
         this.margin = 600;
+        this.cellsOffset = 200;
     }
 
     addNarrative = function(n){
@@ -28,11 +29,15 @@ class NarrativeLayout {
 
     updateLayout = function(){
         this.applyLayoutNarrativeCellsNaive(()=>{
-            this.updateNarrativeCellsYPositions();
+            this.updateNarrativeCellsYPositions(()=>{
+                this.app.narratives.forEach(narrative => {
+                    this.applyLayout(narrative);
+                });
+            });
         })
     }
 
-    updateNarrativeCellsYPositions = function(){
+    updateNarrativeCellsYPositions = function(callback){
          //update excluded cells position
          var model = this.graph.model;
          var graph = this.graph;
@@ -57,10 +62,12 @@ class NarrativeLayout {
              morph.addListener(mxEvent.DONE, function()
              {
                  model.endUpdate();
-                 graph.refresh();
+                 if(callback) callback();
              });      
              morph.startAnimation();
          }
+         graph.refresh();
+         graph.getView().refresh();
     }
 
     applyLayoutNarrativeCellsNaive = function(callback){
@@ -87,11 +94,14 @@ class NarrativeLayout {
             morph.addListener(mxEvent.DONE, function()
             {
                 model.endUpdate();
-                graph.refresh();
                 if(callback) callback();
             });      
             morph.startAnimation();
         }
+        graph.refresh();
+        graph.getView().refresh();
+
+
     }
 
     // applyLayoutNarrativeCells = function(){
@@ -193,7 +203,6 @@ class NarrativeLayout {
         }finally{
           model.endUpdate();
           //then, based on the new graph parent position, we update the layout such that the resulting layout positions the cells next to the root cell (narrative cell)
-          var morph;
           try {          
               // Create an mxHierarchicalLayout instance
               var layout = new mxHierarchicalLayout(graph);
@@ -204,8 +213,6 @@ class NarrativeLayout {
               layout.maintainParentLocation = true;
 
               layout.execute(parent, parentNodes);
-              var morph = new mxMorphing(graph);
-              morph.cells = parentNodes;
 
               excludeNodes.forEach((cell) => {
                   var currentgeometry = model.getGeometry(cell.excell);
@@ -213,15 +220,24 @@ class NarrativeLayout {
                   currentgeometry.y = cell.y;
                   model.setGeometry(cell.excell, currentgeometry);
               });
+
+              var t = this;
+              parentNodes.forEach(cell => {
+                var currentgeometry = model.getGeometry(cell);
+                var rootCellGeom = model.getGeometry(narrative.rootCell);
+                currentgeometry.y = currentgeometry.y + rootCellGeom.y;
+                currentgeometry.x = currentgeometry.x + t.cellsOffset;
+                model.setGeometry(cell, currentgeometry);
+              });
+
           } finally {
-              morph.addListener(mxEvent.DONE, function()
-              {
-                model.endUpdate();
-                graph.refresh();
-              });      
-              morph.startAnimation();
+            model.endUpdate();
           }      
       }
+      graph.refresh();
+      graph.getView().refresh();
+
+
     }
  
 }
