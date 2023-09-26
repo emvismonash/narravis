@@ -168,6 +168,8 @@ class NarrativeLayout {
         });
         this.graph.clearSelection();
 
+        console.log("Excluded nodes", excludeNodes);
+
         return excludeNodes;
     }
 
@@ -215,6 +217,7 @@ class NarrativeLayout {
               morph.addListener(mxEvent.DONE, function()
               {
                 model.endUpdate();
+                graph.refresh();
               });      
               morph.startAnimation();
           }      

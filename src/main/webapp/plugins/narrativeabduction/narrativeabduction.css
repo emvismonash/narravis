@@ -38,7 +38,14 @@
 .nalv-title {
   /* styles for Title */
 }
-
+.nalv-headbottompar button{
+  background-color: transparent;
+  margin: 3px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  border: 2px solid;
+}
 .nalv-togglebutton {
     color: darkgray;
     background: transparent;

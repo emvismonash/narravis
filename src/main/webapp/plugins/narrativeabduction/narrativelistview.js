@@ -255,8 +255,8 @@ class NarrativeListView {
 
     createLayoutButton = function(){
         var buttonLayout = document.createElement("button");
-        buttonLayout.innerHTML = "L";
-        buttonLayout.title = "Apply layout"; //todo
+        buttonLayout.innerHTML = "⟲";
+        buttonLayout.title = "Reset layout"; //todo
         buttonLayout.onclick = this.applyLayout.bind(null, this);
         this.headContainer.bottompart.append(buttonLayout);       
     }
@@ -271,13 +271,14 @@ class NarrativeListView {
 
     createToggleVisibilityButton = function(){
       var buttonToggle = document.createElement("button");
-      buttonToggle.title = "Toggle highlight"; //todo
+      buttonToggle.title = "Toggle visibility"; //todo
       buttonToggle.onclick = this.toggleVisibility.bind(null, this);
-      var img = document.createElement('img');
-			img.setAttribute('src', Editor.visibleImage);
-      buttonToggle.append(img);
+      buttonToggle.innerHTML = "👁";
+      //var img = document.createElement('img');
+			//img.setAttribute('src', Editor.visibleImage);
+      //buttonToggle.append(img);
       this.headContainer.bottompart.buttonvisibility = buttonToggle;
-      this.headContainer.bottompart.buttonvisibility.img = img;
+     // this.headContainer.bottompart.buttonvisibility.img = img;
       this.headContainer.bottompart.append(buttonToggle);  
     }
 
@@ -312,11 +313,13 @@ class NarrativeListView {
         if(t.narrative.isvisible){
           t.toggleCellsVisibility(t.narrative.cells, false);
           t.narrative.isvisible = false;
-          t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.hiddenImage);
+          //t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.hiddenImage);
+          t.headContainer.bottompart.buttonvisibility.innerHTML = "⎯";
 
         }else{
           t.toggleCellsVisibility(t.narrative.cells, true);
-          t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.visibleImage);
+          //t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.visibleImage);
+          t.headContainer.bottompart.buttonvisibility.innerHTML = "👁";
           t.narrative.isvisible = true;
         }        
         t.app.narrativelayout.applyLayoutNarrativeCellsNaive(() => {
