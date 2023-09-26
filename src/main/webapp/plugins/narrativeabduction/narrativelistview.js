@@ -157,11 +157,15 @@ class NarrativeListView {
   
       var t = this;
       //#region narrative title event listeners
+      var graph = this.editorui.editor.graph;
+      var highlight = new mxCellHighlight(graph, "#000", 2);
       this.uinarrativetitle.onmouseenter = function () {
-        t.highlightCells(t.narrative.cells);
+        //t.highlightCells(t.narrative.cells);
+        highlight.highlight(graph.view.getState(t.narrative.rootCell));
       };
       this.uinarrativetitle.onmouseleave = function () {
-        t.unhighlightCells(t.narrative.cells);
+        //t.unhighlightCells(t.narrative.cells);
+        highlight.hide();
       };
       this.uinarrativetitle.onclick = function(){
         t.selectCells();
