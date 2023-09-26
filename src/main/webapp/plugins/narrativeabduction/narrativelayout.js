@@ -27,12 +27,13 @@ class NarrativeLayout {
         });
     }
 
-    updateLayout = function(){
+    updateLayout = function(narrative){
         this.applyLayoutNarrativeCellsNaive(()=>{
             this.updateNarrativeCellsYPositions(()=>{
-                this.app.narratives.forEach(narrative => {
-                    this.applyLayout(narrative);
-                });
+                if(narrative) this.applyLayout(narrative);
+                // this.app.narratives.forEach(narrative => {
+                //     this.applyLayout(narrative);
+                // });
             });
         })
     }
@@ -45,7 +46,6 @@ class NarrativeLayout {
          this.updateNarrativeCellsLayout();
          model.beginUpdate();
          try{
-             var morph = new mxMorphing(graph);
              this.app.narratives.forEach(narrative =>{
                 narrative.cells.forEach(cell => {
                     var geom = cell.geometry;
@@ -59,15 +59,12 @@ class NarrativeLayout {
                 })
              });            
          }finally{
-             morph.addListener(mxEvent.DONE, function()
-             {
-                 model.endUpdate();
-                 if(callback) callback();
-             });      
-             morph.startAnimation();
+            model.endUpdate();
+            graph.refresh();
+            graph.getView().refresh();
+            if(callback) callback();
          }
-         graph.refresh();
-         graph.getView().refresh();
+         
     }
 
     applyLayoutNarrativeCellsNaive = function(callback){
@@ -83,7 +80,6 @@ class NarrativeLayout {
 
         model.beginUpdate();
         try{
-            var morph = new mxMorphing(graph);
             cells.forEach((cell) => {
                 var geom = cell.geometry;
                 geom.x = 0; 
@@ -91,55 +87,16 @@ class NarrativeLayout {
                 model.setGeometry(cell, geom);
             });
         }finally{
-            morph.addListener(mxEvent.DONE, function()
-            {
-                model.endUpdate();
-                if(callback) callback();
-            });      
-            morph.startAnimation();
+            model.endUpdate();
+            graph.refresh();
+            graph.getView().refresh();
+            if(callback) callback();
         }
-        graph.refresh();
-        graph.getView().refresh();
+
 
 
     }
 
-    // applyLayoutNarrativeCells = function(){
-    //     //update excluded cells position
-    //     var model = this.graph.model;
-    //     var graph = this.graph;
-
-    //     var cells = this.getNarrativeCells();
-    //     var excludeNodes = this.getExcludedCells(cells);
-
-    //     model.beginUpdate();
-
-    //     try{
-    //         var parent = graph.getDefaultParent();
-    //         parent.geometry = new mxGeometry(0, 0); //this is currently being hardcoded. 
-    //         var morph = new mxMorphing(graph);
-
-    //     }finally{
-    //         try{
-    //             var layout = new mxStackLayout(graph, false, 50);
-    //             layout.execute(graph.getDefaultParent(), cells);
-    //             morph.cells = cells;    
-    //             excludeNodes.forEach((cell) => {
-    //                 var currentgeometry = model.getGeometry(cell.excell);
-    //                 currentgeometry.x = cell.x;
-    //                 currentgeometry.y = cell.y;    
-    //                 model.setGeometry(cell.excell, currentgeometry);
-    //             });
-    
-    //         }finally{
-    //             morph.addListener(mxEvent.DONE, function()
-    //             {
-    //                 model.endUpdate();
-    //             });      
-    //             morph.startAnimation();
-    //         }
-    //     }
-    // }
 
     getNarrativeCellLayout = function(nacell){
         var res;
@@ -194,13 +151,6 @@ class NarrativeLayout {
           // check excluded nodes
           var excludeNodes = this.getExcludedCells(parentNodes);
   
-        model.beginUpdate();
-        //the first update is to set the offset of the layout to a value, such as narrative cell position
-        try{
-          var parent = graph.getDefaultParent();
-          parent.geometry = new mxGeometry(0, this.getNarrativeCellYPosition(narrative)); //this is currently being hardcoded. 
-
-        }finally{
           model.endUpdate();
           //then, based on the new graph parent position, we update the layout such that the resulting layout positions the cells next to the root cell (narrative cell)
           try {          
@@ -212,7 +162,7 @@ class NarrativeLayout {
               layout.moveParent = false;
               layout.maintainParentLocation = true;
 
-              layout.execute(parent, parentNodes);
+              layout.execute(graph.getDefaultParent(), parentNodes);
 
               excludeNodes.forEach((cell) => {
                   var currentgeometry = model.getGeometry(cell.excell);
@@ -232,10 +182,9 @@ class NarrativeLayout {
 
           } finally {
             model.endUpdate();
+            graph.refresh();
+            graph.getView().refresh();
           }      
-      }
-      graph.refresh();
-      graph.getView().refresh();
 
 
     }
