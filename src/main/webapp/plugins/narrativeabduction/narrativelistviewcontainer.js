@@ -113,7 +113,7 @@ class NarrativeListViewContainer {
       var targetIdx = currentIdx - 1;        
       if(this.narrativealistviews[targetIdx]){
         this.swapElementsPositions(listView, this.narrativealistviews[targetIdx]);
-        this.app.narrativelayout.updateLayout(narrative);
+        this.app.narrativelayout.updateLayout([narrative, this.narrativealistviews[targetIdx].narrative]);
       }
     }
 
@@ -125,7 +125,7 @@ class NarrativeListViewContainer {
 
       if(this.narrativealistviews[targetIdx]){
         this.swapElementsPositions(this.narrativealistviews[targetIdx], listView);
-        this.app.narrativelayout.updateLayout(narrative);
+        this.app.narrativelayout.updateLayout([narrative, this.narrativealistviews[targetIdx].narrative]);
       }    
     }
     

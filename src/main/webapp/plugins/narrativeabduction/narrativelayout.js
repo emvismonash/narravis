@@ -10,10 +10,6 @@ class NarrativeLayout {
         this.cellsOffset = 200;
     }
 
-    addNarrative = function(n){
-        this.narratives.push(n);
-    }
-
     updateNarrativeCellsLayout = function(){
         this.narrativecellslayout = [];
         var narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;
@@ -27,25 +23,30 @@ class NarrativeLayout {
         });
     }
 
-    updateLayout = function(narrative){
+    updateLayout = function(narratives){
         this.applyLayoutNarrativeCellsNaive(()=>{
-            this.updateNarrativeCellsYPositions(()=>{
-                if(narrative) this.applyLayout(narrative);
-                // this.app.narratives.forEach(narrative => {
-                //     this.applyLayout(narrative);
-                // });
-            });
-        })
+            this.updateNarrativeCellsYPositions(() =>{
+                    this.app.narratives.forEach(narrative => {
+                        this.applyLayout(narrative);     //this one causes the graph not updating properly
+                    });
+                });
+               
+        });
+
     }
 
-    updateNarrativeCellsYPositions = function(callback){
+    updateNarrativeCellsYPositions = function(callback, change, post){
          //update excluded cells position
-         var model = this.graph.model;
+         var model = this.graph.getModel();
          var graph = this.graph;
          var t = this;
          this.updateNarrativeCellsLayout();
          model.beginUpdate();
          try{
+            if (change != null)
+            {
+                change();
+            }
              this.app.narratives.forEach(narrative =>{
                 narrative.cells.forEach(cell => {
                     var geom = cell.geometry;
@@ -58,18 +59,32 @@ class NarrativeLayout {
                     model.setGeometry(cell, geom);
                 })
              });            
+         }catch (e)
+         {
+             throw e;
          }finally{
-            model.endUpdate();
-            graph.refresh();
-            graph.getView().refresh();
-            if(callback) callback();
+            // New API for animating graph layout results asynchronously
+            var morph = new mxMorphing(graph);
+            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
+            {
+                graph.getModel().endUpdate();
+                graph.refresh();                
+                if (post != null)
+                {
+                    post();
+                }
+
+                if(callback) callback();
+            }));
+            
+            morph.startAnimation();
          }
          
     }
 
-    applyLayoutNarrativeCellsNaive = function(callback){
+    applyLayoutNarrativeCellsNaive = function(callback, change, post){
         //update excluded cells position
-        var model = this.graph.model;
+        var model = this.graph.getModel();
         var graph = this.graph;
         var cells = [];
         var t = this;
@@ -80,17 +95,39 @@ class NarrativeLayout {
 
         model.beginUpdate();
         try{
+            if (change != null)
+            {
+                change();
+            }
+
             cells.forEach((cell) => {
                 var geom = cell.geometry;
                 geom.x = 0; 
                 geom.y = t.getNarrativeCellYPosition(cell);
                 model.setGeometry(cell, geom);
             });
-        }finally{
-            model.endUpdate();
-            graph.refresh();
-            graph.getView().refresh();
-            if(callback) callback();
+        }
+        catch (e)
+        {
+            throw e;
+        }
+        finally
+        {
+             // New API for animating graph layout results asynchronously
+             var morph = new mxMorphing(graph);
+             morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
+             {
+                 graph.getModel().endUpdate();
+                 graph.refresh();
+                 if (post != null)
+                 {
+                     post();
+                 }
+
+                 if(callback) callback();
+             }));
+             
+             morph.startAnimation();
         }
 
 
@@ -140,53 +177,59 @@ class NarrativeLayout {
         return excludeNodes;
     }
 
-    applyLayout = function(narrative){
+    applyLayout = function(narrative, change, post){
         //update excluded cells position
-        var model = this.graph.model;
         var graph = this.graph;
+        var model = this.graph.getModel();
+        var targetCells = narrative.cells; // Array of parent node cells
+        var layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
+        layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
+        var excludeNodes = this.getExcludedCells(targetCells);
 
-          // Identify parent nodes and children (replace with your logic)
-          var parentNodes = narrative.cells; // Array of parent node cells
-
-          // check excluded nodes
-          var excludeNodes = this.getExcludedCells(parentNodes);
-  
-          model.endUpdate();
-          //then, based on the new graph parent position, we update the layout such that the resulting layout positions the cells next to the root cell (narrative cell)
-          try {          
-              // Create an mxHierarchicalLayout instance
-              var layout = new mxHierarchicalLayout(graph);
-              // Configure the layout as horizontal
-              layout.orientation = mxConstants.DIRECTION_WEST;
-              layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
-              layout.moveParent = false;
-              layout.maintainParentLocation = true;
-
-              layout.execute(graph.getDefaultParent(), parentNodes);
-
-              excludeNodes.forEach((cell) => {
-                  var currentgeometry = model.getGeometry(cell.excell);
-                  currentgeometry.x = cell.x;
-                  currentgeometry.y = cell.y;
-                  model.setGeometry(cell.excell, currentgeometry);
-              });
-
-              var t = this;
-              parentNodes.forEach(cell => {
+        graph.getModel().beginUpdate();
+        try
+        {
+            if (change != null)
+            {
+                change();
+            }
+            
+            layout.execute(graph.getDefaultParent(), targetCells);
+            var t = this;
+            targetCells.forEach(cell => {
                 var currentgeometry = model.getGeometry(cell);
                 var rootCellGeom = model.getGeometry(narrative.rootCell);
                 currentgeometry.y = currentgeometry.y + rootCellGeom.y;
                 currentgeometry.x = currentgeometry.x + t.cellsOffset;
                 model.setGeometry(cell, currentgeometry);
-              });
+            });
 
-          } finally {
-            model.endUpdate();
-            graph.refresh();
-            graph.getView().refresh();
-          }      
-
-
+            excludeNodes.forEach((cell) => {
+                var currentgeometry = model.getGeometry(cell.excell);
+                currentgeometry.x = cell.x;
+                currentgeometry.y = cell.y;
+                model.setGeometry(cell.excell, currentgeometry);
+            });
+        }
+        catch (e)
+        {
+            throw e;
+        }
+        finally
+        {
+            // New API for animating graph layout results asynchronously
+            var morph = new mxMorphing(graph);
+            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
+            {
+                graph.getModel().endUpdate();
+                
+                if (post != null)
+                {
+                    post();
+                }
+            }));
+            
+            morph.startAnimation();
+        }
     }
- 
 }
