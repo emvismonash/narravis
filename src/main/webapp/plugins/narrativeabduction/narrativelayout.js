@@ -206,6 +206,9 @@ class NarrativeLayout {
     }
 
     applyLayout = function(narrative, callback, change, post){
+        //do not apply layout if narrative is hidden
+        if(!narrative.isvisible) return;
+        
         //update excluded cells position
         var graph = this.graph;
         var model = this.graph.getModel();

@@ -17,6 +17,27 @@ class Narrative {
       }
       this.initListenerUpdateBound();
     }
+
+    hideBound = function(){
+      this.toggleBoundVisible(false);
+    }
+
+    showBound = function(){
+      this.toggleBoundVisible(true);
+    }
+
+    toggleBoundVisible = function(status){
+      if(!this.boundcell) return;
+
+      var graph = this.graph;  
+      graph.getModel().beginUpdate();
+      try {
+         graph.cellsToggled([this.boundcell], status);
+      } finally {
+         graph.getModel().endUpdate();
+      }
+      graph.refresh();
+    }
   
     initListenerUpdateBound = function(){
       var graph = this.graph;
@@ -131,6 +152,9 @@ class Narrative {
      * @param {*} callback 
      */
     updateCellsBound = function(){
+      // can't calculate bound if cells are hidden
+      if(!this.isvisible) return;
+
       var cellsToCalculateBoundary = this.cells;
 
       // Initialize variables to store the boundary coordinates
