@@ -225,7 +225,8 @@ class NarrativeLayout {
             layout.execute(graph.getDefaultParent(), targetCells);
             var t = this;
             var order = this.getNarrativeCellLayout(narrative.rootCell);
-            var dy = order.positionY;
+            
+            var dy = (order)? order.positionY: 0;
             targetCells.forEach(cell => {
                 var currentgeometry = model.getGeometry(cell);
                 currentgeometry.y = currentgeometry.y + dy;
