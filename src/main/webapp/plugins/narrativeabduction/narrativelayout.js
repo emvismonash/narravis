@@ -6,28 +6,50 @@ class NarrativeLayout {
         this.app = app;
         this.graph;
         this.narrativecellslayout = [];
-        this.margin = 600;
-        this.cellsOffset = 200;
+        this.verticalspace = 20;
+        this.horizontalspacebetweennarrativeandlayout = 200;
+        this.narrativesbounds = [];
     }
 
     updateNarrativeCellsLayout = function(){
         this.narrativecellslayout = [];
         var narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;
-        narrativeListViews.forEach((listView,i) => {
-            var na = listView.narrative;
-            this.narrativecellslayout.push({
-                nacell: na.rootCell,
-                order: i,
-                positionY: i * this.margin
-            });
-        });
+        var sum = 0;
+        for(var i = 0; i < narrativeListViews.length; i++){
+            var na = narrativeListViews[i].narrative;
+            var bound, posY;
+            if(i == 0 ){
+                if(!na.bound) na.updateCellsBound();
+                bound  = na.bound;    
+                posY = 0;
+                sum += na.bound.height + this.verticalspace;
+                this.narrativecellslayout.push({
+                    nacell: na.rootCell,
+                    order: i,
+                    positionY: posY 
+                });
+            }else{
+                if(!na.bound) na.updateCellsBound();
+                bound  = na.bound;            
+                posY = sum;
+                sum += na.bound.height + this.verticalspace;
+                this.narrativecellslayout.push({
+                    nacell: na.rootCell,
+                    order: i,
+                    positionY: posY 
+                });
+            }
+        }
     }
+
+
 
     updateLayout = function(narratives){
         this.applyLayoutNarrativeCellsNaive(()=>{
             this.updateNarrativeCellsYPositions(() =>{
                     this.app.narratives.forEach(narrative => {
-                        this.applyLayout(narrative);     //this one causes the graph not updating properly
+                        this.applyLayout(narrative, ()=> {
+                        });     //this one causes the graph not updating properly
                     });
                 });
                
@@ -82,6 +104,12 @@ class NarrativeLayout {
          
     }
 
+    /**
+     * Stack the narrative cells
+     * @param {*} callback 
+     * @param {*} change 
+     * @param {*} post 
+     */
     applyLayoutNarrativeCellsNaive = function(callback, change, post){
         //update excluded cells position
         var model = this.graph.getModel();
@@ -177,7 +205,7 @@ class NarrativeLayout {
         return excludeNodes;
     }
 
-    applyLayout = function(narrative, change, post){
+    applyLayout = function(narrative, callback, change, post){
         //update excluded cells position
         var graph = this.graph;
         var model = this.graph.getModel();
@@ -196,11 +224,12 @@ class NarrativeLayout {
             
             layout.execute(graph.getDefaultParent(), targetCells);
             var t = this;
+            var order = this.getNarrativeCellLayout(narrative.rootCell);
+            var dy = order.positionY;
             targetCells.forEach(cell => {
                 var currentgeometry = model.getGeometry(cell);
-                var rootCellGeom = model.getGeometry(narrative.rootCell);
-                currentgeometry.y = currentgeometry.y + rootCellGeom.y;
-                currentgeometry.x = currentgeometry.x + t.cellsOffset;
+                currentgeometry.y = currentgeometry.y + dy;
+                currentgeometry.x = currentgeometry.x + t.horizontalspacebetweennarrativeandlayout;
                 model.setGeometry(cell, currentgeometry);
             });
 
@@ -227,6 +256,8 @@ class NarrativeLayout {
                 {
                     post();
                 }
+                narrative.updateCellsBound();
+                if(callback) callback();
             }));
             
             morph.startAnimation();
