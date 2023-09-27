@@ -173,7 +173,7 @@ class Narrative {
       var graph = this.graph;
       if(!this.boundcell){
         var vertex = graph.insertVertex(this.graph.getDefaultParent(), null, '', this.bound.cx, this.bound.cy, this.bound.width, this.bound.height);
-        vertex.setStyle("connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#808080;dashed=1;dashPattern=12 12;");
+        vertex.setStyle(NASettings.Styles.NarrativeBound);
         this.boundcell = vertex;
         graph.orderCells(true, [this.boundcell]);
         this.updateCellsBound();

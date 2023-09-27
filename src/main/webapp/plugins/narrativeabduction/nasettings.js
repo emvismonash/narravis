@@ -56,6 +56,9 @@ class NASettings {
         "#cab2d6",
       ],
     };
+    static Styles = {
+      NarrativeBound: "connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#808080;dashed=1;dashPattern=12 12;fillColor=none;"
+    }
     static CSSClasses = {
       NarrativeListView: {
         NodeContainer: "nalv-nodecontainer",

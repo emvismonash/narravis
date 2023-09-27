@@ -42,6 +42,7 @@ class NarrativeListViewContainer {
     removeListView = function (narrative) {
       var listView = this.getListViewByNarrative(narrative);
       if (listView) {
+        listView.unhighlightCells(listView.narrative.cells); // unhighligth cells
         listView.remove(); //remove the view
         this.colors.push(listView.color); //return the color
       }
