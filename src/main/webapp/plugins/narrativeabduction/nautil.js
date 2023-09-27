@@ -1,5 +1,4 @@
 class NAUtil {
-
     static arraysContainSameItems = function(arr1, arr2) {
         if (arr1.length !== arr2.length) {
           return false; // If the arrays have different lengths, they can't contain the same items

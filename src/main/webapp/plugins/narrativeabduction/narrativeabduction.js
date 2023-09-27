@@ -765,6 +765,7 @@ class NarrativeAbductionApp {
     }
   };
 
+
   //#region listeners
 
   /**
@@ -801,6 +802,8 @@ class NarrativeAbductionApp {
                 console.log("htmlcontent 2", htmlcontent);
                 console.log("New height 2", htmlcontent.scrollHeight);
                 var htmlheight = htmlcontent.clientHeight;
+                console.log("htmlheight", htmlheight);
+                htmlheight = (htmlheight > 0)? htmlheight: descell.geometry.height;
                 descell.geometry.height = htmlheight;
                 descell.geometry.y = t.titlecellheight;
 

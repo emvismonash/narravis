@@ -11,6 +11,10 @@ class Narrative {
       this.isvisible = true;
       this.bound;
 
+      if(this.getBoundCell()){
+        this.boundcell = this.getBoundCell();
+        this.graph.getModel().setStyle(this.boundcell, NASettings.Styles.NarrativeBound);
+      }
       this.initListenerUpdateBound();
     }
   
@@ -64,6 +68,7 @@ class Narrative {
       if (!this.cells.includes(c)) {
         this.cells.push(c);
         this.saveCell(c);
+        this.updateCellsBound();
       }
     };
   
@@ -112,6 +117,15 @@ class Narrative {
       );
     };
   
+    getBoundCell = function(){
+      var cell = this.graph.getModel().getCell(this.getBoundCellID());
+      return cell;
+    }
+
+    getBoundCellID = function(){
+      return NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLSBOUND + "-" + this.rootCell.id;
+    }
+
     /**
      * 
      * @param {*} callback 
@@ -174,6 +188,7 @@ class Narrative {
       if(!this.boundcell){
         var vertex = graph.insertVertex(this.graph.getDefaultParent(), null, '', this.bound.cx, this.bound.cy, this.bound.width, this.bound.height);
         vertex.setStyle(NASettings.Styles.NarrativeBound);
+        vertex.id = this.getBoundCellID();
         this.boundcell = vertex;
         graph.orderCells(true, [this.boundcell]);
         this.updateCellsBound();

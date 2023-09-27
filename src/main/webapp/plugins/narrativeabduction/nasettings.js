@@ -24,6 +24,7 @@ class NASettings {
         DOCTITLE: "doctitle",
         DOCDESCRIPTION: "docdescription",
         NARRATIVECELLS: "cells",
+        NARRATIVECELLSBOUND: "narrativecellsbound"
       },
       UI: {
         NAHTMLCONTENT: "HTMLDocContent",
@@ -57,7 +58,7 @@ class NASettings {
       ],
     };
     static Styles = {
-      NarrativeBound: "connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#808080;dashed=1;dashPattern=12 12;fillColor=none;"
+      NarrativeBound: "connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#408080;dashed=1;fillColor=none;strokeWidth=3;perimeterSpacing=3;"
     }
     static CSSClasses = {
       NarrativeListView: {
