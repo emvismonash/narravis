@@ -406,6 +406,7 @@ class NarrativeListView {
   
         var titlecell = this.getTitleCell(cell);
         textcontainer.innerHTML = titlecell.value;
+        textcontainer.title = "Click to select";
         container.cell = cell;
         container.style.cursor = "pointer";
         container.classList.add(
@@ -434,7 +435,10 @@ class NarrativeListView {
         textcontainer.onmouseleave = function () {
           highlight.hide();
         };
-  
+        textcontainer.onclick = function () {
+          graph.setSelectionCell (cell);
+        };
+
         var cellView = {
           cell: cell,
           htmlcontainer: container,
