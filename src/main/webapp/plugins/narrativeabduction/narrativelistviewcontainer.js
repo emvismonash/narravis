@@ -39,9 +39,10 @@ class NarrativeListViewContainer {
      * Remove view from the list
      * @param {*} narrative
      */
-    removeListView = function (narrative) {
-      var listView = this.getListViewByNarrative(narrative);
+    removeListView = function (narrativecell) {
+      var listView = this.getListViewByNarrative(narrativecell);
       if (listView) {
+        listView.narrative.deleteBound();
         listView.unhighlightCells(listView.narrative.cells); // unhighligth cells
         listView.remove(); //remove the view
         this.colors.push(listView.color); //return the color
@@ -50,7 +51,7 @@ class NarrativeListViewContainer {
         this.narrativealistviews.indexOf(listView),
         1
       ); //update the list
-      this.app.deleteNarrative(narrative); //delete the narrative object
+      this.app.deleteNarrative(narrativecell); //delete the narrative object
     };
   
     

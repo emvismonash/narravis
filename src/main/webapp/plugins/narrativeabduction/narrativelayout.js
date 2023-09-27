@@ -15,6 +15,7 @@ class NarrativeLayout {
         this.narrativecellslayout = [];
         var narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;
         var sum = 0;
+        console.log("narrativeListViews", narrativeListViews);
         for(var i = 0; i < narrativeListViews.length; i++){
             var bound, posY, height, posY;
             var na = narrativeListViews[i].narrative;
@@ -74,11 +75,13 @@ class NarrativeLayout {
                     var geom = cell.geometry;
                     geom.x = geom.x;
                     var naCellPos = t.getNarrativeCellLayout(narrative.rootCell);
-                    console.log("geom Y", geom.y);     
-                    console.log("Layout pos", naCellPos);    
-                    var dy = naCellPos.positionY;
-                    geom.y = dy;
-                    model.setGeometry(cell, geom);
+                    if(naCellPos){
+                        console.log("geom Y", geom.y);     
+                        console.log("Layout pos", naCellPos);    
+                        var dy = naCellPos.positionY;
+                        geom.y = dy;
+                        model.setGeometry(cell, geom);
+                    }
                 })
              });            
          }catch (e)

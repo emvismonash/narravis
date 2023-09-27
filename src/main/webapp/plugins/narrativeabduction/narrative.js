@@ -39,6 +39,15 @@ class Narrative {
       graph.refresh();
     }
   
+    deleteBound = function(){
+      this.graph.getModel().beginUpdate();
+      try{
+        this.graph.cellsRemoved([this.boundcell]);
+      }finally{
+        this.graph.getModel().endUpdate();
+      }
+    }
+
     initListenerUpdateBound = function(){
       var graph = this.graph;
       var t = this;
