@@ -16,29 +16,31 @@ class NarrativeLayout {
         var narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;
         var sum = 0;
         for(var i = 0; i < narrativeListViews.length; i++){
+            var bound, posY, height, posY;
             var na = narrativeListViews[i].narrative;
-            var bound, posY;
-            if(i == 0 ){
-                if(!na.bound) na.updateCellsBound();
-                bound  = na.bound;    
-                posY = 0;
-                sum += na.bound.height + this.verticalspace;
-                this.narrativecellslayout.push({
-                    nacell: na.rootCell,
-                    order: i,
-                    positionY: posY 
-                });
+            if(!na.bound) na.updateCellsBound();
+            bound  = na.bound;
+            //if the height is zero because the narrative has not items, use the height of the narrative cell
+            if(!bound){
+                height = na.rootCell.getGeometry().height;
             }else{
-                if(!na.bound) na.updateCellsBound();
-                bound  = na.bound;            
-                posY = sum;
-                sum += na.bound.height + this.verticalspace;
-                this.narrativecellslayout.push({
-                    nacell: na.rootCell,
-                    order: i,
-                    positionY: posY 
-                });
+                height = bound.height;
             }
+
+            console.log("bound", bound);
+            console.log("height", height);
+            if(i == 0 ){         
+                posY = 0;               
+            }else{                    
+                posY = sum;
+            }
+
+            sum += height + this.verticalspace;
+            this.narrativecellslayout.push({
+                nacell: na.rootCell,
+                order: i,
+                positionY: posY 
+            });
         }
     }
 
@@ -47,13 +49,11 @@ class NarrativeLayout {
     updateLayout = function(narratives){
         this.applyLayoutNarrativeCellsNaive(()=>{
             this.updateNarrativeCellsYPositions(() =>{
-                    this.app.narratives.forEach(narrative => {
-                        this.applyLayout(narrative, ()=> {
-                        });     //this one causes the graph not updating properly
-                    });
-                });
-               
-        });
+                this.app.narratives.forEach(narrative => {
+                       this.applyLayout(narrative);
+                 });  
+            });
+        })
 
     }
 
@@ -208,7 +208,7 @@ class NarrativeLayout {
     applyLayout = function(narrative, callback, change, post){
         //do not apply layout if narrative is hidden
         if(!narrative.isvisible) return;
-        
+
         //update excluded cells position
         var graph = this.graph;
         var model = this.graph.getModel();

@@ -154,6 +154,7 @@ class Narrative {
     updateCellsBound = function(){
       // can't calculate bound if cells are hidden
       if(!this.isvisible) return;
+      if(this.cells.length == 0) return;
 
       var cellsToCalculateBoundary = this.cells;
 
