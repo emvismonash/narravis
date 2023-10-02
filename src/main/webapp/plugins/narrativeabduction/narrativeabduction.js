@@ -1030,13 +1030,14 @@ class NarrativeAbductionApp {
       //if edge, show Contextual Edge Option Menu
       var cells = evt.getProperty("cells");
       console.log("new cells", cells);
-      if (cells[0] && cells[0].isEdge()) {
+      var newCell = cells[0];
+      if (newCell && newCell.isEdge()) {
         //edge type based on target node
-        var edge = cells[0];
-        var target = edge.target.value.getAttribute(
+        var edge = newCell;
+        var targetType = edge.target.value.getAttribute(
           NASettings.Dictionary.ATTRIBUTTES.NATYPE
         );
-        switch (target) {
+        switch (targetType) {
           case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
             t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
             break;
@@ -1044,18 +1045,50 @@ class NarrativeAbductionApp {
             t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
             break;
         }
+        //if the source cell is narrative item and source cell is part of a narrative, make the cell part of the same narrative
+        var source = edge.source;
+        var target = edge.target;
+        console.log(source, "source");
+        var sourceNarrative = t.getDocumentItemNarrative(source);
+        console.log("sourceNarrative", sourceNarrative);
+
+        if(sourceNarrative){
+            var naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);
+            console.log("naListVIew", naListVIew);
+
+            if(naListVIew){
+              naListVIew.assignNodes([target]);
+            }
+        }
+        
         // t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
       }
       //if the cell is Narrative, trigger create a new narrative action
       if (
-        cells[0].getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) ==
+        newCell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) ==
         NASettings.Dictionary.CELLS.NARRATIVE
       ) {
-        graph.removeCells([cells[0]]);
+        graph.removeCells([newCell]);
         t.newNarrative();
       }
+     
     });
   };
+
+  /**
+   * Get a narrative that has the cell
+   * @param {*} cell 
+   * @returns 
+   */
+  getDocumentItemNarrative = function(cell){
+    var na;
+    this.narratives.forEach(narrative => {
+        if(narrative.cells.includes(cell)){
+          na = narrative;        
+        }
+    });
+    return na;
+  }
 
   //#endregion
 
