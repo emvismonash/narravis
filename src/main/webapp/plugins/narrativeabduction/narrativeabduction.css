@@ -52,7 +52,14 @@
     border: 1px solid white;
     cursor: pointer;
 }
-
+.nalvc-container, .na-commonmenucontainer{
+  margin: 5px;
+  border-bottom: 1px solid darkgray;
+  padding-bottom: 10px;
+}
+.nalvc-menucontainer{
+  margin-bottom: 10px;
+}
 .nalv-cellviewcontainer, .nalv-headtoppart{
     display: flex;
     justify-content: space-between;

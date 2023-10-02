@@ -11,17 +11,24 @@ class NarrativeListViewContainer {
 
       /**
        * Container 
+       * - Title
        *  - Menu container
        *  - List container
        */
+      var title = document.createElement("h3");
+      title.innerHTML = "NA View";
       var menucontainer = document.createElement("div");
       var listcontainer = document.createElement("div");
       var container = document.createElement("div");    
+      container.classList.add(NASettings.CSSClasses.NarrativeListViewContainer.NarrativeViewContainer);
+      menucontainer.classList.add(NASettings.CSSClasses.NarrativeListViewContainer.NarrativeViewContainerMenu);
+
       listcontainer.id = "naListContainer";
+      container.append(title);
       container.append(menucontainer);
       container.append(listcontainer);
-      container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
-      this.app.editorui.sidebar.container.append(container);
+      
+      this.app.panelwindow.narrativeview.append(container);
       this.container = container;
       this.menucontainer = menucontainer;
       this.listcontainer = listcontainer;
