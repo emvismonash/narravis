@@ -37,7 +37,7 @@ class NASettings {
     };
     static Language = {
       English: {
-        newnarrative: "New Narrative",
+        newnarrative: "New Group",
         loadnarratives: "Load Narratives",
         assign: "Assign",
         unassign: "Unassign",
@@ -73,10 +73,16 @@ class NASettings {
         CellViewContainer: "nalv-cellviewcontainer",
         CellViewTitle: "nalv-cellviewtitle",
         CellViewUnassignButton: "nalv-cellviewunassignbutton",
-        CellViewUIContainer: "nalv-cellviewuicontainer",
+        CellViewUIContainer: "nalv-cellviewuicontainer"
+      },
+      NarrativeListViewContainer: {
+        NarrativeViewContainer: "nalvc-container",
+        NarrativeViewContainerMenu: "nalv-menucontainer",
+        MenuLabel: "nalv-menulabel"
       },
       Panels: {
         SidePanel: "naSidePanel",
+        CommonMenuContainer: "na-commonmenucontainer"
       },
       NAUtils: {
         Button: "naUtilButton",

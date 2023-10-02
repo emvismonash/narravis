@@ -132,8 +132,8 @@ class NarrativeAbductionApp {
    * Initialisation
    */
   _init = function () {
-    this.createNarrativesView();
     this.createNAPanel();
+    this.createNarrativesView();
     this.createPalette();
     //this.installStackedLayout();
     this.initListenerResponsiveSizeHandlerVanilaContent();
@@ -355,21 +355,63 @@ class NarrativeAbductionApp {
   };
   /**
    * Create NA Panel Window
+   * Default shape picker
+   * Narrative Abduction Side Panel 
+   * - Narrative View
+   * - Common Menus
    */
   createNAPanel = function () {
     var container = document.createElement("div");
+    var commonmenu = document.createElement("div");
+    var narrativeview = document.createElement("div");
+
     container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
+    commonmenu.classList.add(NASettings.CSSClasses.Panels.CommonMenuContainer);
     this.panelwindow = container;
+    this.panelwindow.commonmenu = commonmenu;
+    this.panelwindow.narrativeview = narrativeview;
 
     this.editorui.sidebar.container.append(container);
+    container.append(narrativeview);
+    container.append(commonmenu);
 
-    //This part is to add link type buttons
+    this.createCommonMenus();
+    //This part contains some functions for development purposes
+    //this.createDevToolPanel(container);
+  };
+
+  createCommonMenus = function(){
+      var title = document.createElement("h3");
+      title.innerHTML = "Common Menus";
+      this.panelwindow.commonmenu.append(title);
+      this.createUpdateLinksMenu();
+      this.createLoadNarrativeMenu();
+      //    
+  }
+
+  createLoadNarrativeMenu = function(){
+    var container = document.createElement("div");
+    var t = this;
+    NAUtil.AddButton("Load narratives", container, function () {
+      t.loadExistingNarratives();
+    });
+
+    this.createCommonMenu("Load existing narrative", container);
+  }
+
+  createCommonMenu = function(label, menucontainer){
+      var container = document.createElement("div");
+      var labelcontainer = document.createElement("div");
+      labelcontainer.innerHTML = label;
+      labelcontainer.classList.add(NASettings.CSSClasses.NarrativeListView.MenuLabel);
+      container.append(labelcontainer);
+      container.append(menucontainer);
+      this.panelwindow.commonmenu.append(container);
+  }
+
+  createUpdateLinksMenu = function(){
+    //This part is to add link type buttons 
     var setlinktypecontainer = document.createElement("div");
-    var label = document.createElement("div");
-    label.innerHTML = "Update edge into";
-    label.style.paddingBottom = "5px";
-    setlinktypecontainer.append(label);
-    container.append(setlinktypecontainer);
     //looping through naentries
     var t = this;
     this.naentries.forEach(function (element) {
@@ -403,10 +445,8 @@ class NarrativeAbductionApp {
         );
       }
     });
-
-    //This part contains some functions for development purposes
-    this.createDevToolPanel(container);
-  };
+    this.createCommonMenu("Update selected edge into", setlinktypecontainer);
+  }
 
   /**
    * Create Dev tool panel on
