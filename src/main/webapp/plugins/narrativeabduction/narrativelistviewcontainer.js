@@ -117,7 +117,6 @@ class NarrativeListViewContainer {
 
     moveUp = function(narrative){
       var listView = this.getListViewByNarrative(narrative);
-      console.log("this.narrativealistviews", this.narrativealistviews);
       var currentIdx = this.narrativealistviews.indexOf(listView);
       var targetIdx = currentIdx - 1;        
       if(this.narrativealistviews[targetIdx]){
@@ -128,7 +127,6 @@ class NarrativeListViewContainer {
 
     moveDown = function(narrative){
       var listView = this.getListViewByNarrative(narrative);
-      console.log("this.narrativealistviews", this.narrativealistviews);
       var currentIdx = this.narrativealistviews.indexOf(listView);
       var targetIdx = currentIdx + 1;        
 

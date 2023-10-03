@@ -4,11 +4,12 @@
 class NarrativeLayout {
     constructor(app){
         this.app = app;
-        this.graph;
+        this.graph = app.editorui.editor.graph;
         this.narrativecellslayout = [];
         this.verticalspace = 20;
         this.horizontalspacebetweennarrativeandlayout = 200;
         this.narrativesbounds = [];
+        
     }
 
     updateNarrativeCellsLayout = function(){
@@ -45,8 +46,6 @@ class NarrativeLayout {
         }
     }
 
-
-
     updateLayout = function(narratives){
         this.applyLayoutNarrativeCellsNaive(()=>{
             this.updateNarrativeCellsYPositions(() =>{
@@ -55,7 +54,6 @@ class NarrativeLayout {
                  });  
             });
         })
-
     }
 
     updateNarrativeCellsYPositions = function(callback, change, post){
@@ -165,7 +163,6 @@ class NarrativeLayout {
 
     }
 
-
     getNarrativeCellLayout = function(nacell){
         var res;
         this.narrativecellslayout.forEach(element => {
@@ -185,7 +182,6 @@ class NarrativeLayout {
         });
         return pos;
     }
-
 
     getExcludedCells = function(selectedNodes){
         this.graph.selectAll();

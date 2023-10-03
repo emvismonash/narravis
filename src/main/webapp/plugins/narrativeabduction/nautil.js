@@ -1,4 +1,10 @@
 class NAUtil {
+
+    static RemoveElementArray = function(idx, arr){      
+        const x = arr.splice(idx, 1);
+        return x;
+    }
+
     static arraysContainSameItems = function(arr1, arr2) {
         if (arr1.length !== arr2.length) {
           return false; // If the arrays have different lengths, they can't contain the same items
@@ -110,5 +116,7 @@ class NAUtil {
       });
   
       container.appendChild(btn);
+
+      return btn;
     };
   }

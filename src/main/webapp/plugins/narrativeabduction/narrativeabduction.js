@@ -11,11 +11,13 @@ Draw.loadPlugin(function (ui) {
                     mxscript("plugins/narrativeabduction/narrativelistview.js", function(){
                         mxscript("plugins/narrativeabduction/nautil.js", function(){
                           mxscript("plugins/narrativeabduction/narrativelayout.js", function(){
-                            console.log("EditorUi", ui);
-                            console.log("Sidebar", ui.sidebar.graph);
-                            console.log("Editor", ui.editor);            
-                            var na = new NarrativeAbductionApp(ui);
-                            na._init();                      
+                            mxscript("plugins/narrativeabduction/narativelayoutswimlane.js", function(){
+                              console.log("EditorUi", ui);
+                              console.log("Sidebar", ui.sidebar.graph);
+                              console.log("Editor", ui.editor);            
+                              var na = new NarrativeAbductionApp(ui);
+                              na._init();                      
+                            });
                           });                  
                         });
                     });
@@ -26,7 +28,7 @@ Draw.loadPlugin(function (ui) {
 
 
 class NarrativeAbductionApp {
-  #event;
+  #newnarrative
   constructor(ui) {
     this.editorui = ui;
     this.panelwindow;
@@ -141,7 +143,7 @@ class NarrativeAbductionApp {
     this.initOverrideShapePickerHandler();
     this.initOverrrideNewCellHandler();
     this.initOverrideConnectionConstraints();
-    this.initOverrideSnapToFixedPoints();
+    //this.initOverrideSnapToFixedPoints();
     this.initListenerRemoveNarrativeCellHandler();
     this.initListenerEdgeDoubleClickEditHandler();
     this.updateMoreShapesButton();
@@ -385,9 +387,48 @@ class NarrativeAbductionApp {
       var title = document.createElement("h3");
       title.innerHTML = "Common Menus";
       this.panelwindow.commonmenu.append(title);
+      this.createSelectLayoutModeMenu();
       this.createUpdateLinksMenu();
       this.createLoadNarrativeMenu();
+      
       //    
+  }
+
+
+  createCommonMenu = function(label, menucontainer){
+      var container = document.createElement("div");
+      var labelcontainer = document.createElement("div");
+      labelcontainer.innerHTML = label;
+      labelcontainer.classList.add(NASettings.CSSClasses.NarrativeListView.MenuLabel);
+      container.append(labelcontainer);
+      container.append(menucontainer);
+      this.panelwindow.commonmenu.append(container);
+  }
+
+  createSelectLayoutModeMenu = function(){
+    var container = document.createElement("div");
+    var t = this;
+    var btnFlex = NAUtil.AddButton("Flexible Mode", container, function(){
+      t.narrativelayout = new NarrativeLayout(t);
+    })
+    btnFlex.style.backgroundColor = "#dadce0";
+
+    var btnSwim = NAUtil.AddButton("Swimlane Mode", container, function(){
+      t.narrativelayout = new NarrativeLayoutSwimlanes(t);
+      console.log("t.narrativelayout", t.narrativelayout);
+    })
+
+    btnFlex.addEventListener("click", ()=>{
+        btnFlex.style.backgroundColor = "#dadce0";
+        btnSwim.style.backgroundColor = "#f1f3f4";
+    });
+
+    btnSwim.addEventListener("click", ()=>{
+      btnSwim.style.backgroundColor = "#dadce0";
+      btnFlex.style.backgroundColor = "#f1f3f4";
+   });
+
+    this.createCommonMenu("Layout modes", container);
   }
 
   createLoadNarrativeMenu = function(){
@@ -400,15 +441,6 @@ class NarrativeAbductionApp {
     this.createCommonMenu("Load existing narrative", container);
   }
 
-  createCommonMenu = function(label, menucontainer){
-      var container = document.createElement("div");
-      var labelcontainer = document.createElement("div");
-      labelcontainer.innerHTML = label;
-      labelcontainer.classList.add(NASettings.CSSClasses.NarrativeListView.MenuLabel);
-      container.append(labelcontainer);
-      container.append(menucontainer);
-      this.panelwindow.commonmenu.append(container);
-  }
 
   createUpdateLinksMenu = function(){
     //This part is to add link type buttons 
@@ -1565,13 +1597,15 @@ class NarrativeAbductionApp {
       ); //add accordion view
 
       //trigger new narrative event
-      this.#event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, {
+      var event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, {
         detail: {
           narrative: na,
           narrativecell: narrativecell,
+          narrativeview: narrview
         },
       });
-      dispatchEvent(this.#event);
+      document.dispatchEvent(event);
+
 
       //if objects are selected, add them automatically to the narrative
       var selectedCells = graph.getSelectionCells();
