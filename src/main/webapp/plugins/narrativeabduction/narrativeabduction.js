@@ -778,6 +778,36 @@ class NarrativeAbductionApp {
     return res;
   };
 
+    /**
+   * Get a narrative that has the cell
+   * @param {*} cell 
+   * @returns 
+   */
+    getDocumentItemNarrative = function(cell){
+      var na = null;
+      this.narratives.forEach(narrative => {
+          if(narrative.cells.includes(cell)){
+            na = narrative;        
+          }
+      });
+      return na;
+    }
+
+    /**
+     * Get narrative from given root cell
+     * @param {*} cell 
+     * @returns 
+     */
+    getNarrativeFromRootCell = function(cell){
+      var na = null;
+      this.narratives.forEach(narrative => {
+          if(narrative.rootCell == cell){
+            na = narrative;        
+          }
+      });
+      return na;
+    }
+
   /**
    * Hide Mode Shapes button on the Side bar
    */
@@ -1115,20 +1145,7 @@ class NarrativeAbductionApp {
     });
   };
 
-  /**
-   * Get a narrative that has the cell
-   * @param {*} cell 
-   * @returns 
-   */
-  getDocumentItemNarrative = function(cell){
-    var na;
-    this.narratives.forEach(narrative => {
-        if(narrative.cells.includes(cell)){
-          na = narrative;        
-        }
-    });
-    return na;
-  }
+
 
   //#endregion
 
@@ -1439,8 +1456,10 @@ class NarrativeAbductionApp {
     console.log("nacells", nacells);
 
     nacells.forEach((cell) => {
-      if (Narrative.isCellNarrative(cell)) {
-        console.log("loadExistingNarratives", cell);
+      //if the cell is already bound with a view, ignore
+      var narrative = this.getNarrativeFromRootCell(cell);
+      if (Narrative.isCellNarrative(cell) && narrative == null) {
+        console.log("loadExistingNarratives", narrative);
         let val = t.getNarrativeCellValue(cell);
         if(val == "") val = NASettings.Language.English.newnarrative;
         var na = new Narrative(
