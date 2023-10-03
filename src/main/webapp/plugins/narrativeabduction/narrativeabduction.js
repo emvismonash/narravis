@@ -135,12 +135,13 @@ class NarrativeAbductionApp {
     this.createNAPanel();
     this.createNarrativesView();
     this.createPalette();
-    //this.installStackedLayout();
     this.initListenerResponsiveSizeHandlerVanilaContent();
     this.initListenerDocumentSizeAfterDescriptionEdit();
     this.initOverrideConvertValueString();
     this.initOverrideShapePickerHandler();
     this.initOverrrideNewCellHandler();
+    this.initOverrideConnectionConstraints();
+    this.initOverrideSnapToFixedPoints();
     this.initListenerRemoveNarrativeCellHandler();
     this.initListenerEdgeDoubleClickEditHandler();
     this.updateMoreShapesButton();
@@ -1007,6 +1008,41 @@ class NarrativeAbductionApp {
     };
   };
 
+
+  /**
+   * Override the connection points, only use four pounts
+   */
+  initOverrideConnectionConstraints = function(){
+    this.editorui.editor.graph.getAllConnectionConstraints = function(terminal)
+		{
+					if (terminal != null && this.model.isVertex(terminal.cell))
+					{
+						return [
+					    	    new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+					    	    new mxConnectionConstraint(new mxPoint(1, 0.5), true),
+							      new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+							      new mxConnectionConstraint(new mxPoint(0, 0.5), true)];
+					}
+
+					return null;
+		};    
+  }
+
+  /**
+   * TODO: snap the source and target edge to the constraint points
+   */
+  initOverrideSnapToFixedPoints = function(){
+    var graph = this.editorui.editor.graph;
+    graph.getView().updateFixedTerminalPoints  =   function(edge, source,target)
+    {
+      console.log("edge", edge);
+      console.log("target", target);
+      console.log("source", source);
+
+      this.updateFixedTerminalPoint(edge, source, true, graph.getConnectionConstraint(edge, source, true));
+      this.updateFixedTerminalPoint(edge, target, false, graph.getConnectionConstraint(edge, target, false))
+    }
+  }
 
   /**
    * Override label presentation of the narrative document items
