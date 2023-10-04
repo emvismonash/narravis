@@ -33,6 +33,7 @@ class NASettings {
       EVENTS: {
         NEWNARRATIVE: "newnarrative",
         DELETENARRATIVE: "deletenarrative",
+        NEWDOCUMENTITEM: "newdocumentitem"
       },
     };
     static Language = {

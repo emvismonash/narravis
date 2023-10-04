@@ -820,7 +820,8 @@ class NarrativeAbductionApp {
       var na = null;
       this.narratives.forEach(narrative => {
           if(narrative.cells.includes(cell)){
-            na = narrative;        
+            na = narrative;       
+            return na; 
           }
       });
       return na;
@@ -1189,6 +1190,8 @@ class NarrativeAbductionApp {
         console.log(source, "source");
         var sourceNarrative = t.getDocumentItemNarrative(source);
         console.log("sourceNarrative", sourceNarrative);
+        console.log("sourceNarrative", t.narratives);
+
 
         if(sourceNarrative){
             var naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);
@@ -1196,6 +1199,14 @@ class NarrativeAbductionApp {
 
             if(naListVIew){
               naListVIew.assignNodes([target]);
+                //trigger new document item
+                var event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+                  detail: {
+                    cell: newCell, 
+                    narrative: sourceNarrative
+                  },
+                });
+                document.dispatchEvent(event);
             }
         }
         

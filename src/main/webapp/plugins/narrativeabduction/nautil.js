@@ -1,8 +1,9 @@
 class NAUtil {
 
     static RemoveElementArray = function(idx, arr){      
-        const x = arr.splice(idx, 1);
-        return x;
+      const myObject = arr[idx];
+      const newArray1 = arr.filter(item => item !== myObject);
+      return newArray1;
     }
 
     static arraysContainSameItems = function(arr1, arr2) {
