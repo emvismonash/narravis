@@ -44,6 +44,40 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         })  
     }
 
+    remove = function(){
+        //remove cells
+        var graph = this.graph;
+        graph.getModel().beginUpdate();
+            try{
+                graph.getModel().remove(this.toplane.boundcell);
+                graph.getModel().remove(this.midlane.boundcell);
+                graph.getModel().remove(this.botlane.boundcell);
+
+                graph.getModel().remove(this.toplane.labelcell);
+                graph.getModel().remove(this.midlane.labelcell);
+                graph.getModel().remove(this.botlane.labelcell);
+            }finally{
+              graph.getModel().endUpdate(); 
+              graph.refresh();             
+        }
+        this.removeLane(this.toplane);
+        this.removeLane(this.midlane);
+        this.removeLane(this.botlane);
+    }
+
+    removeLane = function(lane){
+        lane.uis.forEach(element => {
+            element.remove();
+        });
+        var children = Array.from(lane.container.children); 
+        console.log("children", children);
+        children.forEach(child => {
+            this.app.narrativeaviewscontainer.listcontainer.append(child);
+        });        
+
+        lane.container.remove();
+    }
+
     createLabelCell = function(value, lane){
         var boundcell = lane.boundcell;
         var yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;
@@ -172,6 +206,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         var title = document.createElement("div");
         title.innerHTML = label;
         lane.container.append(title);
+        lane.uis.push(title);
     }
 
     addAssignButtons = function(narrative){

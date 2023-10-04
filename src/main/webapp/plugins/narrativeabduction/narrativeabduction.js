@@ -409,13 +409,13 @@ class NarrativeAbductionApp {
     var container = document.createElement("div");
     var t = this;
     var btnFlex = NAUtil.AddButton("Flexible Mode", container, function(){
+      t.narrativelayout.remove();
       t.narrativelayout = new NarrativeLayout(t);
     })
     btnFlex.style.backgroundColor = "#dadce0";
 
     var btnSwim = NAUtil.AddButton("Swimlane Mode", container, function(){
       t.narrativelayout = new NarrativeLayoutSwimlanes(t);
-      console.log("t.narrativelayout", t.narrativelayout);
     })
 
     btnFlex.addEventListener("click", ()=>{
