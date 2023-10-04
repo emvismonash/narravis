@@ -63,6 +63,29 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         this.removeLane(this.toplane);
         this.removeLane(this.midlane);
         this.removeLane(this.botlane);
+
+        //bring back move up and down, currently very ugly approach
+        var t = this;
+        var nlc = this.app.narrativeaviewscontainer;
+        this.app.narrativeaviewscontainer.moveUp = function(narrative){
+            var listView = nlc.getListViewByNarrative(narrative);
+            var currentIdx = nlc.narrativealistviews.indexOf(listView);
+            var targetIdx = currentIdx - 1;        
+            if(nlc.narrativealistviews[targetIdx]){
+                nlc.swapElementsPositions(listView, nlc.narrativealistviews[targetIdx]);
+                nlc.app.narrativelayout.updateLayout([narrative, nlc.narrativealistviews[targetIdx].narrative]);
+            }
+        }
+        this.app.narrativeaviewscontainer.moveDown = function(narrative){
+            var listView = nlc.getListViewByNarrative(narrative);
+            var currentIdx = nlc.narrativealistviews.indexOf(listView);
+            var targetIdx = currentIdx + 1;        
+      
+            if(nlc.narrativealistviews[targetIdx]){
+                nlc.swapElementsPositions(nlc.narrativealistviews[targetIdx], listView);
+                nlc.app.narrativelayout.updateLayout([narrative, nlc.narrativealistviews[targetIdx].narrative]);
+            }  
+        }
     }
 
     removeLane = function(lane){
