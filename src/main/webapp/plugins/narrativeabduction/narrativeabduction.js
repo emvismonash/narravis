@@ -77,41 +77,41 @@ class NarrativeAbductionApp {
       },
       {
         name: NASettings.Dictionary.CELLS.EXPLAINLINK,
-        style: "editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;",
+        style: "editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;bendable=0;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.CAUSELINK,
-        style: "editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;",
+        style: "editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;bendable=0;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.TRIGGERLINK,
         style:
-          "editable=0;endArrow=classic;html=1;rounded=1;strokeWidth=3;dashed=1;",
+          "editable=0;endArrow=classic;html=1;rounded=1;strokeWidth=3;dashed=1;bendable=0;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.ENABLELINK,
         style:
-          "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;",
+          "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;bendable=0;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.SUPPORTLINK,
         style:
-          "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#006600;",
+          "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#006600;bendable=0;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.MOTIVATELINK,
-        style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+        style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;bendable=0;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.CONFLICTLINK,
         style:
-          "editable=0;editable=1;endArrow=cross;html=1;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;connectable=1;startArrow=none;startFill=0;endFill=0;strokeWidth=2;strokeColor=#ff0000;",
+          "editable=0;editable=1;endArrow=cross;html=1;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;connectable=1;startArrow=none;startFill=0;endFill=0;strokeWidth=2;strokeColor=#ff0000;bendable=0;snapToPoint=1;",
         type: "edge",
       },
     ];
@@ -304,8 +304,8 @@ class NarrativeAbductionApp {
       this.panelwindow.commonmenu.append(title);
       //this.createSelectLayoutModeMenu();
       this.createUpdateLinksMenu();
+      this.createLoadJSONMenu();
       this.createLoadNarrativeMenu();
-      
       //    
   }
 
@@ -344,6 +344,99 @@ class NarrativeAbductionApp {
    });
 
     this.createCommonMenu("Layout modes", container);
+  }
+
+  createLoadJSONMenu(){
+    let container = document.createElement("div");
+    // Create a new input element
+    const inputElement = document.createElement('input');
+
+    // Set the type attribute to 'file' for a file input
+    inputElement.setAttribute('type', 'file');
+
+    // Optionally, set other attributes or properties, such as an ID or name
+    inputElement.setAttribute('id', 'fileInput');
+    inputElement.setAttribute('name', 'fileInput');
+    let t = this;
+
+    // Add event listener to handle selected file
+    inputElement.addEventListener('change', function() {
+      const selectedFile = fileInput.files[0];
+      if (selectedFile) {
+        // Read the selected JSON file
+        const fileReader = new FileReader();
+        fileReader.onload = function(event) {
+          // Parse the JSON data into a JavaScript object
+          try {
+            const jsonData = JSON.parse(event.target.result);
+            // Do something with the parsed JSON data
+            console.log('Parsed JSON data:', jsonData);
+            t.createDocumentItemsFromJSON(jsonData);
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        };
+        fileReader.readAsText(selectedFile);
+      }
+    });
+
+    // Append the input element to the desired location in the DOM
+    container.appendChild(inputElement); // Example: append it to the body
+    this.createCommonMenu("Load JSON", container);
+  }
+
+
+  nodeToDocumentItem(node){
+    console.log("node", node);
+      let entry = this.getEntryByName(node.type);
+      return this.createDocumentItem(entry);
+  }
+
+  getContentFromNode(node){
+    return  "<b>" + node.title + "</b><br/>" + node.description;
+  }
+
+  createDocumentItemsFromJSON(parsedObject){
+      //create nodes
+      let graph = this.editorui.editor.graph;
+      let parent = graph.getDefaultParent();
+      let nodes = parsedObject.nodes;
+      let links = parsedObject.links;
+      let t = this;
+      let cells = [];
+
+      graph.getModel().beginUpdate();
+      try{
+        nodes.forEach(node => {
+          let documentitem = t.nodeToDocumentItem(node);
+          let cell = documentitem.cell;
+          cell.setAttribute("label", t.getContentFromNode(node));
+          if(cell) cells.push(cell);
+          node.cell = cell;
+        });
+        graph.addCells(cells, parent);
+        //create links
+        links.forEach(link => {
+          let sourceId = link.source;
+          let targetId = link.target;
+          let sourceCell, targetCell;
+          //get cell
+          nodes.forEach(node => {
+            if(node.id == sourceId) sourceCell = node.cell;
+            if(node.id == targetId) targetCell = node.cell;
+          });
+          if(sourceCell && targetCell){
+            let label = link.type;
+            let linkCell = graph.insertEdge(parent, null, "", sourceCell, targetCell);
+            t.setEdgeType(linkCell, label);
+          }
+        });
+      }catch(e){
+        console.log(e);
+      }finally{
+        graph.getModel().endUpdate();
+        t.narrativelayout.applyCellsLayout(cells);
+      }
   }
 
   createLoadNarrativeMenu(){
@@ -520,6 +613,8 @@ class NarrativeAbductionApp {
         entry.descname = NAUtil.GetCellChildrenLabels(
           this.naentries[i].name
         ).description;
+
+        console.log("entry", entry);
 
         res = this.createDocumentItem(entry);
         this.naentries[i].xml = res.xml;
