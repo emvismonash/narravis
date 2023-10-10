@@ -19,7 +19,7 @@ class NASettings {
         MOTIVATELINK: "MotivateLink",
         CONFLICTLINK: "ConflictLink",
       },
-      ATTRIBUTTES: {
+      ATTRIBUTES: {
         NATYPE: "natype",
         DOCTITLE: "doctitle",
         DOCDESCRIPTION: "docdescription",
@@ -33,6 +33,7 @@ class NASettings {
       EVENTS: {
         NEWNARRATIVE: "newnarrative",
         DELETENARRATIVE: "deletenarrative",
+        NEWDOCUMENTITEM: "newdocumentitem"
       },
     };
     static Language = {

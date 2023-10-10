@@ -17,13 +17,14 @@ class NarrativeListView {
 
       this.initListenerUpdateNarrativeCellEdit();
       this.initListenerUpdateDocumentItemTitle();
+      this.initListenerRemoveCell();
       //this.initListenerClickRemoveHighlight();
     }
   
     /**
      * Remove the list view
      */
-    remove = function () {
+    remove() {
       this.container.remove();
     };
   
@@ -31,7 +32,7 @@ class NarrativeListView {
      *
      * @returns Get the style to hightlight
      */
-    getHighlightStyle = function () {
+    getHighlightStyle() {
       return "strokeColor=" + this.color + ";strokeWidth=6";
     };
   
@@ -39,10 +40,10 @@ class NarrativeListView {
      * Highlight children cells
      * @param {*} cellsToHighlight
      */
-    highlightCells = function (cellsToHighlight) {
-      var highlightStyle = this.getHighlightStyle();
+    highlightCells(cellsToHighlight) {
+      let highlightStyle = this.getHighlightStyle();
   
-      var graph = this.editorui.editor.graph;
+      let graph = this.editorui.editor.graph;
       graph.getModel().beginUpdate();
       try {
         for (let cell of cellsToHighlight) {
@@ -55,7 +56,7 @@ class NarrativeListView {
     };
 
     selectCells = function(){
-        var graph = this.editorui.editor.graph;
+        let graph = this.editorui.editor.graph;
         graph.getModel().beginUpdate();
         try {
             graph.setSelectionCells(this.narrative.cells);          
@@ -66,9 +67,9 @@ class NarrativeListView {
     }
   
     isAllCellsSelected = function(){
-        var graph = this.editorui.editor.graph;
-        var selectedCells = graph.getSelectionCells();
-        var docitems = [];
+        let graph = this.editorui.editor.graph;
+        let selectedCells = graph.getSelectionCells();
+        let docitems = [];
         selectedCells.forEach(cell => {
             if(NarrativeAbductionApp.isCellDocumentItem(cell)){
                 docitems.push(cell);
@@ -85,14 +86,14 @@ class NarrativeListView {
      * Unhighilight the children cells
      * @param {*} cellsToUnhighlight
      */
-    unhighlightCells = function (cellsToUnhighlight) {
-      var graph = this.editorui.editor.graph;
-      var highlightStyle = this.getHighlightStyle();
+    unhighlightCells(cellsToUnhighlight) {
+      let graph = this.editorui.editor.graph;
+      let highlightStyle = this.getHighlightStyle();
   
       graph.getModel().beginUpdate();
       try {
         for (let cell of cellsToUnhighlight) {
-          var style = cell.getStyle().replace(highlightStyle, "");
+          let style = cell.getStyle().replace(highlightStyle, "");
           graph.setCellStyle(style, [cell]);
         }
       } finally {
@@ -106,7 +107,7 @@ class NarrativeListView {
      * @param {*} cellsToHide 
      */
     toggleCellsVisibility = function(cellsToHide, status){
-      var graph = this.editorui.editor.graph;  
+      let graph = this.editorui.editor.graph;  
       graph.getModel().beginUpdate();
       try {
          graph.cellsToggled(cellsToHide, status);
@@ -128,12 +129,12 @@ class NarrativeListView {
      *      <cell view
      *      <cell view
      */
-    createContainers = function () {
+    createContainers() {
       this.headContainer = document.createElement("div");
       this.bodyContainer = document.createElement("div");
       this.uinarrativetitle = document.createElement("div");
-      var toppart = document.createElement("div");
-      var botpart = document.createElement("div");
+      let toppart = document.createElement("div");
+      let botpart = document.createElement("div");
   
       this.container.classList.add(
         NASettings.CSSClasses.NarrativeListView.Container
@@ -155,10 +156,10 @@ class NarrativeListView {
         NASettings.CSSClasses.NarrativeListView.Title
       );
   
-      var t = this;
+      let t = this;
       //#region narrative title event listeners
-      var graph = this.editorui.editor.graph;
-      var highlight = new mxCellHighlight(graph, "#000", 2);
+      let graph = this.editorui.editor.graph;
+      let highlight = new mxCellHighlight(graph, "#000", 2);
       this.uinarrativetitle.onmouseenter = function () {
         //t.highlightCells(t.narrative.cells);
         highlight.highlight(graph.view.getState(t.narrative.rootCell));
@@ -172,7 +173,7 @@ class NarrativeListView {
       }
       //#endregion
   
-      var toggleButton = document.createElement("button");
+      let toggleButton = document.createElement("button");
       toggleButton.classList.add(
         NASettings.CSSClasses.NarrativeListView.ToggleButton
       );
@@ -199,15 +200,28 @@ class NarrativeListView {
       this.headContainer.bottompart = botpart;
     };
   
+    initListenerRemoveCell(){
+      let t = this;
+      let graph = this.editorui.editor.graph;
+      graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt){
+        let cells = evt.getProperty("cells");
+        cells.forEach(cell => {
+          if (t.getCellView(cell)) {
+            t.removeCellView(cell);
+          }
+        });
+      })
+    }
+
     /**
      * Update the narrative list livew
      */
-    initListenerUpdateNarrativeCellEdit = function () {
-      var graph = this.editorui.editor.graph;
-      var t = this;
+    initListenerUpdateNarrativeCellEdit() {
+      let graph = this.editorui.editor.graph;
+      let t = this;
       graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
-        var cell = evt.getProperty("cell"); // Get the cell whose label changed
-        var newValue = evt.getProperty("value"); // Get the new label value  
+        let cell = evt.getProperty("cell"); // Get the cell whose label changed
+        let newValue = evt.getProperty("value"); // Get the new label value  
         if (Narrative.isCellNarrative(cell) && t.narrative.rootCell == cell) {
           t.uinarrativetitle.innerHTML = newValue;
         }
@@ -215,8 +229,8 @@ class NarrativeListView {
     };
 
     initListenerClickRemoveHighlight = function(){
-        var graph = this.editorui.editor.graph;
-        var t = this;
+        let graph = this.editorui.editor.graph;
+        let t = this;
         graph.addListener(mxEvent.CLICK, function (sender, evt) {
             if(!t.isAllCellsSelected()){
                 t.unhighlightCells(t.narrative.cells);
@@ -228,18 +242,18 @@ class NarrativeListView {
     /**
      * Update the narrative list livew
      */
-    initListenerUpdateDocumentItemTitle = function () {
-      var graph = this.editorui.editor.graph;
-      var t = this;
+    initListenerUpdateDocumentItemTitle() {
+      let graph = this.editorui.editor.graph;
+      let t = this;
       graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
-        var cell = evt.getProperty("cell"); // Get the cell whose label changed
-        var newValue = evt.getProperty("value"); // Get the new label value
-        var natype = cell.natype;  
-        if (natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE) {
+        let cell = evt.getProperty("cell"); // Get the cell whose label changed
+        
+        if (NarrativeAbductionApp.isCellDocumentItem(cell)) {
+          let newValue = t.app.getDocumentItemTitle(cell);
           //check if the parent is in narrative
-          var parent = cell.parent;
-          if (t.narrative.cells.includes(parent)) {
-            var cellview = t.getCellView(parent);
+          console.log("new value", newValue);
+          if (t.narrative.cells.includes(cell)) {
+            let cellview = t.getCellView(cell);
             if (cellview) cellview.htmltitle.innerHTML = newValue;
           }
         }
@@ -249,8 +263,8 @@ class NarrativeListView {
     /**
      * Create assign nodes button
      */
-    createAssignNodesButton = function () {
-      var buttonAssignNode = document.createElement("button");
+    createAssignNodesButton() {
+      let buttonAssignNode = document.createElement("button");
       buttonAssignNode.innerHTML = "←";
       buttonAssignNode.title = NASettings.Language.English["assign"];
       buttonAssignNode.onclick = this.assignNode.bind(null, this);
@@ -258,7 +272,7 @@ class NarrativeListView {
     };
 
     createLayoutButton = function(){
-        var buttonLayout = document.createElement("button");
+        let buttonLayout = document.createElement("button");
         buttonLayout.innerHTML = "⟲";
         buttonLayout.title = "Reset layout"; //todo
         buttonLayout.onclick = this.applyLayout.bind(null, this);
@@ -266,7 +280,7 @@ class NarrativeListView {
     }
 
     createToggleHighlightButton = function(){
-        var buttonToggle = document.createElement("button");
+        let buttonToggle = document.createElement("button");
         buttonToggle.innerHTML = "H";
         buttonToggle.title = "Toggle highlight"; //todo
         buttonToggle.onclick = this.toggleHighlight.bind(null, this);
@@ -274,11 +288,11 @@ class NarrativeListView {
     }
 
     createToggleVisibilityButton = function(){
-      var buttonToggle = document.createElement("button");
+      let buttonToggle = document.createElement("button");
       buttonToggle.title = "Toggle visibility"; //todo
       buttonToggle.onclick = this.toggleVisibility.bind(null, this);
       buttonToggle.innerHTML = "👁";
-      //var img = document.createElement('img');
+      //let img = document.createElement('img');
 			//img.setAttribute('src', Editor.visibleImage);
       //buttonToggle.append(img);
       this.headContainer.bottompart.buttonvisibility = buttonToggle;
@@ -288,13 +302,13 @@ class NarrativeListView {
 
 
     createUpDownButtons = function(){
-      var upButton = document.createElement("button");
+      let upButton = document.createElement("button");
       upButton.title = "Move up";
       upButton.innerHTML = "↑";
       upButton.onclick = this.moveUp.bind(null, this);
       this.headContainer.bottompart.append(upButton);
 
-      var downButton = document.createElement("button");
+      let downButton = document.createElement("button");
       downButton.title = "Move down";
       downButton.innerHTML = "↓";
       downButton.onclick = this.moveDown.bind(null, this);
@@ -355,14 +369,19 @@ class NarrativeListView {
      * Assign selected node to the narrative.
      * The narrative cell should contain the all information necessary to recreate the view, thus, the children cells' ids should be stored in the narrative cell.
      */
-    assignNode = function (t) {
-      var graph = t.editorui.editor.graph;
-      var selectedCells = graph.getSelectionCells();
+    assignNode(t) {
+      let graph = t.editorui.editor.graph;
+      let selectedCells = graph.getSelectionCells();
       if (selectedCells) {
-        t.assignNodes(selectedCells);
+        let validated = t.app.getValidatedAssignedCells(selectedCells);
+        let validcells = validated.validcells;        
+        t.assignNodes(validcells);
+        if(validated.invalidcells.length > 0){
+          mxUtils.alert("Some of the cells are ignored because they are part of existing narratives");
+        }
       }
     };
-    assignNodes = function (cells) {
+    assignNodes(cells) {
       this.narrative.addCells(cells); //add cell to the narrative object, this is where the children cells are added to the root cell
       this.createBodyElements(); //create representaton
       if(this.narrative.ishighlight) {
@@ -371,12 +390,12 @@ class NarrativeListView {
         }
     };
   
-    getTitleCell = function (cell) {
-      var children = cell.children;
-      var ret = null;
+    getTitleCell(cell) {
+      let children = cell.children;
+      let ret = null;
       if (children) {
         children.forEach((child) => {
-          if (child.natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE) {
+          if (child.natype == NASettings.Dictionary.ATTRIBUTES.DOCTITLE) {
             ret = child;
           }
         });
@@ -388,24 +407,24 @@ class NarrativeListView {
      * Create representation of the cell/node in the view
      * @param {*} cell
      */
-    createCellView = function (cell) {
+    createCellView(cell) {
       if (cell.isVertex()) {
         //container of the view
-        var container = document.createElement("div"); //main container
-        var textcontainer = document.createElement("div");
+        let container = document.createElement("div"); //main container
+        let textcontainer = document.createElement("div");
         textcontainer.classList.add(
           NASettings.CSSClasses.NarrativeListView.CellViewTitle
         );
   
-        var uicontainer = document.createElement("div");
+        let uicontainer = document.createElement("div");
         uicontainer.classList.add(
           NASettings.CSSClasses.NarrativeListView.CellViewUIContainer
         );
         container.append(textcontainer);
         container.append(uicontainer);
   
-        var titlecell = this.getTitleCell(cell);
-        textcontainer.innerHTML = titlecell.value;
+        let title = this.app.getDocumentItemTitle(cell);
+        textcontainer.innerHTML = title;
         textcontainer.title = "Click to select";
         container.cell = cell;
         container.style.cursor = "pointer";
@@ -415,7 +434,7 @@ class NarrativeListView {
         container.id = cell.id;
   
         //create unasign button
-        var unasignButton = document.createElement("button");
+        let unasignButton = document.createElement("button");
         unasignButton.classList.add(
           NASettings.CSSClasses.NarrativeListView.CellViewUnassignButton
         );
@@ -426,8 +445,8 @@ class NarrativeListView {
   
         //add the container to the body
         this.bodyContainer.append(container);
-        var graph = this.editorui.editor.graph;
-        var highlight = new mxCellHighlight(graph, "#000", 2);
+        let graph = this.editorui.editor.graph;
+        let highlight = new mxCellHighlight(graph, "#000", 2);
         //add highlight
         textcontainer.onmouseenter = function () {
           highlight.highlight(graph.view.getState(cell));
@@ -439,7 +458,7 @@ class NarrativeListView {
           graph.setSelectionCell (cell);
         };
 
-        var cellView = {
+        let cellView = {
           cell: cell,
           htmlcontainer: container,
           htmltitle: textcontainer,
@@ -455,20 +474,20 @@ class NarrativeListView {
      * @param {*} t
      * @param {*} c
      */
-    unasignCell = function (t, c) {
+    unasignCell(t, c) {
       t.narrative.removeCell(c);
       t.removeCellView(c);
     };
   
     /**
      * Remove cell view
-     * @param {*} c
+     * @param {*} cell
      */
-    removeCellView = function (c) {
-      var cellView = this.getCellView(c);
-      this.unhighlightCells([c]);
+    removeCellView(cell) {
+      let cellView = this.getCellView(cell);
+      this.unhighlightCells([cell]);
       cellView.htmlcontainer.remove();
-      this.cellviews.splice(this.cellviews.indexOf(cellView), 1);
+      this.cellviews = NAUtil.RemoveElementArray(this.cellviews.indexOf(cellView), this.cellviews);
     };
   
     /**
@@ -476,8 +495,8 @@ class NarrativeListView {
      * @param {*} cell
      * @returns
      */
-    getCellView = function (cell) {
-      var ret = null;
+    getCellView(cell) {
+      let ret = null;
       this.cellviews.forEach((view) => {
         if (view.cell == cell) {
           ret = view;
@@ -490,8 +509,8 @@ class NarrativeListView {
     /**
      * Create representation of cells in the view's body
      */
-    createBodyElements = function () {
-      var t = this;
+    createBodyElements() {
+      let t = this;
       this.bodyContainer.innerHTML = "";
       this.cellviews = [];
       this.narrative.cells.forEach(function (cell) {
@@ -499,7 +518,7 @@ class NarrativeListView {
       });
     };
   
-    createHeadElements = function () {
+    createHeadElements() {
       this.createAssignNodesButton();
       this.createLayoutButton();
       //this.createToggleHighlightButton();
@@ -507,7 +526,7 @@ class NarrativeListView {
       this.createUpDownButtons();
     };
   
-    updateView = function () {
+    updateView() {
       this.createContainers();
       this.createHeadElements();
       this.createBodyElements();
@@ -518,8 +537,8 @@ class NarrativeListView {
     /**
      * Update the colour of the narrative cell
      */
-    updateRootCellColor = function () {
-      var style =
+    updateRootCellColor() {
+      let style =
         this.narrative.rootCell.getStyle() + ";fontColor=" + this.color + ";";
         this.editorui.editor.graph
         .getModel()

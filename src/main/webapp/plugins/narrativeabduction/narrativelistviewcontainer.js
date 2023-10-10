@@ -15,11 +15,11 @@ class NarrativeListViewContainer {
        *  - Menu container
        *  - List container
        */
-      var title = document.createElement("h3");
+      let title = document.createElement("h3");
       title.innerHTML = "NA View";
-      var menucontainer = document.createElement("div");
-      var listcontainer = document.createElement("div");
-      var container = document.createElement("div");    
+      let menucontainer = document.createElement("div");
+      let listcontainer = document.createElement("div");
+      let container = document.createElement("div");    
       container.classList.add(NASettings.CSSClasses.NarrativeListViewContainer.NarrativeViewContainer);
       menucontainer.classList.add(NASettings.CSSClasses.NarrativeListViewContainer.NarrativeViewContainerMenu);
 
@@ -34,7 +34,7 @@ class NarrativeListViewContainer {
       this.listcontainer = listcontainer;
 
           // add create narrative buttion
-      var t = this;
+      let t = this;
       NAUtil.AddButton(NASettings.Language.English.newnarrative, this.menucontainer, () => {
         t.app.newNarrative();
       });
@@ -46,8 +46,8 @@ class NarrativeListViewContainer {
      * Remove view from the list
      * @param {*} narrative
      */
-    removeListView = function (narrativecell) {
-      var listView = this.getListViewByNarrative(narrativecell);
+    removeListView(narrativecell) {
+      let listView = this.getListViewByNarrative(narrativecell);
       if (listView) {
         listView.narrative.deleteBound();
         listView.unhighlightCells(listView.narrative.cells); // unhighligth cells
@@ -66,8 +66,8 @@ class NarrativeListViewContainer {
      * Get the view by narrative
      * @param {*} narrative
      */
-    getListViewByNarrative = function (narrative) {
-      var ret = null;
+    getListViewByNarrative(narrative) {
+      let ret = null;
       this.narrativealistviews.forEach((element) => {
         if (element.narrative.id == narrative.id) {
           ret = element;
@@ -81,15 +81,15 @@ class NarrativeListViewContainer {
      * @param {*} na
      * @param {*} narrativecell
      */
-    addNarrativeListView = function (narrative, narrativecell, naabduction) {
+    addNarrativeListView(narrative, narrativecell, naabduction) {
       //container of the narrative view
-      var container = document.createElement("div");
+      let container = document.createElement("div");
       container.id = narrativecell.id;
       container.setAttribute("draggable", true);
   
       this.listcontainer.append(container);
-      var color = this.getColor();
-      var naaccview = new NarrativeListView(
+      let color = this.getColor();
+      let naaccview = new NarrativeListView(
         narrative,
         container,
         this.app.editorui,
@@ -106,7 +106,7 @@ class NarrativeListViewContainer {
     /**
      * Get new color
      */
-    getColor = function () {
+    getColor() {
       return this.colors.pop();
     };
 
@@ -116,10 +116,9 @@ class NarrativeListViewContainer {
     }
 
     moveUp = function(narrative){
-      var listView = this.getListViewByNarrative(narrative);
-      console.log("this.narrativealistviews", this.narrativealistviews);
-      var currentIdx = this.narrativealistviews.indexOf(listView);
-      var targetIdx = currentIdx - 1;        
+      let listView = this.getListViewByNarrative(narrative);
+      let currentIdx = this.narrativealistviews.indexOf(listView);
+      let targetIdx = currentIdx - 1;        
       if(this.narrativealistviews[targetIdx]){
         this.swapElementsPositions(listView, this.narrativealistviews[targetIdx]);
         this.app.narrativelayout.updateLayout([narrative, this.narrativealistviews[targetIdx].narrative]);
@@ -127,10 +126,9 @@ class NarrativeListViewContainer {
     }
 
     moveDown = function(narrative){
-      var listView = this.getListViewByNarrative(narrative);
-      console.log("this.narrativealistviews", this.narrativealistviews);
-      var currentIdx = this.narrativealistviews.indexOf(listView);
-      var targetIdx = currentIdx + 1;        
+      let listView = this.getListViewByNarrative(narrative);
+      let currentIdx = this.narrativealistviews.indexOf(listView);
+      let targetIdx = currentIdx + 1;        
 
       if(this.narrativealistviews[targetIdx]){
         this.swapElementsPositions(this.narrativealistviews[targetIdx], listView);
@@ -141,13 +139,13 @@ class NarrativeListViewContainer {
 
    swapElementsPositions = function(firstlistview, secondlistview) {
       //swap views
-      var firstElm = firstlistview.container;
-      var secondElm = secondlistview.container;
+      let firstElm = firstlistview.container;
+      let secondElm = secondlistview.container;
       firstElm.parentNode.insertBefore(firstElm, secondElm);
       //swap array
-      var tmp = firstlistview;
-      var firstIdx = this.narrativealistviews.indexOf(firstlistview);
-      var secondIdx = this.narrativealistviews.indexOf(secondlistview);
+      let tmp = firstlistview;
+      let firstIdx = this.narrativealistviews.indexOf(firstlistview);
+      let secondIdx = this.narrativealistviews.indexOf(secondlistview);
       this.narrativealistviews[firstIdx] = secondlistview;
       this.narrativealistviews[secondIdx] = tmp;
   }

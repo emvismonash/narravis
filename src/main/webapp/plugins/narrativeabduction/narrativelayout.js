@@ -4,21 +4,22 @@
 class NarrativeLayout {
     constructor(app){
         this.app = app;
-        this.graph;
+        this.graph = app.editorui.editor.graph;
         this.narrativecellslayout = [];
         this.verticalspace = 20;
         this.horizontalspacebetweennarrativeandlayout = 200;
         this.narrativesbounds = [];
+        
     }
 
-    updateNarrativeCellsLayout = function(){
+    updateNarrativeCellsLayout(){
         this.narrativecellslayout = [];
-        var narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;
-        var sum = 0;
+        let narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;
+        let sum = 0;
         console.log("narrativeListViews", narrativeListViews);
-        for(var i = 0; i < narrativeListViews.length; i++){
-            var bound, posY, height, posY;
-            var na = narrativeListViews[i].narrative;
+        for(let i = 0; i < narrativeListViews.length; i++){
+            let bound, posY, height;
+            let na = narrativeListViews[i].narrative;
             if(!na.bound) na.updateCellsBound();
             bound  = na.bound;
             //if the height is zero because the narrative has not items, use the height of the narrative cell
@@ -45,9 +46,7 @@ class NarrativeLayout {
         }
     }
 
-
-
-    updateLayout = function(narratives){
+    updateLayout(narratives){
         this.applyLayoutNarrativeCellsNaive(()=>{
             this.updateNarrativeCellsYPositions(() =>{
                 this.app.narratives.forEach(narrative => {
@@ -55,14 +54,13 @@ class NarrativeLayout {
                  });  
             });
         })
-
     }
 
-    updateNarrativeCellsYPositions = function(callback, change, post){
+    updateNarrativeCellsYPositions(callback, change, post){
          //update excluded cells position
-         var model = this.graph.getModel();
-         var graph = this.graph;
-         var t = this;
+         let model = this.graph.getModel();
+         let graph = this.graph;
+         let t = this;
          this.updateNarrativeCellsLayout();
          model.beginUpdate();
          try{
@@ -72,13 +70,13 @@ class NarrativeLayout {
             }
              this.app.narratives.forEach(narrative =>{
                 narrative.cells.forEach(cell => {
-                    var geom = cell.geometry;
+                    let geom = cell.geometry;
                     geom.x = geom.x;
-                    var naCellPos = t.getNarrativeCellLayout(narrative.rootCell);
+                    let naCellPos = t.getNarrativeCellLayout(narrative.rootCell);
                     if(naCellPos){
                         console.log("geom Y", geom.y);     
                         console.log("Layout pos", naCellPos);    
-                        var dy = naCellPos.positionY;
+                        let dy = naCellPos.positionY;
                         geom.y = dy;
                         model.setGeometry(cell, geom);
                     }
@@ -89,7 +87,7 @@ class NarrativeLayout {
              throw e;
          }finally{
             // New API for animating graph layout results asynchronously
-            var morph = new mxMorphing(graph);
+            let morph = new mxMorphing(graph);
             morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
             {
                 graph.getModel().endUpdate();
@@ -113,12 +111,12 @@ class NarrativeLayout {
      * @param {*} change 
      * @param {*} post 
      */
-    applyLayoutNarrativeCellsNaive = function(callback, change, post){
+    applyLayoutNarrativeCellsNaive(callback, change, post){
         //update excluded cells position
-        var model = this.graph.getModel();
-        var graph = this.graph;
-        var cells = [];
-        var t = this;
+        let model = this.graph.getModel();
+        let graph = this.graph;
+        let cells = [];
+        let t = this;
         this.updateNarrativeCellsLayout();
         this.narrativecellslayout.forEach(cell =>{
             cells.push(cell.nacell);
@@ -132,7 +130,7 @@ class NarrativeLayout {
             }
 
             cells.forEach((cell) => {
-                var geom = cell.geometry;
+                let geom = cell.geometry;
                 geom.x = 0; 
                 geom.y = t.getNarrativeCellYPosition(cell);
                 model.setGeometry(cell, geom);
@@ -145,7 +143,7 @@ class NarrativeLayout {
         finally
         {
              // New API for animating graph layout results asynchronously
-             var morph = new mxMorphing(graph);
+             let morph = new mxMorphing(graph);
              morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
              {
                  graph.getModel().endUpdate();
@@ -165,9 +163,8 @@ class NarrativeLayout {
 
     }
 
-
-    getNarrativeCellLayout = function(nacell){
-        var res;
+    getNarrativeCellLayout(nacell){
+        let res;
         this.narrativecellslayout.forEach(element => {
             if(nacell == element.nacell){
                 res = element;
@@ -176,8 +173,8 @@ class NarrativeLayout {
         return res;
     }
 
-    getNarrativeCellYPosition = function(nacell){
-        var pos;
+    getNarrativeCellYPosition(nacell){
+        let pos;
         this.narrativecellslayout.forEach(element => {
             if(nacell == element.nacell){
                 pos = element.positionY;
@@ -186,11 +183,10 @@ class NarrativeLayout {
         return pos;
     }
 
-
-    getExcludedCells = function(selectedNodes){
+    getExcludedCells(selectedNodes){
         this.graph.selectAll();
-        var excludeNodes = [];
-        var selectedCells = this.graph.getSelectionCells();
+        let excludeNodes = [];
+        let selectedCells = this.graph.getSelectionCells();
 
         selectedCells.forEach((cell) => {
           if (!selectedNodes.includes(cell) && cell.children != null) {
@@ -208,17 +204,17 @@ class NarrativeLayout {
         return excludeNodes;
     }
 
-    applyLayout = function(narrative, callback, change, post){
+    applyLayout(narrative, callback, change, post){
         //do not apply layout if narrative is hidden
         if(!narrative.isvisible) return;
 
         //update excluded cells position
-        var graph = this.graph;
-        var model = this.graph.getModel();
-        var targetCells = narrative.cells; // Array of parent node cells
-        var layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
+        let graph = this.graph;
+        let model = this.graph.getModel();
+        let targetCells = narrative.cells; // Array of parent node cells
+        let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
-        var excludeNodes = this.getExcludedCells(targetCells);
+        let excludeNodes = this.getExcludedCells(targetCells);
 
         graph.getModel().beginUpdate();
         try
@@ -229,19 +225,19 @@ class NarrativeLayout {
             }
             
             layout.execute(graph.getDefaultParent(), targetCells);
-            var t = this;
-            var order = this.getNarrativeCellLayout(narrative.rootCell);
+            let t = this;
+            let order = this.getNarrativeCellLayout(narrative.rootCell);
             
-            var dy = (order)? order.positionY: 0;
+            let dy = (order)? order.positionY: 0;
             targetCells.forEach(cell => {
-                var currentgeometry = model.getGeometry(cell);
+                let currentgeometry = model.getGeometry(cell);
                 currentgeometry.y = currentgeometry.y + dy;
                 currentgeometry.x = currentgeometry.x + t.horizontalspacebetweennarrativeandlayout;
                 model.setGeometry(cell, currentgeometry);
             });
 
             excludeNodes.forEach((cell) => {
-                var currentgeometry = model.getGeometry(cell.excell);
+                let currentgeometry = model.getGeometry(cell.excell);
                 currentgeometry.x = cell.x;
                 currentgeometry.y = cell.y;
                 model.setGeometry(cell.excell, currentgeometry);
@@ -254,7 +250,7 @@ class NarrativeLayout {
         finally
         {
             // New API for animating graph layout results asynchronously
-            var morph = new mxMorphing(graph);
+            let morph = new mxMorphing(graph);
             morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
             {
                 graph.getModel().endUpdate();
