@@ -137,8 +137,8 @@ class NarrativeAbductionApp {
     this.createNAPanel();
     this.createNarrativesView();
     this.createPalette();
-    this.initListenerResponsiveSizeHandlerVanilaContent();
-    this.initListenerDocumentSizeAfterDescriptionEdit();
+    this.initListenerResponsiveSizeHandler();
+    //this.initListenerDocumentSizeAfterDescriptionEdit();
     this.initOverrideConvertValueString();
     this.initOverrideShapePickerHandler();
     this.initOverrrideNewCellHandler();
@@ -207,67 +207,7 @@ class NarrativeAbductionApp {
     };
   };
 
-  /**
-   * Create a document node in HTML content format
-   * @param {*} graph
-   * @param {*} entry
-   * @returns
-   */
-  createDocumentItemHTMLCell(graph, entry) {
-    const itemname = entry.name;
-    const titlename = entry.titlename;
-    const descrname = entry.descrname;
-    const style = entry.style;
-
-    const doc = mxUtils.createXmlDocument();
-    const docmain = doc.createElement(itemname);
-    const doccontent = doc.createElement(NASettings.Dictionary.UI.NAHTMLCONTENT);
-    docmain.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, itemname);
-    //these attributes can be used to visualise the document item
-    doccontent.setAttribute(
-      NASettings.Dictionary.ATTRIBUTES.NATYPE,
-      NASettings.Dictionary.UI.NAHTMLCONTENT
-    );
-    docmain.setAttribute(NASettings.Dictionary.ATTRIBUTES.DOCTITLE, titlename);
-    docmain.setAttribute(
-      NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION,
-      descrname
-    );
-
-    const parent = graph.getDefaultParent();
-    let documentcell;
-    let contentcell;
-    try {
-      documentcell = graph.insertVertex(
-        parent,
-        null,
-        docmain,
-        200,
-        150,
-        350,
-        150
-      );
-      documentcell.setStyle(style);
-      contentcell = graph.insertVertex(
-        documentcell,
-        null,
-        doccontent,
-        0,
-        20,
-        350,
-        130
-      );
-      contentcell.setStyle(
-        "html=1;movable=0;editable=0;whiteSpace=wrap;overflow=hidden;resizable=0;rotatable=0;deletable=0;locked=0;connectable=0;"
-      );
-      this.updateHTMLDocumentItemAppearance(documentcell, contentcell); // here is the visualisation happens
-      //disable direct edit
-    } finally {
-      graph.getModel().endUpdate();
-    }
-    return documentcell;
-  };
-
+ 
   /**
    * Create the cell for a document item in label + content format
    * @param {*} graph
@@ -309,33 +249,7 @@ class NarrativeAbductionApp {
         this.documentcellwidth,
         this.documentcellheight
       );
-      documentcell.setStyle(style);
-      let nodetitle = graph.insertVertex(
-        documentcell,
-        null,
-        objtitle,
-        0,
-        0,
-        this.documentcellwidth,
-        this.titlecellheight
-      );
-      nodetitle.setStyle(this.titlecellstyle);
-      nodetitle.setValue(titlename);
-      nodetitle.natype = NASettings.Dictionary.ATTRIBUTES.DOCTITLE;
-      nodetitle.setConnectable(false);
-      let nodedesc = graph.insertVertex(
-        documentcell,
-        null,
-        objdescription,
-        0,
-        this.titlecellheight,
-        this.documentcellwidth,
-        this.documentcellheight - this.titlecellheight
-      );
-      nodedesc.setStyle(this.descriptioncellstyle);
-      nodedesc.setValue(NASettings.Language.English["description"]);
-      nodedesc.setConnectable(false);
-      nodedesc.natype = NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION;
+      documentcell.setStyle(style);      
     } finally {
       graph.getModel().endUpdate();
     }
@@ -384,7 +298,7 @@ class NarrativeAbductionApp {
     //this.createDevToolPanel(container);
   };
 
-  createCommonMenus = function(){
+  createCommonMenus(){
       let title = document.createElement("h3");
       title.innerHTML = "Common Menus";
       this.panelwindow.commonmenu.append(title);
@@ -396,7 +310,7 @@ class NarrativeAbductionApp {
   }
 
 
-  createCommonMenu = function(label, menucontainer){
+  createCommonMenu(label, menucontainer){
       let container = document.createElement("div");
       let labelcontainer = document.createElement("div");
       labelcontainer.innerHTML = label;
@@ -406,7 +320,7 @@ class NarrativeAbductionApp {
       this.panelwindow.commonmenu.append(container);
   }
 
-  createSelectLayoutModeMenu = function(){
+  createSelectLayoutModeMenu(){
     let container = document.createElement("div");
     let t = this;
     let btnFlex = NAUtil.AddButton("Flexible Mode", container, function(){
@@ -432,7 +346,7 @@ class NarrativeAbductionApp {
     this.createCommonMenu("Layout modes", container);
   }
 
-  createLoadNarrativeMenu = function(){
+  createLoadNarrativeMenu(){
     let container = document.createElement("div");
     let t = this;
     NAUtil.AddButton("Load narratives", container, function () {
@@ -443,7 +357,7 @@ class NarrativeAbductionApp {
   }
 
 
-  createUpdateLinksMenu = function(){
+  createUpdateLinksMenu(){
     //This part is to add link type buttons 
     let setlinktypecontainer = document.createElement("div");
     //looping through naentries
@@ -660,7 +574,7 @@ class NarrativeAbductionApp {
   /**
    * Create narrativesviewer window/panel
    */
-  createNarrativesView = () => {
+  createNarrativesView(){
     this.narrativeaviewscontainer = new NarrativeListViewContainer(
       NASettings.Colors.Narratives,
       this
@@ -720,7 +634,7 @@ class NarrativeAbductionApp {
    * @param {*} cell 
    * @returns 
    */
-  getNarrativeCellValue = function(cell){
+  getNarrativeCellValue(cell){
     let val = "";
     let cellvalue =  this.editorui.editor.graph.model.getValue(cell);
     if (cellvalue != null) val = cellvalue.getAttribute('label');
@@ -729,6 +643,9 @@ class NarrativeAbductionApp {
     return val;
   }
 
+  getDocumentItemCellValue(cell){
+    return cell.getValue().getAttribute("label");
+  }
 
   /**
    * Return the html content of the HTML Document Item
@@ -794,7 +711,7 @@ class NarrativeAbductionApp {
   };
 
   getDescriptionCellContentHTML(descell) {
-    return document.getElementById(descell.id + "-description");
+    return document.getElementById(descell.id+"-cell");
   };
 
   /**
@@ -817,7 +734,7 @@ class NarrativeAbductionApp {
    * @param {*} cell 
    * @returns 
    */
-    getDocumentItemNarrative = function(cell){
+    getDocumentItemNarrative(cell){
       let na = null;
       this.narratives.forEach(narrative => {
           if(narrative.cells.includes(cell)){
@@ -833,7 +750,7 @@ class NarrativeAbductionApp {
      * @param {*} cell 
      * @returns 
      */
-    getNarrativeFromRootCell = function(cell){
+    getNarrativeFromRootCell(cell){
       let na = null;
       this.narratives.forEach(narrative => {
           if(narrative.rootCell == cell){
@@ -877,7 +794,7 @@ class NarrativeAbductionApp {
    * Handler for when the vanila document item size is updated.
    * The requirement is that the height can't be manually adjusted. The height is adjusted based on the content of the description.
    */
-  initListenerResponsiveSizeHandlerVanilaContent() {
+  initListenerResponsiveSizeHandler() {
     let graph = this.editorui.editor.graph;
     let t = this;
     // Handle resizing of the cell
@@ -896,30 +813,31 @@ class NarrativeAbductionApp {
             //the height, however, is based on the height of the description cell.
             //the problem is, we need to wait until the HTML content inside the description cell to be updated before getting the final height.
             //thus, the height of the document item can only be adjusted after the next frame animation
-            let descell = t.getDescriptionCell(cell);
+            let descell = (cell);
             if (descell) {
             descell.geometry.width = newWidth;
 
             //now update the height according to the new height
             let htmlcontent = t.getDescriptionCellContentHTML(descell);
-
+            const cellLabel = graph.getLabel(cell);
+            console.log("cellLabel",  cellLabel);
+            console.log("htmlcontent",  htmlcontent);
+            
+            if(htmlcontent)
             requestAnimationFrame(() => {
                 console.log("htmlcontent 2", htmlcontent);
                 console.log("New height 2", htmlcontent.scrollHeight);
                 let htmlheight = htmlcontent.clientHeight;
+                htmlheight = (htmlheight > 0)? htmlheight:  t.documentitemminheight;
+
                 console.log("htmlheight", htmlheight);
-                htmlheight = (htmlheight > 0)? htmlheight: descell.geometry.height;
+
                 descell.geometry.height = htmlheight;
                 descell.geometry.y = t.titlecellheight;
 
                 cell.geometry.height = htmlheight + t.titlecellheight;
                 graph.refresh();
             });
-            }
-
-            let titlecell = t.getTitleCell(cell);
-            if (titlecell) {
-            titlecell.geometry.width = newWidth;
             }
         }
       }
@@ -1046,7 +964,7 @@ class NarrativeAbductionApp {
   /**
    * Override the connection points, only use four pounts
    */
-  initOverrideConnectionConstraints = function(){
+  initOverrideConnectionConstraints(){
     this.editorui.editor.graph.getAllConnectionConstraints = function(terminal)
 		{
 					if (terminal != null && this.model.isVertex(terminal.cell))
@@ -1065,7 +983,7 @@ class NarrativeAbductionApp {
   /**
    * TODO: snap the source and target edge to the constraint points
    */
-  initOverrideSnapToFixedPoints = function(){
+  initOverrideSnapToFixedPoints(){
     let graph = this.editorui.editor.graph;
     graph.getView().updateFixedTerminalPoints  =   function(edge, source,target)
     {
@@ -1084,75 +1002,78 @@ class NarrativeAbductionApp {
   initOverrideConvertValueString() {
     let graph = this.editorui.editor.graph;
     let t = this;
+    let value;
     graph.convertValueToString = function (cell) {
-        //console.log("initOverrideConvertValueString cell", cell);
       //if the cell is document item, return empty string
       if (NarrativeAbductionApp.isCellDocumentItem(cell)) {
-        return "";
+        value = t.getDocumentItemCellValue(cell);
+        value = (value == null)? cell.getValue().getAttribute("natype"): value;
+        return "<div id='" + cell.id + "-cell'>" + value + "</div>";
       } else if (t.isCellNarrativeCell(cell)){
         //console.log("Narrative");
-        let val = t.getNarrativeCellValue(cell);
+        value = t.getNarrativeCellValue(cell);
        // console.log("val", val); 
-        return val;        
+        return value;        
     } else {
         //check title or description
-        if (cell.natype) {
-          let value, htmlvalue;
-          switch (cell.natype) {
-            case NASettings.Dictionary.ATTRIBUTES.DOCTITLE:
-              value = cell.value;
-              htmlvalue =
-                "<div id ='" +
-                cell.id +
-                "-title' style='" +
-                t.titlecellcontenthmtlstyle +
-                "'><h3>" +
-                value +
-                "</h3></div>";
-              return htmlvalue;
-              break;
-            case NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION:
-              value = cell.value;
-              htmlvalue =
-                "<div id ='" +
-                cell.id +
-                "-description' style='" +
-                t.descriptioncellcontenthtmlstyle +
-                "'>" +
-                value +
-                "</div>";
-              return htmlvalue;
-              break;
-            default:
-                if (cell.value != null) {
-                    // Here, you can customize how the cell's value is displayed as a string
-                    return cell.value.toString(); // Example: Convert the value to a string
-                  } else {
-                    return ''; // Return an empty string if the value is null or undefined
-                }
-          }
+        if (cell.value != null) {                 
+          // Here, you can customize how the cell's value is displayed as a string
+          return cell.value.toString(); // Example: Convert the value to a string
         } else {
-            if (cell.value != null) {
-                // Here, you can customize how the cell's value is displayed as a string
-                return cell.value.toString(); // Example: Convert the value to a string
-              } else {
-                return ''; // Return an empty string if the value is null or undefined
-            }
+          return ''; // Return an empty string if the value is null or undefined
         }
       }
     };
   };
 
+  parseDocumentContent(content){
+      return  NarrativeAbductionApp.getTextBetweenAsterisks(content);
+  }
+
+  getDocumentItemTitle(cell){
+    let value = this.getDocumentItemCellValue(cell);
+    if(value){
+      const regex = /<b>(.*?)<\/b>/g;
+      let content = NarrativeAbductionApp.extractTitleContentFromText(value, regex);
+      if(content){
+        return content.title
+      }else{
+        return value;
+      }
+    }else{
+      return cell.getAttribute("natype");
+    }
+  }
+
+  static extractTitleContentFromText(text, regex) {
+
+  // Use the `exec` method to find the first match
+  const match = regex.exec(text);
+
+  if (match) {
+    // Extract the text between asterisks
+    const title = match[1];
+    
+    // Remove the first match from the input text
+    const content = text.replace(match[0], '');
+
+    // Create and return an object with the extracted title and content
+    return { title, content};
+  } else {
+    // If no match is found, return null or an appropriate value
+    return null;
+  }
+}
   /**
    * Is the cell a document item
    * @param {*} cell 
    * @returns 
    */
-  static isCellDocumentItem = function(cell){
+  static isCellDocumentItem(cell){
     return (cell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE));
   }
 
-  isCellNarrativeCell = function(cell){
+  isCellNarrativeCell(cell){
     if(cell.value && cell.value.nodeName == NASettings.Dictionary.CELLS.NARRATIVE){
         return true;
     }else{
@@ -1160,11 +1081,14 @@ class NarrativeAbductionApp {
     }
   }
 
+
   /**
    * Trigger custom functions everytime a new cell is added
    */
   initOverrrideNewCellHandler() {
     let graph = this.editorui.editor.graph;
+    let editor = this.editorui.editor;
+
     let t = this;
     graph.addListener(mxEvent.CELLS_ADDED, function (sender, evt) {
       //if edge, show Contextual Edge Option Menu
@@ -1210,9 +1134,19 @@ class NarrativeAbductionApp {
                 document.dispatchEvent(event);
             }
         }
-        
+
+        if(target && target.isVertex()){
+          graph.refresh();
+          requestAnimationFrame(() => {
+            graph.startEditingAtCell(target);
+        });
+        }
+
         // t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
       }
+
+
+
       //if the cell is Narrative, trigger create a new narrative action
       if (
         newCell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE) ==

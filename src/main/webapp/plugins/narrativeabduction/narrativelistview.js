@@ -17,6 +17,7 @@ class NarrativeListView {
 
       this.initListenerUpdateNarrativeCellEdit();
       this.initListenerUpdateDocumentItemTitle();
+      this.initListenerRemoveCell();
       //this.initListenerClickRemoveHighlight();
     }
   
@@ -199,6 +200,19 @@ class NarrativeListView {
       this.headContainer.bottompart = botpart;
     };
   
+    initListenerRemoveCell(){
+      let t = this;
+      let graph = this.editorui.editor.graph;
+      graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt){
+        let cells = evt.getProperty("cells");
+        cells.forEach(cell => {
+          if (t.getCellView(cell)) {
+            t.removeCellView(cell);
+          }
+        });
+      })
+    }
+
     /**
      * Update the narrative list livew
      */
@@ -233,13 +247,13 @@ class NarrativeListView {
       let t = this;
       graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
         let cell = evt.getProperty("cell"); // Get the cell whose label changed
-        let newValue = evt.getProperty("value"); // Get the new label value
-        let natype = cell.natype;  
-        if (natype == NASettings.Dictionary.ATTRIBUTES.DOCTITLE) {
+        
+        if (NarrativeAbductionApp.isCellDocumentItem(cell)) {
+          let newValue = t.app.getDocumentItemTitle(cell);
           //check if the parent is in narrative
-          let parent = cell.parent;
-          if (t.narrative.cells.includes(parent)) {
-            let cellview = t.getCellView(parent);
+          console.log("new value", newValue);
+          if (t.narrative.cells.includes(cell)) {
+            let cellview = t.getCellView(cell);
             if (cellview) cellview.htmltitle.innerHTML = newValue;
           }
         }
@@ -404,8 +418,8 @@ class NarrativeListView {
         container.append(textcontainer);
         container.append(uicontainer);
   
-        let titlecell = this.getTitleCell(cell);
-        textcontainer.innerHTML = titlecell.value;
+        let title = this.app.getDocumentItemTitle(cell);
+        textcontainer.innerHTML = title;
         textcontainer.title = "Click to select";
         container.cell = cell;
         container.style.cursor = "pointer";
@@ -462,13 +476,13 @@ class NarrativeListView {
   
     /**
      * Remove cell view
-     * @param {*} c
+     * @param {*} cell
      */
-    removeCellView(c) {
-      let cellView = this.getCellView(c);
-      this.unhighlightCells([c]);
+    removeCellView(cell) {
+      let cellView = this.getCellView(cell);
+      this.unhighlightCells([cell]);
       cellView.htmlcontainer.remove();
-      this.cellviews.splice(this.cellviews.indexOf(cellView), 1);
+      this.cellviews = NAUtil.RemoveElementArray(this.cellviews.indexOf(cellView), this.cellviews);
     };
   
     /**

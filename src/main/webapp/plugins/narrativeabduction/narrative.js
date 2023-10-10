@@ -16,6 +16,7 @@ class Narrative {
         this.graph.getModel().setStyle(this.boundcell, NASettings.Styles.NarrativeBound);
       }
       this.initListenerUpdateBound();
+      this.initListenerRemoveCell();
     }
 
     hideBound(){
@@ -48,6 +49,18 @@ class Narrative {
       }
     }
 
+    initListenerRemoveCell(){
+      let t = this;
+      let graph = this.graph;
+      graph.addListener(mxEvent.CELLS_REMOVED, function(sender, evt){
+        let cells = evt.getProperty("cells");
+        cells.forEach(cell => {
+          if (t.cells.includes(cell)) {
+            t.removeCell(cell);
+          }
+        });
+      })
+    }
     initListenerUpdateBound(){
       const graph = this.graph;
       const t = this;
