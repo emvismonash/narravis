@@ -11,12 +11,14 @@ Draw.loadPlugin(function (ui) {
                     mxscript("plugins/narrativeabduction/narrativelistview.js", function(){
                         mxscript("plugins/narrativeabduction/nautil.js", function(){
                           mxscript("plugins/narrativeabduction/narrativelayout.js", function(){
-                            mxscript("plugins/narrativeabduction/narativelayoutswimlane.js", function(){
-                              console.log("EditorUi", ui);
-                              console.log("Sidebar", ui.sidebar.graph);
-                              console.log("Editor", ui.editor);            
-                              let na = new NarrativeAbductionApp(ui);
-                              na.init();                      
+                            mxscript("plugins/narrativeabduction/narativelayoutswimlane.js", function(){   
+                              mxscript("plugins/narrativeabduction/narrativegpt.js", function(){
+                                console.log("EditorUi", ui);
+                                console.log("Sidebar", ui.sidebar.graph);
+                                console.log("Editor", ui.editor);            
+                                let na = new NarrativeAbductionApp(ui);
+                                na.init();                      
+                              });               
                             });
                           });                  
                         });
@@ -35,6 +37,7 @@ class NarrativeAbductionApp {
     this.narrativeaviewscontainer;
     this.narratives = [];
     this.narrativelayout = new NarrativeLayout(this);
+    this.narrativegpt = new NarrativeGPT("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");
     this.narrativelayout.graph = ui.editor.graph;
 
     this.settings = {
@@ -124,10 +127,9 @@ class NarrativeAbductionApp {
     this.descriptioncellstyle =
       "constituent=1;html=1;text;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;movable=0;";
     this.titlecellheight = 50;
-    this.titlecellcontenthmtlstyle =
-      "padding:5px;padding-left:15px;text-align:center;";
-    this.descriptioncellcontenthtmlstyle =
-      "padding:5px;padding-left:15px;min-height:150px;";
+    this.titlecellcontenthmtlstyle ="padding:5px;padding-left:15px;text-align:center;";
+    this.descriptioncellcontenthtmlstyle = "padding:5px;padding-left:15px;min-height:150px;";
+    
   }
 
   /**
@@ -306,6 +308,7 @@ class NarrativeAbductionApp {
       this.createUpdateLinksMenu();
       this.createLoadJSONMenu();
       this.createLoadNarrativeMenu();
+      this.createGenerateNarrativeJSONMenu();
       //    
   }
 
@@ -318,6 +321,28 @@ class NarrativeAbductionApp {
       container.append(labelcontainer);
       container.append(menucontainer);
       this.panelwindow.commonmenu.append(container);
+  }
+
+  createGenerateNarrativeJSONMenu(){
+    let container = document.createElement("div");
+    let textArea = document.createElement('textarea');
+    let t = this;
+    // Set attributes for the text area
+    textArea.rows = '4';
+    textArea.cols = '50';
+
+    container.append(textArea);
+
+    let btnGenerate = NAUtil.AddButton("Generate", container, function(){
+      t.generateNarrativeJSON(textArea.value);
+    })
+
+    
+    this.createCommonMenu("Layout modes", container);
+  }
+
+  generateNarrativeJSON(text){
+    this.narrativegpt.extractNarrativesJSON(text);
   }
 
   createSelectLayoutModeMenu(){
