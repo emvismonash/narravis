@@ -30,12 +30,12 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
     }
 
     initListenerNewNarrative= function() {
-        var t = this;
+        let t = this;
         document.addEventListener(NASettings.Dictionary.EVENTS.NEWNARRATIVE, function(evt){
             console.log("EVT", evt);
-            var data = evt.detail;
+            let data = evt.detail;
 
-            var narrative = data.narrative;
+            let narrative = data.narrative;
             if(narrative){
                 t.assignTopLane(narrative);
                 t.addAssignButtons(narrative);
@@ -44,9 +44,9 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         })  
     }
 
-    remove = function(){
+    remove(){
         //remove cells
-        var graph = this.graph;
+        let graph = this.graph;
         graph.getModel().beginUpdate();
             try{
                 graph.getModel().remove(this.toplane.boundcell);
@@ -65,21 +65,21 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         this.removeLane(this.botlane);
 
         //bring back move up and down, currently very ugly approach
-        var t = this;
-        var nlc = this.app.narrativeaviewscontainer;
+        let t = this;
+        let nlc = this.app.narrativeaviewscontainer;
         this.app.narrativeaviewscontainer.moveUp = function(narrative){
-            var listView = nlc.getListViewByNarrative(narrative);
-            var currentIdx = nlc.narrativealistviews.indexOf(listView);
-            var targetIdx = currentIdx - 1;        
+            let listView = nlc.getListViewByNarrative(narrative);
+            let currentIdx = nlc.narrativealistviews.indexOf(listView);
+            let targetIdx = currentIdx - 1;        
             if(nlc.narrativealistviews[targetIdx]){
                 nlc.swapElementsPositions(listView, nlc.narrativealistviews[targetIdx]);
                 nlc.app.narrativelayout.updateLayout([narrative, nlc.narrativealistviews[targetIdx].narrative]);
             }
         }
         this.app.narrativeaviewscontainer.moveDown = function(narrative){
-            var listView = nlc.getListViewByNarrative(narrative);
-            var currentIdx = nlc.narrativealistviews.indexOf(listView);
-            var targetIdx = currentIdx + 1;        
+            let listView = nlc.getListViewByNarrative(narrative);
+            let currentIdx = nlc.narrativealistviews.indexOf(listView);
+            let targetIdx = currentIdx + 1;        
       
             if(nlc.narrativealistviews[targetIdx]){
                 nlc.swapElementsPositions(nlc.narrativealistviews[targetIdx], listView);
@@ -88,11 +88,11 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         }
     }
 
-    removeLane = function(lane){
+    removeLane(lane){
         lane.uis.forEach(element => {
             element.remove();
         });
-        var children = Array.from(lane.container.children); 
+        let children = Array.from(lane.container.children); 
         console.log("children", children);
         children.forEach(child => {
             this.app.narrativeaviewscontainer.listcontainer.append(child);
@@ -101,13 +101,13 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         lane.container.remove();
     }
 
-    createLabelCell = function(value, lane){
-        var boundcell = lane.boundcell;
-        var yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;
-        var graph = this.graph;
+    createLabelCell(value, lane){
+        let boundcell = lane.boundcell;
+        let yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;
+        let graph = this.graph;
         graph.getModel().beginUpdate();
             try{
-                var labelVertex = graph.insertVertex(graph.getDefaultParent(), null, '', -100, yPos, 100, 200);
+                let labelVertex = graph.insertVertex(graph.getDefaultParent(), null, '', -100, yPos, 100, 200);
                 labelVertex.setStyle(this.lanelabelstyle);  
                 labelVertex.setValue(value);    
                 lane.labelcell = labelVertex;
@@ -117,13 +117,13 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         }
     }
 
-    updateLabelPosition = function(lane){
-        var boundcell = lane.boundcell;
-        var yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;
-        var graph = this.graph;
+    updateLabelPosition(lane){
+        let boundcell = lane.boundcell;
+        let yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;
+        let graph = this.graph;
         graph.getModel().beginUpdate();
             try{
-                var geom = lane.labelcell.geometry;
+                let geom = lane.labelcell.geometry;
                 geom.y = yPos;
                 graph.getModel().setGeometry(lane.labelcell, geom);
             }finally{
@@ -132,22 +132,22 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         }
     }
 
-    initListenerNewDocumentItem = function(){
-        var t = this;
+    initListenerNewDocumentItem(){
+        let t = this;
         document.addEventListener(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, function(evt){
             console.log("New document item", evt);
-            var data = evt.detail;
+            let data = evt.detail;
 
-            var narrative = data.narrative;
-            var lane = t.getNarrativeLane(narrative);
+            let narrative = data.narrative;
+            let lane = t.getNarrativeLane(narrative);
             if(lane){
                 t.updateLayout();
             }
         })  
     }
 
-    initOverrideUpDowButton = function(){
-        var t = this;
+    initOverrideUpDowButton(){
+        let t = this;
         this.app.narrativeaviewscontainer.moveUp = function(narrative){
             t.moveUp(narrative);
         }
@@ -156,17 +156,17 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         }
     }
     
-    moveUp = function(narrative){
-        var listView = this.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
-        var lane = this.getNarrativeLane(narrative);
-        var currentIdx = lane.narratives.indexOf(narrative);
-        var targetIdx = currentIdx - 1;        
-        var na2 = lane.narratives[targetIdx];
+    moveUp(narrative){
+        let listView = this.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
+        let lane = this.getNarrativeLane(narrative);
+        let currentIdx = lane.narratives.indexOf(narrative);
+        let targetIdx = currentIdx - 1;        
+        let na2 = lane.narratives[targetIdx];
         if(na2){
-            var targetView = this.app.narrativeaviewscontainer.getListViewByNarrative(na2);
+            let targetView = this.app.narrativeaviewscontainer.getListViewByNarrative(na2);
             this.app.narrativeaviewscontainer.swapElementsPositions(listView, targetView);
             this.swapNarrativesPositions(narrative, na2, lane);
-            var t = this;
+            let t = this;
             this.updateLayout(function(){
                 t.updateLaneCell(lane);
             });
@@ -175,32 +175,32 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         
     }
   
-    moveDown = function(narrative){
-        var listView = this.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
-        var lane = this.getNarrativeLane(narrative);
-        var currentIdx = lane.narratives.indexOf(narrative);
-        var targetIdx = currentIdx + 1;        
-        var na2 = lane.narratives[targetIdx];
+    moveDown(narrative){
+        let listView = this.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
+        let lane = this.getNarrativeLane(narrative);
+        let currentIdx = lane.narratives.indexOf(narrative);
+        let targetIdx = currentIdx + 1;        
+        let na2 = lane.narratives[targetIdx];
         if(na2){
-            var targetView = this.app.narrativeaviewscontainer.getListViewByNarrative(na2);
+            let targetView = this.app.narrativeaviewscontainer.getListViewByNarrative(na2);
             this.app.narrativeaviewscontainer.swapElementsPositions(targetView, listView);
             this.swapNarrativesPositions(narrative, na2, lane);
-             var t = this;
+             let t = this;
             this.updateLayout(function(){
                 t.updateLaneCell(lane);
             });
         }
     }
 
-    swapNarrativesPositions = function(na1, na2, lane){
-        var tmp = na1;
-        var idx1 = lane.narratives.indexOf(na1);
-        var idx2 = lane.narratives.indexOf(na2);
+    swapNarrativesPositions(na1, na2, lane){
+        let tmp = na1;
+        let idx1 = lane.narratives.indexOf(na1);
+        let idx2 = lane.narratives.indexOf(na2);
         lane.narratives[idx1] = na2;
         lane.narratives[idx2] = tmp;
     }
 
-    initiate = function(){
+    initiate(){
         this.toplane.narratives = this.app.narratives;
         console.log("narratives", this.app.narratives);
         this.createLaneContainer(this.toplane, "<b>Top Lane</b>");
@@ -223,44 +223,44 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         this.initListenerNewDocumentItem();
     }
 
-    updateLaneViews = function(){
-        var t = this;
+    updateLaneViews(){
+        let t = this;
         this.toplane.narratives.forEach(narrative => {
-            var lv = t.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
+            let lv = t.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
             if(lv) t.toplane.container.append(lv.container);
         });
         this.midlane.narratives.forEach(narrative => {
-            var lv = t.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
+            let lv = t.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
             if(lv) t.midlane.container.append(lv.container);
         });
         this.botlane.narratives.forEach(narrative => {
-            var lv = t.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
+            let lv = t.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
             if(lv) t.botlane.container.append(lv.container);
         });
     }
 
-    createAssignButtons = function(){
-        var t = this;
+    createAssignButtons(){
+        let t = this;
         this.app.narratives.forEach(narrative => {
             t.addAssignButtons(narrative);
         });
     }
 
-    createLaneContainer = function(lane, label){
+    createLaneContainer(lane, label){
         lane.container = document.createElement("div");
         lane.container.style.padding = "2px";
-        var title = document.createElement("div");
+        let title = document.createElement("div");
         title.innerHTML = label;
         lane.container.append(title);
         lane.uis.push(title);
     }
 
-    addAssignButtons = function(narrative){
-        var listView = this.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
-        var t = this;
+    addAssignButtons(narrative){
+        let listView = this.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
+        let t = this;
 
         if(listView){              
-                var btnATop = document.createElement("button");
+                let btnATop = document.createElement("button");
                 btnATop.innerHTML = "T";
                 btnATop.title = "Move group to Top Lane";
                 btnATop.onclick = function () {
@@ -268,7 +268,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
                 };
 
                 //mid
-                var btnAMid = document.createElement("button");
+                let btnAMid = document.createElement("button");
                 btnAMid.innerHTML = "M";
                 btnAMid.title = "Move group to Middle Lane";
                 btnAMid.onclick = function () {
@@ -277,7 +277,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
                 };
 
                 //mid
-                var btnABot = document.createElement("button");
+                let btnABot = document.createElement("button");
                 btnABot.innerHTML = "B";
                 btnABot.title = "Move group to Bottom Lane";
                 btnABot.onclick = function () {
@@ -294,40 +294,40 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         }
     }
 
-    getNarrativeLane = function(narrative){
+    getNarrativeLane(narrative){
         if(this.toplane.narratives.includes(narrative)) return this.toplane;
         if(this.midlane.narratives.includes(narrative)) return this.midlane;
         if(this.botlane.narratives.includes(narrative)) return this.botlane;
         return null;
     }
 
-    assignTopLane = function(narrative){
+    assignTopLane(narrative){
         this.assignToLane(narrative, this.toplane);
     }
 
-    assignMidLane = function(narrative){
+    assignMidLane(narrative){
         this.assignToLane(narrative, this.midlane);
     }
 
-    assignBotLane = function(narrative){
+    assignBotLane(narrative){
         this.assignToLane(narrative, this.botlane);
     }
 
-    assignToLane = function(narrative, lane){
+    assignToLane(narrative, lane){
         //remove from previous lane
         this.app.narratives.forEach(element => {
             console.log("all narratives", element);
 
         });
 
-        var prevLane = this.getNarrativeLane(narrative);
+        let prevLane = this.getNarrativeLane(narrative);
         if(prevLane != null) prevLane.narratives =  NAUtil.RemoveElementArray(prevLane.narratives.indexOf(narrative), prevLane.narratives);
 
         //assign to new lane.
         lane.narratives.push(narrative); 
 
         //move view
-        var listView = this.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
+        let listView = this.app.narrativeaviewscontainer.getListViewByNarrative(narrative);
         if(listView)
         lane.container.append(listView.container);
         this.updateLayout();
@@ -336,15 +336,15 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         });
     }
 
-    updateLaneCells = function(){
+    updateLaneCells(){
         this.updateLaneCell(this.toplane, 1);
         this.updateLaneCell(this.midlane, 2);
         this.updateLaneCell(this.botlane, 3);
     }
 
-    getLaneHeight = function(lane){
-        var height = 0;
-        var t = this;
+    getLaneHeight(lane){
+        let height = 0;
+        let t = this;
         lane.narratives.forEach(narrative => {
             console.log("Narrative", narrative);
             narrative.updateCellsBound();
@@ -358,12 +358,12 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         return height;
     }
 
-    getLaneHeightAdjusted = function(lane){
+    getLaneHeightAdjusted(lane){
         return Math.max(200, this.getLaneHeight(lane));
     }
 
-    getLaneWidth = function(lane){
-        var maxWidth = 0;
+    getLaneWidth(lane){
+        let maxWidth = 0;
         lane.narratives.forEach(narrative => {
             if(narrative.bound && narrative.bound.width > maxWidth){
                 maxWidth = narrative.bound.width;
@@ -373,12 +373,12 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         return maxWidth;
     }
 
-    updateLaneCell = function(lane, order){
-        var graph = this.graph;
+    updateLaneCell(lane, order){
+        let graph = this.graph;
         //get the max width and height
-        var maxWidth = Math.max(200, this.getLaneWidth(lane));
-        var height = Math.max(200, this.getLaneHeight(lane));
-        var prevHeight = 0;
+        let maxWidth = Math.max(200, this.getLaneWidth(lane));
+        let height = Math.max(200, this.getLaneHeight(lane));
+        let prevHeight = 0;
         switch(order){
             case 2:
                 prevHeight = this.getLaneHeightAdjusted(this.toplane);
@@ -386,12 +386,12 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
             case 3: 
                 prevHeight = this.getLaneHeightAdjusted(this.toplane) + this.getLaneHeightAdjusted(this.midlane);                
         }
-        var yPos = prevHeight;       
+        let yPos = prevHeight;       
 
         if(!lane.boundcell){
             graph.getModel().beginUpdate();
             try{
-                var vertex = graph.insertVertex(graph.getDefaultParent(), null, '', 0, yPos, maxWidth, height);
+                let vertex = graph.insertVertex(graph.getDefaultParent(), null, '', 0, yPos, maxWidth, height);
                 vertex.setStyle(this.laneboundstlye);
                 lane.boundcell = vertex;
                 graph.orderCells(true, [vertex]);
@@ -402,7 +402,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         }else{
             graph.getModel().beginUpdate();
             try{
-                var geometry = lane.boundcell.geometry;
+                let geometry = lane.boundcell.geometry;
                 geometry.y = yPos;
                 geometry.height = height;
                 geometry.width = maxWidth;
@@ -417,7 +417,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
     }
 
     
-    updateLayout = function(callback){
+    updateLayout(callback){
         this.updateLaneCells();
         this.applyLayoutNarrativeCellsNaive(()=>{
             this.updateNarrativeCellsYPositions(() =>{
@@ -434,16 +434,16 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
             });
         })
     }
-    updateNarrativeCellsLayoutLane = function(lane){
-        var layoutdata = [];      
-        var originY = lane.boundcell.geometry.y;
-        var sumY = originY;      
-        for(var i = 0; i < lane.narratives.length; i++){
-            var narrative = lane.narratives[i];
+    updateNarrativeCellsLayoutLane(lane){
+        let layoutdata = [];      
+        let originY = lane.boundcell.geometry.y;
+        let sumY = originY;      
+        for(let i = 0; i < lane.narratives.length; i++){
+            let narrative = lane.narratives[i];
             narrative.updateCellsBound();
             //narrative can have not cell
 
-            var posY = sumY;
+            let posY = sumY;
             if(narrative.bound) {
                 sumY += narrative.bound.height + this.verticalspace;
             }
@@ -457,7 +457,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         return layoutdata;
     }
 
-    updateNarrativeCellsLayout = function(){
+    updateNarrativeCellsLayout(){
         this.narrativecellslayout = [];
         this.narrativecellslayout = this.narrativecellslayout.concat(this.updateNarrativeCellsLayoutLane(this.toplane));
         this.narrativecellslayout = this.narrativecellslayout.concat(this.updateNarrativeCellsLayoutLane(this.midlane));

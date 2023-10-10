@@ -1,12 +1,11 @@
 class NAUtil {
-
-    static RemoveElementArray = function(idx, arr){      
+    static RemoveElementArray(idx, arr){      
       const myObject = arr[idx];
       const newArray1 = arr.filter(item => item !== myObject);
       return newArray1;
     }
 
-    static arraysContainSameItems = function(arr1, arr2) {
+    static arraysContainSameItems(arr1, arr2) {
         if (arr1.length !== arr2.length) {
           return false; // If the arrays have different lengths, they can't contain the same items
         }
@@ -18,14 +17,14 @@ class NAUtil {
         return arr1.length === arr2.length && arr1.every(item => set2.has(item));
       }
 
-    static GetCellChildrenLabels = function (name) {
+    static GetCellChildrenLabels (name) {
       return {
         title: name + "Title",
         description: name + "Description",
       };
     };
   
-    static ModelToXML = function (graph) {
+    static ModelToXML (graph) {
       var encoder = new mxCodec();
       var result = encoder.encode(graph.getModel());
       var xml = mxUtils.getXml(result);
@@ -33,7 +32,7 @@ class NAUtil {
       return xml;
     };
   
-    static GetCellByNodeName = function (graph, name) {
+    static GetCellByNodeName (graph, name) {
       console.log("Graph", graph);
       var cells = graph.model.getCells();
       console.log("Celss", graph.model.getCells());
@@ -47,7 +46,7 @@ class NAUtil {
       }
     };
   
-    static Decycle = function (obj, stack = []) {
+    static Decycle (obj, stack = []) {
       if (!obj || typeof obj !== "object") return obj;
   
       if (stack.includes(obj)) return null;
@@ -61,7 +60,7 @@ class NAUtil {
           );
     };
   
-    static AddNodeClickListener = function (graph, name, f) {
+    static AddNodeClickListener (graph, name, f) {
       graph.addListener(mxEvent.CLICK, function (sender, evt) {
         var cell = evt.getProperty("cell"); // cell may be null
         if (cell != null && cell.value != null && cell.value.nodeName == name) {
@@ -71,7 +70,7 @@ class NAUtil {
       });
     };
   
-    static AddNodeDoubleClickListener = function (graph, name, f) {
+    static AddNodeDoubleClickListener (graph, name, f) {
       graph.addListener(mxEvent.DOUBLE_CLICK, function (sender, evt) {
         var cell = evt.getProperty("cell"); // cell may be null
         if (cell != null && cell.value != null && cell.value.nodeName == name) {
@@ -81,7 +80,7 @@ class NAUtil {
       });
     };
   
-    static AddPalette = function (sidebar, name, nodes) {
+    static AddPalette (sidebar, name, nodes) {
       //  var nodes = [sidebar.addDataEntry("Test", 0, 0, name, Graph.compress(xml))];
       //mxResources.get("narrativeabduction")
       sidebar.setCurrentSearchEntryLibrary("narrative", "abduction");
@@ -100,13 +99,13 @@ class NAUtil {
      * @param {*} height
      * @returns
      */
-    static CreateWindow = function (id, title, content, x, y, width, height) {
+    static CreateWindow (id, title, content, x, y, width, height) {
       var wnd = new mxWindow(title, content, x, y, width, height, true, true);
       wnd.id = id;
       return wnd;
     };
   
-    static AddButton = function (label, container, funct) {
+    static AddButton (label, container, funct) {
       var btn = document.createElement("div");
       btn.innerHTML = label;
       btn.classList.add(NASettings.CSSClasses.NAUtils.Button);

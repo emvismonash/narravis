@@ -15,8 +15,8 @@ Draw.loadPlugin(function (ui) {
                               console.log("EditorUi", ui);
                               console.log("Sidebar", ui.sidebar.graph);
                               console.log("Editor", ui.editor);            
-                              var na = new NarrativeAbductionApp(ui);
-                              na._init();                      
+                              let na = new NarrativeAbductionApp(ui);
+                              na.init();                      
                             });
                           });                  
                         });
@@ -120,9 +120,9 @@ class NarrativeAbductionApp {
     this.documentitemminwidth = 250;
     this.documentitemminheight = 150;
     this.titlecellstyle =
-      "constituent=1;html=1;text;moveable=0;strokeColor=none;fillColor=none;overflow=fill;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;fixedWidth=1;";
+      "constituent=1;html=1;text;strokeColor=none;fillColor=none;overflow=fill;align=left;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=17;fontColor=default;labelBorderColor=none;labelBackgroundColor=none;resizable=0;allowArrows=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;fixedWidth=1;movable=0;";
     this.descriptioncellstyle =
-      "constituent=1;html=1;text;moveable=0;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;";
+      "constituent=1;html=1;text;whiteSpace=wrap;overflow=block;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;rounded=0;allowArrows=0;resizable=0;rotatable=0;cloneable=0;deletable=0;pointerEvents=0;autosize=1;resizeHeight=1;fixedWidth=1;movable=0;";
     this.titlecellheight = 50;
     this.titlecellcontenthmtlstyle =
       "padding:5px;padding-left:15px;text-align:center;";
@@ -133,7 +133,7 @@ class NarrativeAbductionApp {
   /**
    * Initialisation
    */
-  _init = function () {
+  init() {
     this.createNAPanel();
     this.createNarrativesView();
     this.createPalette();
@@ -154,14 +154,14 @@ class NarrativeAbductionApp {
    * Assign the narrative cell into the narrative list
    * @param {*} cell
    */
-  addNarrativeCellToList = function (cell) {
+  addNarrativeCellToList(cell) {
     if (this.narrativelistcell) {
       //console.log("this.narrativelistcell", this.narrativelistcell);
-      var graph = this.editorui.editor.graph;
+      const graph = this.editorui.editor.graph;
       graph.getModel().beginUpdate();
       try {
         graph.getModel().add(this.narrativelistcell, cell);
-        var layout = new mxStackLayout(graph, true);
+        let layout = new mxStackLayout(graph, true);
         layout.execute(this.narrativelistcell);
         // cell.setParent();
       } finally {
@@ -176,13 +176,13 @@ class NarrativeAbductionApp {
    * @param {*} style
    * @returns
    */
-  createLinkItem = function (itemname, style) {
-    var graph = new mxGraph();
-    var parent = graph.getDefaultParent();
+  createLinkItem (itemname, style) {
+    const graph = new mxGraph();
+    const parent = graph.getDefaultParent();
     graph.getModel().beginUpdate();
-    var linkcell;
+    let linkcell;
     try {
-      var v1 = graph.insertVertex(
+      let v1 = graph.insertVertex(
         parent,
         null,
         null,
@@ -192,7 +192,7 @@ class NarrativeAbductionApp {
         1,
         "opacity=0;"
       );
-      var v2 = graph.insertVertex(parent, null, null, 0, 0, 1, 1, "opacity=0;");
+      let v2 = graph.insertVertex(parent, null, null, 0, 0, 1, 1, "opacity=0;");
 
       linkcell = graph.insertEdge(parent, null, "", v2, v1);
       linkcell.setStyle(style);
@@ -213,30 +213,30 @@ class NarrativeAbductionApp {
    * @param {*} entry
    * @returns
    */
-  createDocumentItemHTMLCell = function (graph, entry) {
-    var itemname = entry.name;
-    var titlename = entry.titlename;
-    var descrname = entry.descrname;
-    var style = entry.style;
+  createDocumentItemHTMLCell(graph, entry) {
+    const itemname = entry.name;
+    const titlename = entry.titlename;
+    const descrname = entry.descrname;
+    const style = entry.style;
 
-    var doc = mxUtils.createXmlDocument();
-    var docmain = doc.createElement(itemname);
-    var doccontent = doc.createElement(NASettings.Dictionary.UI.NAHTMLCONTENT);
-    docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, itemname);
+    const doc = mxUtils.createXmlDocument();
+    const docmain = doc.createElement(itemname);
+    const doccontent = doc.createElement(NASettings.Dictionary.UI.NAHTMLCONTENT);
+    docmain.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, itemname);
     //these attributes can be used to visualise the document item
     doccontent.setAttribute(
-      NASettings.Dictionary.ATTRIBUTTES.NATYPE,
+      NASettings.Dictionary.ATTRIBUTES.NATYPE,
       NASettings.Dictionary.UI.NAHTMLCONTENT
     );
-    docmain.setAttribute(NASettings.Dictionary.ATTRIBUTTES.DOCTITLE, titlename);
+    docmain.setAttribute(NASettings.Dictionary.ATTRIBUTES.DOCTITLE, titlename);
     docmain.setAttribute(
-      NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION,
+      NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION,
       descrname
     );
 
-    var parent = graph.getDefaultParent();
-    var documentcell;
-    var contentcell;
+    const parent = graph.getDefaultParent();
+    let documentcell;
+    let contentcell;
     try {
       documentcell = graph.insertVertex(
         parent,
@@ -274,30 +274,31 @@ class NarrativeAbductionApp {
    * @param {*} entry
    * @returns
    */
-  createDocumentItemCell = function (graph, entry) {
-    var itemname = entry.name;
-    var titlename = entry.titlename;
-    var descrname = entry.descrname;
-    var style = entry.style;
+  createDocumentItemCell(graph, entry) {
+    const itemname = entry.name;
+    const titlename = entry.titlename;
+    const descrname = entry.descrname;
+    const style = entry.style;
 
-    var doc = mxUtils.createXmlDocument();
-    var objna = doc.createElement(itemname);
-    objna.setAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE, itemname);
+    const doc = mxUtils.createXmlDocument();
+    let objna = doc.createElement(itemname);
+    objna.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, itemname);
 
-    var objtitle = doc.createElement(titlename);
+    let objtitle = doc.createElement(titlename);
     objtitle.setAttribute(
-      NASettings.Dictionary.ATTRIBUTTES.NATYPE,
-      NASettings.Dictionary.ATTRIBUTTES.DOCTITLE
+      NASettings.Dictionary.ATTRIBUTES.NATYPE,
+      NASettings.Dictionary.ATTRIBUTES.DOCTITLE
     );
 
-    var objdescription = doc.createElement(descrname);
+    let objdescription = doc.createElement(descrname);
     objdescription.setAttribute(
-      NASettings.Dictionary.ATTRIBUTTES.NATYPE,
-      NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION
+      NASettings.Dictionary.ATTRIBUTES.NATYPE,
+      NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION
     );
 
-    var parent = graph.getDefaultParent();
-    var documentcell;
+    const parent = graph.getDefaultParent();
+    graph.getModel().beginUpdate();
+    let documentcell;
     try {
       documentcell = graph.insertVertex(
         parent,
@@ -309,7 +310,7 @@ class NarrativeAbductionApp {
         this.documentcellheight
       );
       documentcell.setStyle(style);
-      var nodetitle = graph.insertVertex(
+      let nodetitle = graph.insertVertex(
         documentcell,
         null,
         objtitle,
@@ -320,9 +321,9 @@ class NarrativeAbductionApp {
       );
       nodetitle.setStyle(this.titlecellstyle);
       nodetitle.setValue(titlename);
-      nodetitle.natype = NASettings.Dictionary.ATTRIBUTTES.DOCTITLE;
+      nodetitle.natype = NASettings.Dictionary.ATTRIBUTES.DOCTITLE;
       nodetitle.setConnectable(false);
-      var nodedesc = graph.insertVertex(
+      let nodedesc = graph.insertVertex(
         documentcell,
         null,
         objdescription,
@@ -334,7 +335,7 @@ class NarrativeAbductionApp {
       nodedesc.setStyle(this.descriptioncellstyle);
       nodedesc.setValue(NASettings.Language.English["description"]);
       nodedesc.setConnectable(false);
-      nodedesc.natype = NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION;
+      nodedesc.natype = NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION;
     } finally {
       graph.getModel().endUpdate();
     }
@@ -346,9 +347,9 @@ class NarrativeAbductionApp {
    * Create document item cell for the Shape picker and Palette
    * @returns
    */
-  createDocumentItem = function (entry) {
-    var graph = new mxGraph();
-    var documentcell = this.createDocumentItemCell(graph, entry); //there are two options, HTML Document or Simple label + description.
+  createDocumentItem(entry) {
+    const graph = new mxGraph();
+    const documentcell = this.createDocumentItemCell(graph, entry); //there are two options, HTML Document or Simple label + description.
     //this.insertListenerHTMLDocumentItemDoubleClick(entry);  //disable double click window editor
     return {
       xml: NAUtil.ModelToXML(graph),
@@ -363,10 +364,10 @@ class NarrativeAbductionApp {
    * - Narrative View
    * - Common Menus
    */
-  createNAPanel = function () {
-    var container = document.createElement("div");
-    var commonmenu = document.createElement("div");
-    var narrativeview = document.createElement("div");
+  createNAPanel() {
+    let container = document.createElement("div");
+    let commonmenu = document.createElement("div");
+    let narrativeview = document.createElement("div");
 
     container.classList.add(NASettings.CSSClasses.Panels.SidePanel);
     commonmenu.classList.add(NASettings.CSSClasses.Panels.CommonMenuContainer);
@@ -384,7 +385,7 @@ class NarrativeAbductionApp {
   };
 
   createCommonMenus = function(){
-      var title = document.createElement("h3");
+      let title = document.createElement("h3");
       title.innerHTML = "Common Menus";
       this.panelwindow.commonmenu.append(title);
       this.createSelectLayoutModeMenu();
@@ -396,8 +397,8 @@ class NarrativeAbductionApp {
 
 
   createCommonMenu = function(label, menucontainer){
-      var container = document.createElement("div");
-      var labelcontainer = document.createElement("div");
+      let container = document.createElement("div");
+      let labelcontainer = document.createElement("div");
       labelcontainer.innerHTML = label;
       labelcontainer.classList.add(NASettings.CSSClasses.NarrativeListView.MenuLabel);
       container.append(labelcontainer);
@@ -406,15 +407,15 @@ class NarrativeAbductionApp {
   }
 
   createSelectLayoutModeMenu = function(){
-    var container = document.createElement("div");
-    var t = this;
-    var btnFlex = NAUtil.AddButton("Flexible Mode", container, function(){
+    let container = document.createElement("div");
+    let t = this;
+    let btnFlex = NAUtil.AddButton("Flexible Mode", container, function(){
       t.narrativelayout.remove();
       t.narrativelayout = new NarrativeLayout(t);
     })
     btnFlex.style.backgroundColor = "#dadce0";
 
-    var btnSwim = NAUtil.AddButton("Swimlane Mode", container, function(){
+    let btnSwim = NAUtil.AddButton("Swimlane Mode", container, function(){
       t.narrativelayout = new NarrativeLayoutSwimlanes(t);
     })
 
@@ -432,8 +433,8 @@ class NarrativeAbductionApp {
   }
 
   createLoadNarrativeMenu = function(){
-    var container = document.createElement("div");
-    var t = this;
+    let container = document.createElement("div");
+    let t = this;
     NAUtil.AddButton("Load narratives", container, function () {
       t.loadExistingNarratives();
     });
@@ -444,16 +445,16 @@ class NarrativeAbductionApp {
 
   createUpdateLinksMenu = function(){
     //This part is to add link type buttons 
-    var setlinktypecontainer = document.createElement("div");
+    let setlinktypecontainer = document.createElement("div");
     //looping through naentries
-    var t = this;
+    let t = this;
     this.naentries.forEach(function (element) {
       if (element.type == "edge") {
         NAUtil.AddButton(
           element.name.replace("Link", ""),
           setlinktypecontainer,
           function () {
-            var selectedCells = t.editorui.editor.graph.getSelectionCells();
+            let selectedCells = t.editorui.editor.graph.getSelectionCells();
             if (selectedCells.length == 0) {
               alert("Select an edge");
               return;
@@ -462,7 +463,7 @@ class NarrativeAbductionApp {
             selectedCells.forEach(function (selected) {
               console.log("Is Edege", selected.isEdge());
               if (selected.isEdge()) {
-                var graph = t.editorui.editor.graph;
+                let graph = t.editorui.editor.graph;
                 graph.getModel().beginUpdate();
                 try {
                   graph
@@ -485,16 +486,16 @@ class NarrativeAbductionApp {
    * Create Dev tool panel on
    * @param {*} container
    */
-  createDevToolPanel = function (container) {
-    var devtoolcontainer = document.createElement("div");
+  createDevToolPanel(container) {
+    let devtoolcontainer = document.createElement("div");
 
     devtoolcontainer.style.border = "1px solid #aaa";
-    var label = document.createElement("span");
+    let label = document.createElement("span");
     label.innerHTML = "Dev tool";
     devtoolcontainer.append(label);
     container.append(devtoolcontainer);
 
-    var t = this;
+    let t = this;
 
     NAUtil.AddButton("Load narratives", devtoolcontainer, function () {
       t.loadExistingNarratives();
@@ -529,19 +530,19 @@ class NarrativeAbductionApp {
     //   function () {
     //     // Assuming you have the mxGraph instance and the graph model
 
-    //     var graph = t.editorui.editor.graph;
-    //     var model = graph.getModel();
-    //     var narrative = t.narratives[0];
+    //     let graph = t.editorui.editor.graph;
+    //     let model = graph.getModel();
+    //     let narrative = t.narratives[0];
     //     if (!narrative) return;
 
     //     // Identify parent nodes and children (replace with your logic)
-    //     var parentNodes = narrative.cells; // Array of parent node cells
+    //     let parentNodes = narrative.cells; // Array of parent node cells
 
     //     // check excluded nodes
-    //     var excludeNodes = [];
+    //     let excludeNodes = [];
 
     //     graph.selectAll();
-    //     var selectedCells = graph.getSelectionCells();
+    //     let selectedCells = graph.getSelectionCells();
     //     selectedCells.forEach((cell) => {
     //       if (!parentNodes.includes(cell) && cell.children != null) {
     //         excludeNodes.push({
@@ -557,11 +558,11 @@ class NarrativeAbductionApp {
     //     //update excluded cells position
     //     model.beginUpdate();
     //     try {
-    //       var layout = new mxHierarchicalLayout(graph);
+    //       let layout = new mxHierarchicalLayout(graph);
     //       layout.execute(graph.getDefaultParent(), parentNodes);
 
     //       excludeNodes.forEach((cell) => {
-    //         var currentgeometry = model.getGeometry(cell.excell);
+    //         let currentgeometry = model.getGeometry(cell.excell);
     //         currentgeometry.x = cell.x;
     //         currentgeometry.y = cell.y;
 
@@ -579,8 +580,8 @@ class NarrativeAbductionApp {
     // /// add group
     // NAUtil.AddButton("Group nodes", devtoolcontainer, function () {
     //   console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
-    //   var graph = t.editorui.editor.graph;
-    //   var cells = graph.getSelectionCells();
+    //   let graph = t.editorui.editor.graph;
+    //   let cells = graph.getSelectionCells();
     //   graph.groupCells(null, 0, cells);
     // });
 
@@ -593,12 +594,12 @@ class NarrativeAbductionApp {
   /**
    * Create palette for the side bar
    */
-  createPalette = function () {
-    var entries = []; //all palette entries
-    for (var i = 0; i < this.naentries.length; i++) {
-      var res;
+  createPalette() {
+    let entries = []; //all palette entries
+    for (let i = 0; i < this.naentries.length; i++) {
+      let res;
       if (this.isValidShapePickerItem(this.naentries[i])) {
-        var entry = this.naentries[i];
+        let entry = this.naentries[i];
         entry.titlename = NAUtil.GetCellChildrenLabels(
           this.naentries[i].name
         ).title;
@@ -630,16 +631,16 @@ class NarrativeAbductionApp {
   /**
    * Create the container cell that will contain the narrative cells
    */
-  createNarrativeListCell = function () {
-    var entry = this.getEntryByName(NASettings.Dictionary.CELLS.NARRATIVELIST);
-    var graph = this.editorui.editor.graph;
-    var doc = mxUtils.createXmlDocument();
-    var obj = doc.createElement(entry.name);
+  createNarrativeListCell() {
+    let entry = this.getEntryByName(NASettings.Dictionary.CELLS.NARRATIVELIST);
+    let graph = this.editorui.editor.graph;
+    let doc = mxUtils.createXmlDocument();
+    let obj = doc.createElement(entry.name);
 
     console.log("entry", entry);
     graph.getModel().beginUpdate();
     try {
-      var cell = graph.insertVertex(
+      let cell = graph.insertVertex(
         graph.getDefaultParent(),
         null,
         obj,
@@ -674,15 +675,15 @@ class NarrativeAbductionApp {
    * Remove narrative from the list
    * @param {*} narrative
    */
-  deleteNarrative = function (narrative) {
+  deleteNarrative(narrative) {
     this.narratives.splice(this.narratives.indexOf(narrative), 1);
   };
 
   /**
    * Return the narrative entry
    */
-  getNarrativeEntry = function () {
-    var res = null;
+  getNarrativeEntry() {
+    let res = null;
     this.naentries.forEach(function (elem) {
       if (elem.name == NASettings.Dictionary.CELLS.NARRATIVE) {
         res = elem;
@@ -691,8 +692,8 @@ class NarrativeAbductionApp {
     return res;
   };
 
-  getNarrativeCells = function (cells) {
-    var nacells = [];
+  getNarrativeCells(cells) {
+    let nacells = [];
     cells.forEach((cell) => {
       if (Narrative.isCellNarrative(cell)) nacells.push(cell);
     });
@@ -701,7 +702,7 @@ class NarrativeAbductionApp {
       cells.forEach((cell) => {
         if (this.isCellNarrativeList(cell)) {
           console.log("Narrative list", cell);
-          var children = cell.children;
+          let children = cell.children;
           if (children) {
             children.forEach((child) => {
               if (Narrative.isCellNarrative(child)) nacells.push(child);
@@ -735,7 +736,7 @@ class NarrativeAbductionApp {
    * @param {*} description
    * @returns
    */
-  getHTMLDocumentItemContent = function (title, description) {
+  getHTMLDocumentItemContent(title, description) {
     return (
       '<div class="responsive-content"><b>' +
       title +
@@ -745,8 +746,8 @@ class NarrativeAbductionApp {
     );
   };
 
-  getEntryByName = function (name) {
-    var ent = null;
+  getEntryByName(name) {
+    let ent = null;
     this.naentries.forEach((element) => {
       if (element.name == name) {
         ent = element;
@@ -761,12 +762,12 @@ class NarrativeAbductionApp {
    * Get the description cell child from a cell
    * @param {*} parentcell
    */
-  getDescriptionCell = function (parentcell) {
-    var res = null;
+  getDescriptionCell(parentcell) {
+    let res = null;
     if (parentcell.children) {
       parentcell.children.forEach((child) => {
-        var natype = child.natype;
-        if (natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION) {
+        let natype = child.natype;
+        if (natype == NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION) {
           res = child;
         }
       });
@@ -779,12 +780,12 @@ class NarrativeAbductionApp {
    * @param {*} parentcell
    * @returns
    */
-  getTitleCell = function (parentcell) {
-    var res = null;
+  getTitleCell(parentcell) {
+    let res = null;
     if (parentcell.children) {
       parentcell.children.forEach((child) => {
-        var natype = child.natype;
-        if (natype == NASettings.Dictionary.ATTRIBUTTES.DOCTITLE) {
+        let natype = child.natype;
+        if (natype == NASettings.Dictionary.ATTRIBUTES.DOCTITLE) {
           res = child;
         }
       });
@@ -792,18 +793,18 @@ class NarrativeAbductionApp {
     return res;
   };
 
-  getDescriptionCellContentHTML = function (descell) {
+  getDescriptionCellContentHTML(descell) {
     return document.getElementById(descell.id + "-description");
   };
 
   /**
    * Get the height of the html description cell content
    */
-  getDescriptionCellContentHeight = function (descell) {
-    var res = null;
+  getDescriptionCellContentHeight(descell) {
+    let res = null;
     if (descell) {
       //get html
-      var html = document.getElementById(descell.id + "-description");
+      let html = document.getElementById(descell.id + "-description");
       if (html) {
         res = html.offsetHeight;
       }
@@ -817,7 +818,7 @@ class NarrativeAbductionApp {
    * @returns 
    */
     getDocumentItemNarrative = function(cell){
-      var na = null;
+      let na = null;
       this.narratives.forEach(narrative => {
           if(narrative.cells.includes(cell)){
             na = narrative;       
@@ -833,7 +834,7 @@ class NarrativeAbductionApp {
      * @returns 
      */
     getNarrativeFromRootCell = function(cell){
-      var na = null;
+      let na = null;
       this.narratives.forEach(narrative => {
           if(narrative.rootCell == cell){
             na = narrative;        
@@ -845,8 +846,8 @@ class NarrativeAbductionApp {
   /**
    * Hide Mode Shapes button on the Side bar
    */
-  hideMoreShapesButton = function () {
-    var buttons = document.getElementsByClassName("geSidebarFooter");
+  hideMoreShapesButton() {
+    let buttons = document.getElementsByClassName("geSidebarFooter");
     console.log("Buttons", buttons);
     Array.from(buttons).forEach(function (elm) {
       console.log("Element", elm.innerHTML);
@@ -856,14 +857,14 @@ class NarrativeAbductionApp {
     });
   };
 
-  updateDescriptionHeightBasedOnContent = function (descell) {
+  updateDescriptionHeightBasedOnContent(descell) {
     //get html
-    var html = document.getElementById(descell.id + "-description");
+    let html = document.getElementById(descell.id + "-description");
     if (html) {
       console.log("html", html);
       console.log("html.height", html.getBoundingClientRect().height);
       console.log(" descell.geometry.height", descell.geometry.height);
-      var height = html.offsetHeight;
+      let height = html.offsetHeight;
       descell.geometry.height = height;
       console.log(" descell.geometry.height", descell.geometry.height);
     }
@@ -876,36 +877,36 @@ class NarrativeAbductionApp {
    * Handler for when the vanila document item size is updated.
    * The requirement is that the height can't be manually adjusted. The height is adjusted based on the content of the description.
    */
-  initListenerResponsiveSizeHandlerVanilaContent = function () {
-    var graph = this.editorui.editor.graph;
-    var t = this;
+  initListenerResponsiveSizeHandlerVanilaContent() {
+    let graph = this.editorui.editor.graph;
+    let t = this;
     // Handle resizing of the cell
     graph.addListener(mxEvent.RESIZE_CELLS, function (sender, evt) {
       console.log("evt", evt);
-      var cells = evt.getProperty("cells");
-      for (var i = 0; i < cells.length; i++) {
-        var cell = cells[i];
+      let cells = evt.getProperty("cells");
+      for (let i = 0; i < cells.length; i++) {
+        let cell = cells[i];
         console.log("Cell", cell);
 
         if(NarrativeAbductionApp.isCellDocumentItem(cell)){
             //the width can be manually adjusted, so the this be
-            var newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
+            let newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
             cell.geometry.width = newWidth;
 
             //the height, however, is based on the height of the description cell.
             //the problem is, we need to wait until the HTML content inside the description cell to be updated before getting the final height.
             //thus, the height of the document item can only be adjusted after the next frame animation
-            var descell = t.getDescriptionCell(cell);
+            let descell = t.getDescriptionCell(cell);
             if (descell) {
             descell.geometry.width = newWidth;
 
             //now update the height according to the new height
-            var htmlcontent = t.getDescriptionCellContentHTML(descell);
+            let htmlcontent = t.getDescriptionCellContentHTML(descell);
 
             requestAnimationFrame(() => {
                 console.log("htmlcontent 2", htmlcontent);
                 console.log("New height 2", htmlcontent.scrollHeight);
-                var htmlheight = htmlcontent.clientHeight;
+                let htmlheight = htmlcontent.clientHeight;
                 console.log("htmlheight", htmlheight);
                 htmlheight = (htmlheight > 0)? htmlheight: descell.geometry.height;
                 descell.geometry.height = htmlheight;
@@ -916,7 +917,7 @@ class NarrativeAbductionApp {
             });
             }
 
-            var titlecell = t.getTitleCell(cell);
+            let titlecell = t.getTitleCell(cell);
             if (titlecell) {
             titlecell.geometry.width = newWidth;
             }
@@ -928,18 +929,18 @@ class NarrativeAbductionApp {
   /**
    * Update the height of the document item to accomodate the description
    */
-  initListenerDocumentSizeAfterDescriptionEdit = function () {
-    var graph = this.editorui.editor.graph;
+  initListenerDocumentSizeAfterDescriptionEdit() {
+    let graph = this.editorui.editor.graph;
     graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
-      var cell = evt.getProperty("cell"); // Get the cell whose label changed
-      var newValue = evt.getProperty("value"); // Get the new label value
-      var natype = cell.natype;
+      let cell = evt.getProperty("cell"); // Get the cell whose label changed
+      let newValue = evt.getProperty("value"); // Get the new label value
+      let natype = cell.natype;
       console.log("cell", cell);
       console.log("natype", natype);
 
       if(!cell.natype) return;
 
-      if (natype == NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION) {
+      if (natype == NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION) {
         console.log("cell", cell);
         console.log("new value", newValue);
         console.log("geometry", cell.geometry);
@@ -950,14 +951,14 @@ class NarrativeAbductionApp {
   /**
    * Prevent editing with double click
    */
-  initListenerEdgeDoubleClickEditHandler = function () {
-    var graph = this.editorui.editor.graph;
-    var t = this;
+  initListenerEdgeDoubleClickEditHandler() {
+    let graph = this.editorui.editor.graph;
+    let t = this;
     graph.addListener(mxEvent.DOUBLE_CLICK, function (sender, evt) {
       //if edge, show Contextual Edge Option Menu
-      var cell = evt.getProperty("cell");
+      let cell = evt.getProperty("cell");
       if (cell != null && cell.isEdge()) {
-        var event = evt.getProperty("event");
+        let event = evt.getProperty("event");
         t.showContextualEdgeOptionMenu(cell, event.x, event.y);
       }
     });
@@ -966,17 +967,17 @@ class NarrativeAbductionApp {
   /**
    * Show link type option when two nodes are connected. In the vanila version, the default link will be "Cause".
    */
-  initListenerConnectionHandler = function () {
-    var graph = this.editorui.editor.graph;
-    var t = this;
+  initListenerConnectionHandler() {
+    let graph = this.editorui.editor.graph;
+    let t = this;
 
     graph.connectionHandler.addListener(
       mxEvent.CONNECT,
       function (sender, evt) {
-        var edge = evt.getProperty("cell");
-        var source = graph.getModel().getTerminal(edge, true);
-        var target = graph.getModel().getTerminal(edge, false);
-        var event = evt.getProperty("event");
+        let edge = evt.getProperty("cell");
+        let source = graph.getModel().getTerminal(edge, true);
+        let target = graph.getModel().getTerminal(edge, false);
+        let event = evt.getProperty("event");
 
         console.log("Connected");
         console.log("Source", source);
@@ -993,12 +994,12 @@ class NarrativeAbductionApp {
   /**
    * Remove cell handler
    */
-  initListenerRemoveNarrativeCellHandler = function () {
-    var graph = this.editorui.editor.graph;
-    var t = this;
+  initListenerRemoveNarrativeCellHandler() {
+    let graph = this.editorui.editor.graph;
+    let t = this;
 
     graph.addListener(mxEvent.CELLS_REMOVED, function (sender, evt) {
-      var cells = evt.getProperty("cells");
+      let cells = evt.getProperty("cells");
       console.log("Cell removed", cells[0]);
       cells.forEach((cell) => {
         //if the cell is narrative, remove the view as well
@@ -1013,25 +1014,25 @@ class NarrativeAbductionApp {
   /**
    * Shape-picker override to show NA cells
    */
-  initOverrideShapePickerHandler = function () {
+  initOverrideShapePickerHandler() {
     //override
-    var t = this;
+    let t = this;
     this.editorui.getCellsForShapePicker = function (
       cell,
       hovering,
       showEdges
     ) {
       //somehow the style fails, we need to override it. This might not be the case anymore, need to revisit this again later
-      var newcells = [];
+      let newcells = [];
       t.naentries.forEach(function (currentValue, index, arr) {
         console.log("c", currentValue);
         //only add node items
         if (t.isValidShapePickerItem(currentValue)) {
-          var cell = NAUtil.GetCellByNodeName(
+          let cell = NAUtil.GetCellByNodeName(
             currentValue.graph,
             currentValue.name
           );
-          var g = currentValue.graph;
+          let g = currentValue.graph;
           g.getModel().setStyle(cell, currentValue.style);
           newcells.push(cell);
         }
@@ -1065,7 +1066,7 @@ class NarrativeAbductionApp {
    * TODO: snap the source and target edge to the constraint points
    */
   initOverrideSnapToFixedPoints = function(){
-    var graph = this.editorui.editor.graph;
+    let graph = this.editorui.editor.graph;
     graph.getView().updateFixedTerminalPoints  =   function(edge, source,target)
     {
       console.log("edge", edge);
@@ -1080,9 +1081,9 @@ class NarrativeAbductionApp {
   /**
    * Override label presentation of the narrative document items
    */
-  initOverrideConvertValueString = function () {
-    var graph = this.editorui.editor.graph;
-    var t = this;
+  initOverrideConvertValueString() {
+    let graph = this.editorui.editor.graph;
+    let t = this;
     graph.convertValueToString = function (cell) {
         //console.log("initOverrideConvertValueString cell", cell);
       //if the cell is document item, return empty string
@@ -1091,16 +1092,16 @@ class NarrativeAbductionApp {
       } else if (t.isCellNarrativeCell(cell)){
         //console.log("Narrative");
         let val = t.getNarrativeCellValue(cell);
-       // console.log("val", val);
- 
+       // console.log("val", val); 
         return val;        
     } else {
         //check title or description
         if (cell.natype) {
+          let value, htmlvalue;
           switch (cell.natype) {
-            case NASettings.Dictionary.ATTRIBUTTES.DOCTITLE:
-              var value = cell.value;
-              var htmlvalue =
+            case NASettings.Dictionary.ATTRIBUTES.DOCTITLE:
+              value = cell.value;
+              htmlvalue =
                 "<div id ='" +
                 cell.id +
                 "-title' style='" +
@@ -1110,9 +1111,9 @@ class NarrativeAbductionApp {
                 "</h3></div>";
               return htmlvalue;
               break;
-            case NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION:
-              var value = cell.value;
-              var htmlvalue =
+            case NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION:
+              value = cell.value;
+              htmlvalue =
                 "<div id ='" +
                 cell.id +
                 "-description' style='" +
@@ -1148,7 +1149,7 @@ class NarrativeAbductionApp {
    * @returns 
    */
   static isCellDocumentItem = function(cell){
-    return (cell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE));
+    return (cell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE));
   }
 
   isCellNarrativeCell = function(cell){
@@ -1162,19 +1163,19 @@ class NarrativeAbductionApp {
   /**
    * Trigger custom functions everytime a new cell is added
    */
-  initOverrrideNewCellHandler = function () {
-    var graph = this.editorui.editor.graph;
-    var t = this;
+  initOverrrideNewCellHandler() {
+    let graph = this.editorui.editor.graph;
+    let t = this;
     graph.addListener(mxEvent.CELLS_ADDED, function (sender, evt) {
       //if edge, show Contextual Edge Option Menu
-      var cells = evt.getProperty("cells");
+      let cells = evt.getProperty("cells");
       console.log("new cells", cells);
-      var newCell = cells[0];
+      let newCell = cells[0];
       if (newCell && newCell.isEdge()) {
         //edge type based on target node
-        var edge = newCell;
-        var targetType = edge.target.value.getAttribute(
-          NASettings.Dictionary.ATTRIBUTTES.NATYPE
+        let edge = newCell;
+        let targetType = edge.target.value.getAttribute(
+          NASettings.Dictionary.ATTRIBUTES.NATYPE
         );
         switch (targetType) {
           case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
@@ -1185,22 +1186,22 @@ class NarrativeAbductionApp {
             break;
         }
         //if the source cell is narrative item and source cell is part of a narrative, make the cell part of the same narrative
-        var source = edge.source;
-        var target = edge.target;
+        let source = edge.source;
+        let target = edge.target;
         console.log(source, "source");
-        var sourceNarrative = t.getDocumentItemNarrative(source);
+        let sourceNarrative = t.getDocumentItemNarrative(source);
         console.log("sourceNarrative", sourceNarrative);
         console.log("sourceNarrative", t.narratives);
 
 
         if(sourceNarrative){
-            var naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);
+            let naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);
             console.log("naListVIew", naListVIew);
 
             if(naListVIew){
               naListVIew.assignNodes([target]);
                 //trigger new document item
-                var event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+                let event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
                   detail: {
                     cell: newCell, 
                     narrative: sourceNarrative
@@ -1214,7 +1215,7 @@ class NarrativeAbductionApp {
       }
       //if the cell is Narrative, trigger create a new narrative action
       if (
-        newCell.getAttribute(NASettings.Dictionary.ATTRIBUTTES.NATYPE) ==
+        newCell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE) ==
         NASettings.Dictionary.CELLS.NARRATIVE
       ) {
         graph.removeCells([newCell]);
@@ -1231,9 +1232,9 @@ class NarrativeAbductionApp {
   /**
    * Update graph model base on LOD if specified
    */
-  initOverrideLODUpdate = function () {
+  initOverrideLODUpdate() {
     // Links level of detail to zoom level but can be independent of zoom
-    var t = this;
+    let t = this;
     this.editorui.editor.graph.isCellVisible = function (cell) {
       //  console.log("Zooming", t.editorui.editor.graph.view.scale);
       //  console.log("Cell LOD", cell.lod);
@@ -1243,7 +1244,7 @@ class NarrativeAbductionApp {
     };
   };
 
-  isCellNarrativeList = function (cell) {
+  isCellNarrativeList(cell) {
     return (
       cell.value &&
       cell.value.tagName &&
@@ -1256,7 +1257,7 @@ class NarrativeAbductionApp {
    * @param {*} entry
    * @returns
    */
-  isValidShapePickerItem = function (entry) {
+  isValidShapePickerItem(entry) {
     return entry.type == "node" && !this.excludefrompicker.includes(entry.name);
   };
 
@@ -1265,9 +1266,9 @@ class NarrativeAbductionApp {
    * TODO: remove duplicates
    * @param {*} entry
    */
-  insertListenerHTMLDocumentItemDoubleClick = function (entry) {
-    var currgraph = this.editorui.editor.graph;
-    var t = this;
+  insertListenerHTMLDocumentItemDoubleClick(entry) {
+    let currgraph = this.editorui.editor.graph;
+    let t = this;
     // Add on click listener to show the Narrative Item window
     NAUtil.AddNodeDoubleClickListener(
       currgraph,
@@ -1275,14 +1276,14 @@ class NarrativeAbductionApp {
       function (cell, evt) {
         if (!cell || !cell.children) return;
 
-        var contentcell = cell.children[0].value;
+        let contentcell = cell.children[0].value;
 
         // get x and y position of triggered event
-        var x = evt.getProperty("event").x;
-        var y = evt.getProperty("event").y;
+        let x = evt.getProperty("event").x;
+        let y = evt.getProperty("event").y;
 
         // create form
-        var formContainer = document.createElement("div");
+        let formContainer = document.createElement("div");
         formContainer.style.width = "150px";
         formContainer.style.padding = "20px";
 
@@ -1297,7 +1298,7 @@ class NarrativeAbductionApp {
         nameInput.name = "name";
         nameInput.required = true;
         nameInput.value = cell.getAttribute(
-          NASettings.Dictionary.ATTRIBUTTES.DOCTITLE
+          NASettings.Dictionary.ATTRIBUTES.DOCTITLE
         );
 
         const br = document.createElement("br");
@@ -1310,7 +1311,7 @@ class NarrativeAbductionApp {
         descriptionTextarea.rows = 4;
         descriptionTextarea.cols = 30;
         descriptionTextarea.value = cell.getAttribute(
-          NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION
+          NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION
         );
 
         const applyButton = document.createElement("button");
@@ -1330,7 +1331,7 @@ class NarrativeAbductionApp {
 
         // Add the form to the container
         formContainer.appendChild(form);
-        var highlight = new mxCellHighlight(currgraph, "#000", 2);
+        let highlight = new mxCellHighlight(currgraph, "#000", 2);
         formContainer.onmouseenter = function () {
           highlight.highlight(currgraph.view.getState(cell));
         };
@@ -1338,7 +1339,7 @@ class NarrativeAbductionApp {
           highlight.hide();
         };
 
-        var wnd = NAUtil.CreateWindow(
+        let wnd = NAUtil.CreateWindow(
           NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
           NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
           formContainer,
@@ -1365,19 +1366,19 @@ class NarrativeAbductionApp {
 
             currgraph.getModel().beginUpdate();
             try {
-              var html = t.getHTMLDocumentItemContent(
+              let html = t.getHTMLDocumentItemContent(
                 nameInput.value,
                 descriptionTextarea.value
               );
-              var contentcell = c.children[0];
+              let contentcell = c.children[0];
 
               currgraph.model.setValue(contentcell, html);
               cell.setAttribute(
-                NASettings.Dictionary.ATTRIBUTTES.DOCTITLE,
+                NASettings.Dictionary.ATTRIBUTES.DOCTITLE,
                 nameInput.value
               );
               cell.setAttribute(
-                NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION,
+                NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION,
                 descriptionTextarea.value
               );
             } finally {
@@ -1396,8 +1397,8 @@ class NarrativeAbductionApp {
    * TODO: remove duplicates
    * @param {*} entry
    */
-  insertListenerDocumentItemDoubleClick = function (entry) {
-    var currgraph = this.editorui.editor.graph;
+  insertListenerDocumentItemDoubleClick(entry) {
+    let currgraph = this.editorui.editor.graph;
     // Add on click listener to show the Narrative Item window
     NAUtil.AddNodeDoubleClickListener(
       currgraph,
@@ -1405,13 +1406,13 @@ class NarrativeAbductionApp {
       function (cell, evt) {
         if (!cell || !cell.children) return;
 
-        var cellName = cell.children[0].value;
-        var cellDesc = cell.children[1].value;
+        let cellName = cell.children[0].value;
+        let cellDesc = cell.children[1].value;
 
-        var x = evt.getProperty("event").x;
-        var y = evt.getProperty("event").y;
+        let x = evt.getProperty("event").x;
+        let y = evt.getProperty("event").y;
 
-        var formContainer = document.createElement("div");
+        let formContainer = document.createElement("div");
         formContainer.style.width = "150px";
         formContainer.style.padding = "20px";
 
@@ -1455,7 +1456,7 @@ class NarrativeAbductionApp {
 
         // Add the form to the container
         formContainer.appendChild(form);
-        var highlight = new mxCellHighlight(currgraph, "#000", 2);
+        let highlight = new mxCellHighlight(currgraph, "#000", 2);
         formContainer.onmouseenter = function () {
           highlight.highlight(currgraph.view.getState(cell));
         };
@@ -1463,7 +1464,7 @@ class NarrativeAbductionApp {
           highlight.hide();
         };
 
-        var wnd = NAUtil.CreateWindow(
+        let wnd = NAUtil.CreateWindow(
           NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
           NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
           formContainer,
@@ -1523,45 +1524,45 @@ class NarrativeAbductionApp {
   /**
    * Check for existing narrative cells and update the view accordingly
    */
-  loadExistingNarratives = function () {
-    var t = this;
-    var graph = t.editorui.editor.graph;
+  loadExistingNarratives() {
+    let t = this;
+    let graph = t.editorui.editor.graph;
 
     t.editorui.editor.graph.selectAll();
-    var cells = graph.getSelectionCells();
+    let cells = graph.getSelectionCells();
     console.log("Cells", cells);
 
-    var nacells = this.getNarrativeCells(cells);
+    let nacells = this.getNarrativeCells(cells);
     console.log("nacells", nacells);
 
     nacells.forEach((cell) => {
       //if the cell is already bound with a view, ignore
-      var narrative = this.getNarrativeFromRootCell(cell);
+      let narrative = this.getNarrativeFromRootCell(cell);
       if (Narrative.isCellNarrative(cell) && narrative == null) {
         console.log("loadExistingNarratives", narrative);
         let val = t.getNarrativeCellValue(cell);
         if(val == "") val = NASettings.Language.English.newnarrative;
-        var na = new Narrative(
+        let na = new Narrative(
           cell,
           graph,
           val,
           cell.id
         );
         this.narratives.push(na);
-        var nalistview = this.narrativeaviewscontainer.addNarrativeListView(
+        let nalistview = this.narrativeaviewscontainer.addNarrativeListView(
           na,
           cell,
           this
         ); //add accordion view
 
         //then, we need to re-assign cells to this narrative. These cells ids are store in the cells proprty
-        var cellstring = cell.getAttribute(
-          NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS
+        let cellstring = cell.getAttribute(
+          NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS
         );
-        var cellsidsarray = Narrative.stringCellsToArray(cellstring);
-        var cellsarray = [];
+        let cellsidsarray = Narrative.stringCellsToArray(cellstring);
+        let cellsarray = [];
         cellsidsarray.forEach((id) => {
-          var cell = graph.getModel().getCell(id);
+          let cell = graph.getModel().getCell(id);
           if (cell) cellsarray.push(cell);
         });
         console.log("cellsarray", cellsarray);
@@ -1574,16 +1575,16 @@ class NarrativeAbductionApp {
   /**
    * Create a new narrative, trigger create narrative view and narrative cell
    */
-  newNarrative = function () {
-    var narrativeentry = this.getNarrativeEntry(); //get narrative entry from the entries list
-    var graph = this.editorui.editor.graph;
-    var parent = graph.getDefaultParent();
-    var doc = mxUtils.createXmlDocument();
-    var objna = doc.createElement(narrativeentry.name);
+  newNarrative() {
+    let narrativeentry = this.getNarrativeEntry(); //get narrative entry from the entries list
+    let graph = this.editorui.editor.graph;
+    let parent = graph.getDefaultParent();
+    let doc = mxUtils.createXmlDocument();
+    let objna = doc.createElement(narrativeentry.name);
 
-    var narrativecell;
-    var narrview;
-    var na;
+    let narrativecell;
+    let narrview;
+    let na;
     graph.getModel().beginUpdate();
     //add the narrative cell
     try {
@@ -1608,7 +1609,7 @@ class NarrativeAbductionApp {
       ); //add accordion view
 
       //trigger new narrative event
-      var event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, {
+      let event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, {
         detail: {
           narrative: na,
           narrativecell: narrativecell,
@@ -1619,7 +1620,7 @@ class NarrativeAbductionApp {
 
 
       //if objects are selected, add them automatically to the narrative
-      var selectedCells = graph.getSelectionCells();
+      let selectedCells = graph.getSelectionCells();
       if (selectedCells && narrview) {
         narrview.assignNodes(selectedCells);
       }
@@ -1640,9 +1641,9 @@ class NarrativeAbductionApp {
    * Take the edge and turn it into Cause link
    * @param {*} edge
    */
-  setEdgeType = function (edge, target) {
-    var graph = this.editorui.editor.graph;
-    var causeLink = this.getEntryByName(target);
+  setEdgeType(edge, target) {
+    let graph = this.editorui.editor.graph;
+    let causeLink = this.getEntryByName(target);
     if (causeLink) {
       graph.getModel().beginUpdate();
       try {
@@ -1660,18 +1661,18 @@ class NarrativeAbductionApp {
    * @param {*} x
    * @param {*} y
    */
-  showContextualEdgeOptionMenu = function (edge, x, y) {
-    var container = document.createElement("div");
-    var window = new mxWindow("EdgeType", container, x, y, 200, 200);
+  showContextualEdgeOptionMenu(edge, x, y) {
+    let container = document.createElement("div");
+    let window = new mxWindow("EdgeType", container, x, y, 200, 200);
 
-    var t = this;
+    let t = this;
     this.naentries.forEach(function (element) {
       if (element.type == "edge") {
         NAUtil.AddButton(
           element.name.replace("Link", ""),
           container,
           function () {
-            var graph = t.editorui.editor.graph;
+            let graph = t.editorui.editor.graph;
             graph.getModel().beginUpdate();
             try {
               graph
@@ -1696,24 +1697,24 @@ class NarrativeAbductionApp {
    * This function decides how the content of the HTML Document Item is rendered to HTML element. This function is related to the HTML Document Item format.
    * @param {*} contencell
    */
-  updateHTMLDocumentItemAppearance = function (doccell, contencell) {
-    var title = doccell.getAttribute(
-      NASettings.Dictionary.ATTRIBUTTES.DOCTITLE
+  updateHTMLDocumentItemAppearance(doccell, contencell) {
+    let title = doccell.getAttribute(
+      NASettings.Dictionary.ATTRIBUTES.DOCTITLE
     );
-    var des = doccell.getAttribute(
-      NASettings.Dictionary.ATTRIBUTTES.DOCDESCRIPTION
+    let des = doccell.getAttribute(
+      NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION
     );
-    var html = this.getHTMLDocumentItemContent(title, des);
+    let html = this.getHTMLDocumentItemContent(title, des);
     contencell.setValue(html);
   };
 
   /**
    * Update position of more shape button
    */
-  updateMoreShapesButton = function () {
-    var buttons = document.getElementsByClassName("geSidebarFooter");
+  updateMoreShapesButton() {
+    let buttons = document.getElementsByClassName("geSidebarFooter");
     console.log("Buttons", buttons);
-    var t = this;
+    let t = this;
     Array.from(buttons).forEach(function (elm) {
       console.log("Element", elm.innerHTML);
       if (elm.innerHTML.includes("More Shapes")) {

@@ -18,18 +18,18 @@ class Narrative {
       this.initListenerUpdateBound();
     }
 
-    hideBound = function(){
+    hideBound(){
       this.toggleBoundVisible(false);
     }
 
-    showBound = function(){
+    showBound(){
       this.toggleBoundVisible(true);
     }
 
-    toggleBoundVisible = function(status){
+    toggleBoundVisible(status){
       if(!this.boundcell) return;
 
-      var graph = this.graph;  
+      const graph = this.graph;  
       graph.getModel().beginUpdate();
       try {
          graph.cellsToggled([this.boundcell], status);
@@ -39,7 +39,7 @@ class Narrative {
       graph.refresh();
     }
   
-    deleteBound = function(){
+    deleteBound(){
       this.graph.getModel().beginUpdate();
       try{
         this.graph.cellsRemoved([this.boundcell]);
@@ -48,11 +48,11 @@ class Narrative {
       }
     }
 
-    initListenerUpdateBound = function(){
-      var graph = this.graph;
-      var t = this;
+    initListenerUpdateBound(){
+      const graph = this.graph;
+      const t = this;
       graph.addListener(mxEvent.CELLS_MOVED, function (sender, evt) {
-        var cells = evt.getProperty('cells'); // Get the moved cells
+        const cells = evt.getProperty('cells'); // Get the moved cells
         if(cells){
           cells.forEach(cell => {
             if(t.cells.includes(cell)){
@@ -62,7 +62,7 @@ class Narrative {
         }
       });
       graph.addListener(mxEvent.CELL_ADDED, function(sender, evt) {
-        var cells = evt.getProperty('cells'); // Get the moved cells
+        const cells = evt.getProperty('cells'); // Get the moved cells
         if(cells){
           cells.forEach(cell => {
             if(t.cells.includes(cell)){
@@ -73,7 +73,7 @@ class Narrative {
       });
       // Add a listener for the cell removed event
       graph.addListener(mxEvent.CELL_REMOVED, function(sender, evt) {
-        var cells = evt.getProperty('cells'); // Get the moved cells
+        const cells = evt.getProperty('cells'); // Get the moved cells
         if(cells){
           cells.forEach(cell => {
             if(t.cells.includes(cell)){
@@ -88,13 +88,13 @@ class Narrative {
      * Remove cell from cells list as well as rootCell children. Note that these two arrays are currently redundant.
      * @param {*} c
      */
-    removeCell = function (c) {
-      var idx = this.cells.indexOf(c);
+    removeCell(c) {
+      const idx = this.cells.indexOf(c);
       this.cells.splice(idx, 1);
       this.unsaveCell(c);
     };
   
-    addCell = function (c) {
+    addCell(c) {
       if (!this.cells.includes(c)) {
         this.cells.push(c);
         this.saveCell(c);
@@ -105,23 +105,23 @@ class Narrative {
     /**
      * Push cell id to the cells attribute of the rootCell.
      */
-    saveCell = function (c) {
-      var cellstring = this.rootCell.value.getAttribute(
-        NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS
+    saveCell(c) {
+      let cellstring = this.rootCell.value.getAttribute(
+        NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS
       );
-      var cellsarr = Narrative.stringCellsToArray(cellstring);
+      let cellsarr = Narrative.stringCellsToArray(cellstring);
   
       cellsarr.push(c.id);
       cellstring = Narrative.arrayCellsToString(cellsarr);
       this.rootCell.value.setAttribute(
-        NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS,
+        NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS,
         cellstring
       );
     };
   
     static stringCellsToArray = function (cellstring) {
       if (cellstring == null) cellstring = "[]";
-      var cellsarr = JSON.parse(cellstring);
+      const cellsarr = JSON.parse(cellstring);
       return cellsarr;
     };
   
@@ -133,56 +133,56 @@ class Narrative {
      * Remove cell from the root cell cells attribute
      * @param {*} c
      */
-    unsaveCell = function (c) {
-      var cellstring = this.rootCell.value.getAttribute(
-        NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS
+    unsaveCell(c) {
+      let cellstring = this.rootCell.value.getAttribute(
+        NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS
       );
-      var cellsarr = Narrative.stringCellsToArray(cellstring);
-      var idx = cellsarr.indexOf(c.idx);
+      const cellsarr = Narrative.stringCellsToArray(cellstring);
+      const idx = cellsarr.indexOf(c.idx);
       cellsarr.splice(idx, 1);
       cellstring = Narrative.arrayCellsToString(cellsarr);
       this.rootCell.value.setAttribute(
-        NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLS,
+        NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS,
         cellstring
       );
     };
   
-    getBoundCell = function(){
-      var cell = this.graph.getModel().getCell(this.getBoundCellID());
+    getBoundCell(){
+      const cell = this.graph.getModel().getCell(this.getBoundCellID());
       return cell;
     }
 
-    getBoundCellID = function(){
-      return NASettings.Dictionary.ATTRIBUTTES.NARRATIVECELLSBOUND + "-" + this.rootCell.id;
+    getBoundCellID(){
+      return NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLSBOUND + "-" + this.rootCell.id;
     }
 
     /**
      * 
      * @param {*} callback 
      */
-    updateCellsBound = function(){
+    updateCellsBound(){
       // can't calculate bound if cells are hidden
       if(!this.isvisible) return;
       if(this.cells.length == 0) return;
 
-      var cellsToCalculateBoundary = this.cells;
+      let cellsToCalculateBoundary = this.cells;
 
       // Initialize variables to store the boundary coordinates
-      var minX = Number.MAX_VALUE;
-      var minY = Number.MAX_VALUE;
-      var maxX = Number.MIN_VALUE;
-      var maxY = Number.MIN_VALUE;
+      let minX = Number.MAX_VALUE;
+      let minY = Number.MAX_VALUE;
+      let maxX = Number.MIN_VALUE;
+      let maxY = Number.MIN_VALUE;
       
       // Iterate through the cells and calculate the boundary
-      for (var i = 0; i < cellsToCalculateBoundary.length; i++) {
-          var cell = cellsToCalculateBoundary[i];
-          var geometry = cell.getGeometry();
+      for (let i = 0; i < cellsToCalculateBoundary.length; i++) {
+          let cell = cellsToCalculateBoundary[i];
+          let geometry = cell.getGeometry();
 
           if (geometry != null) {
-              var x = geometry.x;
-              var y = geometry.y;
-              var width = geometry.width;
-              var height = geometry.height;
+              let x = geometry.x;
+              let y = geometry.y;
+              let width = geometry.width;
+              let height = geometry.height;
 
               // Update the min and max coordinates to expand the bounding box
               minX = Math.min(minX, x);
@@ -192,16 +192,16 @@ class Narrative {
           }
       }
 
-      var w = maxX - minX;
-      var h = maxY - minY;
-      var centerX = (minX + maxX) * 0.5;
-      var centerY = (minY + maxY) * 0.5;
+      let w = maxX - minX;
+      let h = maxY - minY;
+      let centerX = (minX + maxX) * 0.5;
+      let centerY = (minY + maxY) * 0.5;
 
       //the anchor is top left point
-      var tcenterX = minX;
-      var tcenterY = minY;
+      let tcenterX = minX;
+      let tcenterY = minY;
 
-      var bound ={
+      let bound ={
           minx: minX,
           miny: minY,
           maxx: maxX,
@@ -218,9 +218,9 @@ class Narrative {
       console.log("bound", this.bound);
 
       //update bound cell
-      var graph = this.graph;
+      const graph = this.graph;
       if(!this.boundcell){
-        var vertex = graph.insertVertex(this.graph.getDefaultParent(), null, '', this.bound.cx, this.bound.cy, this.bound.width, this.bound.height);
+        let vertex = graph.insertVertex(this.graph.getDefaultParent(), null, '', this.bound.cx, this.bound.cy, this.bound.width, this.bound.height);
         vertex.setStyle(NASettings.Styles.NarrativeBound);
         vertex.id = this.getBoundCellID();
         this.boundcell = vertex;
@@ -229,7 +229,7 @@ class Narrative {
       }else{
         graph.getModel().beginUpdate();
         try{
-          var geom = this.boundcell.getGeometry();
+          let geom = this.boundcell.getGeometry();
           geom.x = this.bound.tcx;
           geom.y = this.bound.tcy;
           geom.width = this.bound.width;
@@ -250,8 +250,8 @@ class Narrative {
      * Add cells into the narrative cell, also add the cells as children of rootcells
      * @param {*} cells
      */
-    addCells = function (cells) {
-      var t = this;
+    addCells(cells) {
+      const t = this;
       cells.forEach((element) => {
         if (Narrative.isCellValid(element)) {
           t.addCell(element);
@@ -262,7 +262,7 @@ class Narrative {
     /**
      * In some cases, the selected cells are part of narrative element, e.g. content cell. This function validates what cell can be added.
      */
-    static isCellValid = function (cell) {
+    static isCellValid(cell) {
       return (
         cell.value &&
         cell.value.tagName &&
@@ -271,7 +271,7 @@ class Narrative {
       );
     };
   
-    static isCellNarrative = function (cell) {
+    static isCellNarrative(cell) {
       return (
         cell.value &&
         cell.value.tagName &&
