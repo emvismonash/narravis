@@ -302,7 +302,7 @@ class NarrativeAbductionApp {
       let title = document.createElement("h3");
       title.innerHTML = "Common Menus";
       this.panelwindow.commonmenu.append(title);
-      this.createSelectLayoutModeMenu();
+      //this.createSelectLayoutModeMenu();
       this.createUpdateLinksMenu();
       this.createLoadNarrativeMenu();
       
@@ -1082,6 +1082,57 @@ class NarrativeAbductionApp {
   }
 
 
+  /** Check wheter or not a cell is part of any narrative */
+  isCellPartOfExistingNarrative(cell){
+    let ret = false;
+    this.narratives.forEach(narrative => {
+      if(narrative.cells.includes(cell)){
+        ret = true;
+      }
+    });
+    return ret;
+  }
+
+  /** Is cell to be assigned valid */
+  isAssignedCellValid(cell){
+    console.log("this.isCellPartOfExistingNarrative(cell);", this.isCellPartOfExistingNarrative(cell));
+    return !this.isCellPartOfExistingNarrative(cell);
+  }
+
+  getValidatedAssignedCells(targets){
+    let validTargets = [];
+    let invalidTargets = [];
+    targets.forEach(cell => {
+       if(this.isAssignedCellValid(cell)){
+        validTargets.push(cell);
+       } else{
+        invalidTargets.push(cell);
+       }
+    });
+
+    return {validcells: validTargets, invalidcells: invalidTargets}
+  }
+
+  /** Assign cell to a narrative */
+  assignNodes(nalistview, targets){
+    let validated = this.getValidatedAssignedCells(targets);
+    let validTargets = validated.validcells;
+    let invalidTargets = validated.invalidcells;
+
+    console.log("validTargets", validTargets);
+    console.log("invalidTargets", invalidTargets);
+    if(validTargets.length > 0)  {
+      if(nalistview) {
+        nalistview.assignNodes(validTargets);
+      } 
+    }
+    if(invalidTargets.length > 0){
+      let msg = "Some of selected cells are ignored because they are part of existing narrative";
+      mxUtils.alert(msg);
+    }
+
+  }
+
   /**
    * Trigger custom functions everytime a new cell is added
    */
@@ -1123,17 +1174,18 @@ class NarrativeAbductionApp {
             console.log("naListVIew", naListVIew);
 
             if(naListVIew){
-              naListVIew.assignNodes([target]);
-                //trigger new document item
-                let event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-                  detail: {
-                    cell: newCell, 
-                    narrative: sourceNarrative
-                  },
-                });
-                document.dispatchEvent(event);
+              t.assignNodes(naListVIew, [target]);
             }
         }
+
+        //trigger new document item
+        let event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+          detail: {
+            cell: newCell, 
+            narrative: sourceNarrative
+          },
+        });
+        document.dispatchEvent(event);
 
         if(target && target.isVertex()){
           graph.refresh();
@@ -1500,7 +1552,7 @@ class NarrativeAbductionApp {
           if (cell) cellsarray.push(cell);
         });
         console.log("cellsarray", cellsarray);
-        nalistview.assignNodes(cellsarray);
+        t.assignNodes(nalistview, cellsarray);
       }
     });
     t.editorui.editor.graph.removeSelectionCells(cells);
@@ -1556,7 +1608,7 @@ class NarrativeAbductionApp {
       //if objects are selected, add them automatically to the narrative
       let selectedCells = graph.getSelectionCells();
       if (selectedCells && narrview) {
-        narrview.assignNodes(selectedCells);
+        this.assignNodes(narrview, selectedCells);
       }
     }
 

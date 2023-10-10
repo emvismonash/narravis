@@ -373,7 +373,12 @@ class NarrativeListView {
       let graph = t.editorui.editor.graph;
       let selectedCells = graph.getSelectionCells();
       if (selectedCells) {
-        t.assignNodes(selectedCells);
+        let validated = t.app.getValidatedAssignedCells(selectedCells);
+        let validcells = validated.validcells;        
+        t.assignNodes(validcells);
+        if(validated.invalidcells.length > 0){
+          mxUtils.alert("Some of the cells are ignored because they are part of existing narratives");
+        }
       }
     };
     assignNodes(cells) {
