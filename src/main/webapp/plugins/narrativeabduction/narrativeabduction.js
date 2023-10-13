@@ -338,7 +338,7 @@ class NarrativeAbductionApp {
     })
 
     
-    this.createCommonMenu("Layout modes", container);
+    this.createCommonMenu("Text to summarise", container);
   }
 
   generateNarrativeJSON(text){
