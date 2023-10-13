@@ -77,41 +77,41 @@ class NarrativeAbductionApp {
       },
       {
         name: NASettings.Dictionary.CELLS.EXPLAINLINK,
-        style: "editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;",
+        style: "editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.CAUSELINK,
-        style: "editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;",
+        style: "editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.TRIGGERLINK,
         style:
-          "editable=0;endArrow=classic;html=1;rounded=1;strokeWidth=3;dashed=1;",
+          "editable=0;endArrow=classic;html=1;rounded=1;strokeWidth=3;dashed=1;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.ENABLELINK,
         style:
-          "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;",
+          "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.SUPPORTLINK,
         style:
-          "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#006600;",
+          "editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#006600;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.MOTIVATELINK,
-        style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;",
+        style: "editable=0;shape=flexArrow;endArrow=classic;html=1;rounded=0;snapToPoint=1;",
         type: "edge",
       },
       {
         name: NASettings.Dictionary.CELLS.CONFLICTLINK,
         style:
-          "editable=0;editable=1;endArrow=cross;html=1;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;connectable=1;startArrow=none;startFill=0;endFill=0;strokeWidth=2;strokeColor=#ff0000;",
+          "editable=0;editable=1;endArrow=cross;html=1;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;connectable=1;startArrow=none;startFill=0;endFill=0;strokeWidth=2;strokeColor=#ff0000;snapToPoint=1;",
         type: "edge",
       },
     ];
@@ -146,6 +146,7 @@ class NarrativeAbductionApp {
     //this.initOverrideSnapToFixedPoints();
     this.initListenerRemoveNarrativeCellHandler();
     this.initListenerEdgeDoubleClickEditHandler();
+    this.initListenerShowAddCellAfterEdit();
     this.updateMoreShapesButton();
     this.loadExistingNarratives();
   };
@@ -929,6 +930,32 @@ class NarrativeAbductionApp {
     });
   };
 
+  initListenerShowAddCellAfterEdit(){
+    let graph = this.editorui.editor.graph;
+    let t = this;
+    graph.addListener(mxEvent.LABEL_CHANGED, function(sender, evt)
+    {
+      console.log("evt", evt);
+      let cell = evt.getProperty("cell");
+      if(cell){
+        var view = graph.view;
+        var state = view.getState(cell);
+        
+        if (state) {
+          var cellElement = state.shape.node; // This is the DOM element of the cell
+          
+          // Now, you can access and manipulate the DOM element of the cell as needed
+          let rect = cellElement.getBoundingClientRect();
+          console.log("cellElement", cellElement);
+          console.log("rect", rect);
+
+          t.showContextualAddNewCellItem(cell, rect.x + rect.width, rect.y);
+        }
+     
+      }
+    })
+  }
+
   /**
    * Shape-picker override to show NA cells
    */
@@ -980,21 +1007,8 @@ class NarrativeAbductionApp {
 		};    
   }
 
-  /**
-   * TODO: snap the source and target edge to the constraint points
-   */
-  initOverrideSnapToFixedPoints(){
-    let graph = this.editorui.editor.graph;
-    graph.getView().updateFixedTerminalPoints  =   function(edge, source,target)
-    {
-      console.log("edge", edge);
-      console.log("target", target);
-      console.log("source", source);
 
-      this.updateFixedTerminalPoint(edge, source, true, graph.getConnectionConstraint(edge, source, true));
-      this.updateFixedTerminalPoint(edge, target, false, graph.getConnectionConstraint(edge, target, false))
-    }
-  }
+
 
   /**
    * Override label presentation of the narrative document items
@@ -1678,6 +1692,55 @@ class NarrativeAbductionApp {
     window.setClosable(true);
     window.setVisible(true);
   };
+
+  showContextualAddNewCellItem(sourcecell, x, y){
+    let container = document.createElement("form");
+    let wnd = new mxWindow("AddItem", container, x, y, 200, 200);
+
+    let t = this;
+    let buttons = [];
+    this.naentries.forEach(function (element) {
+      if (t.isValidShapePickerItem(element)) {
+        let btn = NAUtil.AddButton(
+          element.name.replace("Link", ""),
+          container,
+          function () {
+            let graph = t.editorui.editor.graph;
+            let parent = graph.getDefaultParent();
+            graph.getModel().beginUpdate();
+            try {
+              let cellitem = t.createDocumentItem(element).cell;
+              cellitem.geometry.x = sourcecell.geometry.x + sourcecell.geometry.width + 50;
+              cellitem.geometry.y = sourcecell.geometry.y;
+              if(cellitem){
+                  graph.addCell(cellitem, parent);
+                  let edget = graph.insertEdge(parent, null, "", sourcecell, cellitem);
+                  
+              }
+            } finally {
+              graph.getModel().endUpdate();
+            }
+            wnd.destroy();
+          }
+        );
+        buttons.push(btn);
+      }
+    });
+
+    wnd.setMinimizable(false);
+    wnd.setClosable(true);
+    wnd.setVisible(true);
+    wnd.activate();
+
+    window.setTimeout(function () { 
+      console.log("buttons", buttons);
+      container.click();
+      console.log("button 0", buttons[0]);
+      buttons[0].focus();
+    }, 0); 
+   
+
+  }
 
   /**
    * This function decides how the content of the HTML Document Item is rendered to HTML element. This function is related to the HTML Document Item format.

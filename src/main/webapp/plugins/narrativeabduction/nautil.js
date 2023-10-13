@@ -106,7 +106,7 @@ class NAUtil {
     };
   
     static AddButton (label, container, funct) {
-      var btn = document.createElement("div");
+      var btn = document.createElement("button");
       btn.innerHTML = label;
       btn.classList.add(NASettings.CSSClasses.NAUtils.Button);
   
