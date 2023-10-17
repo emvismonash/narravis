@@ -37,7 +37,7 @@ class NarrativeAbductionApp {
     this.narrativeaviewscontainer;
     this.narratives = [];
     this.narrativelayout = new NarrativeLayout(this);
-    this.narrativegpt = new NarrativeGPT("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");
+    this.narrativegpt = new NarrativeGPT();
     this.narrativelayout.graph = ui.editor.graph;
 
     this.settings = {
@@ -324,25 +324,96 @@ class NarrativeAbductionApp {
   }
 
   createGenerateNarrativeJSONMenu(){
-    let container = document.createElement("div");
-    let textArea = document.createElement('textarea');
+    const container = document.createElement("div");
+    container.classList.add("na-window-content");
+    const textArea = document.createElement('textarea');
+    const textAreaJSON = document.createElement("textarea");
+    textAreaJSON.setAttribute('id', 'nagpt-jsonoutput');
+    const inputElementJSONSetting = document.createElement('input');
+
     let t = this;
     // Set attributes for the text area
     textArea.rows = '4';
     textArea.cols = '50';
 
+    
+    container.append(inputElementJSONSetting); // Example: append it to the body
     container.append(textArea);
-
+    container.append(textAreaJSON);
+    
     let btnGenerate = NAUtil.AddButton("Generate", container, function(){
       t.generateNarrativeJSON(textArea.value);
+      textArea.disabled  = true;
+      btnGenerate.disabled  = true;
+      btnGenerate.innerHTML = "Generating ... ";
     })
 
-    
-    this.createCommonMenu("Text to summarise", container);
+    //Load the setting
+    // Create a new input element
+
+    // Set the type attribute to 'file' for a file input
+    inputElementJSONSetting.setAttribute('type', 'file');
+
+    // Optionally, set other attributes or properties, such as an ID or name
+    inputElementJSONSetting.setAttribute('id', 'fileInput-gpt-setting');
+    inputElementJSONSetting.setAttribute('name', 'fileInputGptSetting');
+
+    // Add event listener to handle selected file
+    inputElementJSONSetting.addEventListener('change', function(e) {
+      e.preventDefault();
+      const selectedFile = inputElementJSONSetting.files[0];
+      if (selectedFile) {
+        // Read the selected JSON file
+        const fileReader = new FileReader();
+        fileReader.onload = function(event) {
+          // Parse the JSON data into a JavaScript object
+          try {
+            const jsonData = JSON.parse(event.target.result);
+            // Do something with the parsed JSON data
+            console.log('Parsed JSON data:', jsonData);
+            t.applyGPTSetting(jsonData);
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        };
+        fileReader.readAsText(selectedFile);
+      }
+    });
+
+    this.narrativegpt.container.uitext = textArea;
+    this.narrativegpt.container.uibuttongenerate = btnGenerate;
+
+    let gptiwindow =  NAUtil.CreateWindow("gpt-window", "Auto Generation", container, 0, 0, 500, 500);
+    gptiwindow.setVisible(true);
   }
 
-  generateNarrativeJSON(text){
-    this.narrativegpt.extractNarrativesJSON(text);
+  applyGPTSetting(jsonData){
+    this.narrativegpt.applySetting(jsonData);
+  }
+
+  async generateNarrativeJSON(text){
+    console.log("Generating ...");
+    this.narrativegpt.extractNarrativesJSON(text)
+    .then(result => {
+      console.log(result);
+      if(result.status == "success"){
+        let jsonText = result.message;
+        let jsonData = JSON.parse(jsonText);
+        // Do something with the parsed JSON data
+        console.log('Done, parsed JSON data:', jsonData);
+        const textArea = document.getElementById("nagpt-jsonoutput");
+        if(textArea) textArea.value = JSON.stringify(jsonData);
+        this.createDocumentItemsFromJSON(jsonData);
+
+        // enable uis
+        this.narrativegpt.container.uitext.disabled = false;
+        this.narrativegpt.container.uibuttongenerate.disabled = false;
+        this.narrativegpt.container.uibuttongenerate.innerHTML = "Generate";
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
   }
 
   createSelectLayoutModeMenu(){
@@ -381,12 +452,14 @@ class NarrativeAbductionApp {
 
     // Optionally, set other attributes or properties, such as an ID or name
     inputElement.setAttribute('id', 'fileInput');
-    inputElement.setAttribute('name', 'fileInput');
+    inputElement.setAttribute('name', 'fileInputJSON');
     let t = this;
 
     // Add event listener to handle selected file
-    inputElement.addEventListener('change', function() {
-      const selectedFile = fileInput.files[0];
+    inputElement.addEventListener('change', function(e) {
+      e.preventDefault();
+
+      const selectedFile = inputElement.files[0];
       if (selectedFile) {
         // Read the selected JSON file
         const fileReader = new FileReader();
