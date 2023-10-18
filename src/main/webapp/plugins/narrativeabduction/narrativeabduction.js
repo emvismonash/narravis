@@ -330,6 +330,8 @@ class NarrativeAbductionApp {
     const textAreaJSON = document.createElement("textarea");
     textAreaJSON.setAttribute('id', 'nagpt-jsonoutput');
     const inputElementJSONSetting = document.createElement('input');
+    const buttonSaveJSON = document.createElement('button');
+    const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
 
     let t = this;
     // Set attributes for the text area
@@ -339,14 +341,34 @@ class NarrativeAbductionApp {
     
     container.append(inputElementJSONSetting); // Example: append it to the body
     container.append(textArea);
-    container.append(textAreaJSON);
     
     let btnGenerate = NAUtil.AddButton("Generate", container, function(){
       t.generateNarrativeJSON(textArea.value);
       textArea.disabled  = true;
       btnGenerate.disabled  = true;
-      btnGenerate.innerHTML = "Generating ... ";
+      btnGenerate.innerHTML = "Generating <img src='"+loadingURL+"' width='20px'>";
     })
+
+    buttonSaveJSON.innerHTML = "Save JSON";
+    buttonSaveJSON.addEventListener('click', function(){
+        // Get the text you want to save
+        var textToSave = textAreaJSON.value;
+
+        // Create a Blob with the text content
+        var blob = new Blob([textToSave], { type: "text/plain" });
+
+        // Create a temporary link element for triggering the download
+        var a = document.createElement("a");
+        a.href = window.URL.createObjectURL(blob);
+        a.download = "generateddiagram.json";
+
+        // Trigger a click event on the link to initiate the download
+        a.click();
+        
+    });
+
+    container.append(textAreaJSON);
+    container.append(buttonSaveJSON);
 
     //Load the setting
     // Create a new input element
