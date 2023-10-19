@@ -1142,7 +1142,7 @@ class NarrativeAbductionApp {
     }
     if(invalidTargets.length > 0){
       let msg = "Some of selected cells are ignored because they are part of existing narrative";
-      mxUtils.alert(msg);
+      console.warn(msg);
     }
 
   }
