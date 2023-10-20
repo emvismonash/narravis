@@ -110,12 +110,12 @@ const NAEntries = [
     {
       name: NASettings.Dictionary.CELLS.NARRATIVEITEM,
       style:
-        "editable=1;rounded=1;whiteSpace=wrap;html=1;fontColor=#333333;strokeColor=default;",
+        "absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;",
       type: "node",
     },
     {
       name: NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE,
-      style: "editable=1;rounded=0;whiteSpace=wrap;html=1;",
+      style: "editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;",
       type: "node",
     },
     {

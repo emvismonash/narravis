@@ -193,6 +193,7 @@ class NarrativeAbductionApp {
         this.panelwindow.commonmenu.append(title);
         this.createUpdateLinksMenu();
         this.createLoadJSONMenu();
+        this.createAutoSizeMenu();
     }
 
     createLoadJSONMenu(){
@@ -288,6 +289,24 @@ class NarrativeAbductionApp {
         this.panelwindow.commonmenu.append(container);
     }
   
+    createAutoSizeMenu(){
+      let container = document.createElement("div");
+      let graph = this.editorui.editor.graph;
+
+      let btnFlex = NAUtil.AddButton("Auto Size", container, function(){
+        let cell = graph.getSelectionCells()[0];
+        console.log(cell);
+        graph.getModel().beginUpdate();
+        try{
+          graph.autoSizeCell(cell);
+        }finally{
+          graph.getModel().endUpdate();
+        }
+      })
+     
+      this.createCommonMenu("Autosize Test", container);
+    }
+
     createSelectLayoutModeMenu(){
       let container = document.createElement("div");
       let t = this;
@@ -649,39 +668,10 @@ class NarrativeAbductionApp {
     updateResponsiveCellSize(cell){
       const t = this;
       let graph = this.editorui.editor.graph;
-        if(NarrativeAbductionApp.isCellDocumentItem(cell)){
-          //the width can be manually adjusted, so the this be
-          let newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
-          cell.geometry.width = newWidth;
 
-          //the height, however, is based on the height of the description cell.
-          //the problem is, we need to wait until the HTML content inside the description cell to be updated before getting the final height.
-          //thus, the height of the document item can only be adjusted after the next frame animation
-          let descell = (cell);
-          if (descell) {
-          descell.geometry.width = newWidth;
-
-          //now update the height according to the new height
-          let htmlcontent = t.getDescriptionCellContentHTML(descell);
-          const cellLabel = graph.getLabel(cell);
-          console.log("cellLabel",  cellLabel);
-          console.log("htmlcontent",  htmlcontent);
-          
-          if(htmlcontent)
-          requestAnimationFrame(() => {
-              console.log("htmlcontent 2", htmlcontent);
-              console.log("New height 2", htmlcontent.scrollHeight);
-              let htmlheight = htmlcontent.clientHeight;
-              htmlheight = (htmlheight > 0 && htmlheight >= t.documentitemminheight)? htmlheight:  t.documentitemminheight;
-
-              console.log("final height", htmlheight);
-              console.log("final width", newWidth);
-
-              descell.geometry.height = htmlheight;
-              graph.refresh();
-          });
-          }
-      }
+      graph.autoSizeCell(cell);
+      let newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
+      cell.geometry.width = newWidth;
     }
   
     /**
