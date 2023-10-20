@@ -204,6 +204,55 @@ class NarrativeLayout {
         return excludeNodes;
     }
 
+    applyCellsLayout(cells, callback, change, post){
+        //update excluded cells position
+        let graph = this.graph;
+        let model = this.graph.getModel();
+        let targetCells = cells; // Array of parent node cells
+        let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
+        layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
+        let excludeNodes = this.getExcludedCells(targetCells);
+
+        graph.getModel().beginUpdate();
+        try
+        {
+            if (change != null)
+            {
+                change();
+            }
+            
+            layout.execute(graph.getDefaultParent(), targetCells);
+            let t = this;
+            excludeNodes.forEach((cell) => {
+                let currentgeometry = model.getGeometry(cell.excell);
+                currentgeometry.x = cell.x;
+                currentgeometry.y = cell.y;
+                model.setGeometry(cell.excell, currentgeometry);
+            });
+        }
+        catch (e)
+        {
+            throw e;
+        }
+        finally
+        {
+            // New API for animating graph layout results asynchronously
+            let morph = new mxMorphing(graph);
+            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
+            {
+                graph.getModel().endUpdate();
+                
+                if (post != null)
+                {
+                    post();
+                }
+                if(callback) callback();
+            }));
+            
+            morph.startAnimation();
+        }
+    }
+
     applyLayout(narrative, callback, change, post){
         //do not apply layout if narrative is hidden
         if(!narrative.isvisible) return;
