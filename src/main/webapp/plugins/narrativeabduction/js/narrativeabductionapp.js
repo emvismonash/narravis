@@ -232,8 +232,7 @@ class NarrativeAbductionApp {
       // Append the input element to the desired location in the DOM
       container.appendChild(inputElement); // Example: append it to the body
       this.createCommonMenu("Load JSON", container);
-    }
-  
+    }  
   
     createDocumentItemsFromJSON(parsedObject){
         //create nodes
@@ -563,6 +562,11 @@ class NarrativeAbductionApp {
       return document.getElementById(descell.id+"-cell");
     };
   
+      
+    getContentFromNode(node){
+      return  "<b>" + node.title + "</b><br/>" + node.description;
+    }
+
     /**
      * Get the height of the html description cell content
      */
@@ -1396,6 +1400,12 @@ class NarrativeAbductionApp {
       t.editorui.editor.graph.removeSelectionCells(cells);
     };
   
+    nodeToDocumentItem(node){
+      console.log("node", node);
+        let entry = this.getEntryByName(node.type);
+        return this.createDocumentItem(entry);
+    }
+
     /**
      * Create a new narrative, trigger create narrative view and narrative cell
      */
