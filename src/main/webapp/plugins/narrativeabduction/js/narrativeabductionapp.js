@@ -193,6 +193,7 @@ class NarrativeAbductionApp {
         this.panelwindow.commonmenu.append(title);
         this.createUpdateLinksMenu();
         this.createLoadJSONMenu();
+        this.createAutoSizeMenu();
     }
 
     createLoadJSONMenu(){
@@ -288,6 +289,24 @@ class NarrativeAbductionApp {
         this.panelwindow.commonmenu.append(container);
     }
   
+    createAutoSizeMenu(){
+      let container = document.createElement("div");
+      let graph = this.editorui.editor.graph;
+
+      let btnFlex = NAUtil.AddButton("Auto Size", container, function(){
+        let cell = graph.getSelectionCells()[0];
+        console.log(cell);
+        graph.getModel().beginUpdate();
+        try{
+          graph.autoSizeCell(cell);
+        }finally{
+          graph.getModel().endUpdate();
+        }
+      })
+     
+      this.createCommonMenu("Autosize Test", container);
+    }
+
     createSelectLayoutModeMenu(){
       let container = document.createElement("div");
       let t = this;
@@ -649,6 +668,10 @@ class NarrativeAbductionApp {
     updateResponsiveCellSize(cell){
       const t = this;
       let graph = this.editorui.editor.graph;
+
+      graph.autoSizeCell(cell);
+return;
+
         if(NarrativeAbductionApp.isCellDocumentItem(cell)){
           //the width can be manually adjusted, so the this be
           let newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
