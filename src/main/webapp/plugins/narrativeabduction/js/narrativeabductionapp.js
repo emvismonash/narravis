@@ -18,7 +18,7 @@ class NarrativeAbductionApp {
       this.createPalette();
       this.initListenerResponsiveSizeHandler();
       //this.initListenerDocumentSizeAfterDescriptionEdit();
-      this.initOverrideConvertValueString();
+     // this.initOverrideConvertValueString();
       this.initOverrideShapePickerHandler();
       this.initOverrrideNewCellHandler();
       this.initOverrideConnectionConstraints();
