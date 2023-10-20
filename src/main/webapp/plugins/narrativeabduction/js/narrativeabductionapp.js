@@ -192,7 +192,90 @@ class NarrativeAbductionApp {
         title.innerHTML = "Common Menus";
         this.panelwindow.commonmenu.append(title);
         this.createUpdateLinksMenu();
+        this.createLoadJSONMenu();
+    }
 
+    createLoadJSONMenu(){
+      let container = document.createElement("div");
+      // Create a new input element
+      const inputElement = document.createElement('input');
+  
+      // Set the type attribute to 'file' for a file input
+      inputElement.setAttribute('type', 'file');
+  
+      // Optionally, set other attributes or properties, such as an ID or name
+      inputElement.setAttribute('id', 'fileInput');
+      inputElement.setAttribute('name', 'fileInput');
+      let t = this;
+  
+      // Add event listener to handle selected file
+      inputElement.addEventListener('change', function() {
+        const selectedFile = fileInput.files[0];
+        if (selectedFile) {
+          // Read the selected JSON file
+          const fileReader = new FileReader();
+          fileReader.onload = function(event) {
+            // Parse the JSON data into a JavaScript object
+            try {
+              const jsonData = JSON.parse(event.target.result);
+              // Do something with the parsed JSON data
+              console.log('Parsed JSON data:', jsonData);
+              t.createDocumentItemsFromJSON(jsonData);
+            } catch (error) {
+              console.error('Error parsing JSON:', error);
+            }
+          };
+          fileReader.readAsText(selectedFile);
+        }
+      });
+  
+      // Append the input element to the desired location in the DOM
+      container.appendChild(inputElement); // Example: append it to the body
+      this.createCommonMenu("Load JSON", container);
+    }
+  
+  
+    createDocumentItemsFromJSON(parsedObject){
+        //create nodes
+        let graph = this.editorui.editor.graph;
+        let parent = graph.getDefaultParent();
+        let nodes = parsedObject.nodes;
+        let links = parsedObject.links;
+        let t = this;
+        let cells = [];
+  
+        graph.getModel().beginUpdate();
+        try{
+          nodes.forEach(node => {
+            let documentitem = t.nodeToDocumentItem(node);
+            let cell = documentitem.cell;
+            cell.setAttribute("label", t.getContentFromNode(node));
+            if(cell) cells.push(cell);
+            node.cell = cell;
+          });
+          graph.addCells(cells, parent);
+          //create links
+          links.forEach(link => {
+            let sourceId = link.source;
+            let targetId = link.target;
+            let sourceCell, targetCell;
+            //get cell
+            nodes.forEach(node => {
+              if(node.id == sourceId) sourceCell = node.cell;
+              if(node.id == targetId) targetCell = node.cell;
+            });
+            if(sourceCell && targetCell){
+              let label = link.type;
+              let linkCell = graph.insertEdge(parent, null, "", sourceCell, targetCell);
+              t.setEdgeType(linkCell, label);
+            }
+          });
+        }catch(e){
+          console.log(e);
+        }finally{
+          graph.getModel().endUpdate();
+          t.narrativelayout.applyCellsLayout(cells);
+        }
     }
   
   
