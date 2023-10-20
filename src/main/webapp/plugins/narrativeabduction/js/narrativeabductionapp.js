@@ -1,11 +1,10 @@
-
-
 class NarrativeAbductionApp {
     constructor(ui) {
       this.editorui = ui;
       this.narratives = [];
-      this.narrativelayout = new NarrativeLayout(this);
-      this.narrativelayout.graph = ui.editor.graph;
+      this.narrativelistcell = {};
+      this.narrativeaviewscontainer = {};
+      this.panelwindow = {};
       this.naentries = NAEntries;
       this.excludefrompicker = [
         NASettings.Dictionary.CELLS.NARRATIVELIST,
@@ -13,18 +12,9 @@ class NarrativeAbductionApp {
       ];
       this.documentitemminwidth = NASettings.DocumentCellSetting.minwidth;
       this.documentitemminheight = NASettings.DocumentCellSetting.minheight;
-      this.narrativelistcell;
-      this.narrativeaviewscontainer;
-      this.panelwindow;
-  
-    }
-  
-    /**
-     * Initialisation
-     */
-    init() {
+
       this.createNAPanel();
-      this.createNarrativesView();
+      this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives, this);  
       this.createPalette();
       this.initListenerResponsiveSizeHandler();
       //this.initListenerDocumentSizeAfterDescriptionEdit();
@@ -37,9 +27,18 @@ class NarrativeAbductionApp {
       this.initListenerEdgeDoubleClickEditHandler();
       this.initListenerShowAddCellAfterEdit();
       this.updateMoreShapesButton();
-      this.loadExistingNarratives();
-    };
+      
+      let t = this;
+      this.editorui.editor.addListener("fileLoaded", function(sender, evt) {
+        console.log("File loaded");
+        t.narrativelayout =  new NarrativeLayoutSwimlanes(t);
+        t.narrativelayout.initiate();
+        t.loadExistingNarratives();
+      });
+
+    }
   
+
     /**
      * Assign the narrative cell into the narrative list
      * @param {*} cell
@@ -192,11 +191,8 @@ class NarrativeAbductionApp {
         let title = document.createElement("h3");
         title.innerHTML = "Common Menus";
         this.panelwindow.commonmenu.append(title);
-        //this.createSelectLayoutModeMenu();
         this.createUpdateLinksMenu();
-        this.createLoadNarrativeMenu();
-        
-        //    
+
     }
   
   
@@ -285,115 +281,7 @@ class NarrativeAbductionApp {
       });
       this.createCommonMenu("Update selected edge into", setlinktypecontainer);
     }
-  
-    /**
-     * Create Dev tool panel on
-     * @param {*} container
-     */
-    createDevToolPanel(container) {
-      let devtoolcontainer = document.createElement("div");
-  
-      devtoolcontainer.style.border = "1px solid #aaa";
-      let label = document.createElement("span");
-      label.innerHTML = "Dev tool";
-      devtoolcontainer.append(label);
-      container.append(devtoolcontainer);
-  
-      let t = this;
-  
-      NAUtil.AddButton("Load narratives", devtoolcontainer, function () {
-        t.loadExistingNarratives();
-      });
-  
-  
-      NAUtil.AddButton("Apply test layou all", devtoolcontainer, function () {
-        t.narrativelayout.applyLayoutNarrativeCellsNaive();
-        
-      });
-  
-  
-      // NAUtil.AddButton("Show model", devtoolcontainer, function () {
-      //   console.log("Dev tool - show model", t.editorui.editor.graph.getModel());
-      // });
-  
-      // NAUtil.AddButton("Show cells detail", devtoolcontainer, function () {
-      //   console.log(
-      //     "Dev tool - show model",
-      //     t.editorui.editor.graph.getSelectionCells()
-      //   );
-      // });
-  
-      // NAUtil.AddButton("Select all", devtoolcontainer, function () {
-      //   t.editorui.editor.graph.selectAll();
-      // });
-  
-  
-      // NAUtil.AddButton(
-      //   "Test layout of Narrative 1",
-      //   devtoolcontainer,
-      //   function () {
-      //     // Assuming you have the mxGraph instance and the graph model
-  
-      //     let graph = t.editorui.editor.graph;
-      //     let model = graph.getModel();
-      //     let narrative = t.narratives[0];
-      //     if (!narrative) return;
-  
-      //     // Identify parent nodes and children (replace with your logic)
-      //     let parentNodes = narrative.cells; // Array of parent node cells
-  
-      //     // check excluded nodes
-      //     let excludeNodes = [];
-  
-      //     graph.selectAll();
-      //     let selectedCells = graph.getSelectionCells();
-      //     selectedCells.forEach((cell) => {
-      //       if (!parentNodes.includes(cell) && cell.children != null) {
-      //         excludeNodes.push({
-      //           excell: cell,
-      //           x: cell.geometry.x,
-      //           y: cell.geometry.y,
-      //         });
-      //       }
-      //     });
-  
-      //     console.log("excludeNodes", excludeNodes);
-  
-      //     //update excluded cells position
-      //     model.beginUpdate();
-      //     try {
-      //       let layout = new mxHierarchicalLayout(graph);
-      //       layout.execute(graph.getDefaultParent(), parentNodes);
-  
-      //       excludeNodes.forEach((cell) => {
-      //         let currentgeometry = model.getGeometry(cell.excell);
-      //         currentgeometry.x = cell.x;
-      //         currentgeometry.y = cell.y;
-  
-      //         console.log("currentgeometry", currentgeometry);
-      //         console.log("cell", cell);
-  
-      //         model.setGeometry(cell.excell, currentgeometry);
-      //       });
-      //     } finally {
-      //       model.endUpdate();
-      //     }
-      //   }
-      // );
-  
-      // /// add group
-      // NAUtil.AddButton("Group nodes", devtoolcontainer, function () {
-      //   console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
-      //   let graph = t.editorui.editor.graph;
-      //   let cells = graph.getSelectionCells();
-      //   graph.groupCells(null, 0, cells);
-      // });
-  
-      // NAUtil.AddButton("Create narrative", devtoolcontainer, function () {
-      //   console.log("Dev tool - group nodes", t.editorui.editor.graph.getModel());
-      //   t.newNarrative();
-      // });
-    };
+
   
     /**
      * Create palette for the side bar
@@ -461,19 +349,7 @@ class NarrativeAbductionApp {
       }
     };
   
-    /**
-     * Create narrativesviewer window/panel
-     */
-    createNarrativesView(){
-      this.narrativeaviewscontainer = new NarrativeListViewContainer(
-        NASettings.Colors.Narratives,
-        this
-      );  
-      // add load narrative buttion
-      // NAUtil.AddButton(NASettings.Language.English.loadnarratives, container, function(){
-      //     t.loadExistingNarratives();
-      //  });
-    };
+
   
     /**
      * Remove narrative from the list
@@ -664,20 +540,6 @@ class NarrativeAbductionApp {
       });
     };
   
-    updateDescriptionHeightBasedOnContent(descell) {
-      //get html
-      let html = document.getElementById(descell.id + "-description");
-      if (html) {
-        console.log("html", html);
-        console.log("html.height", html.getBoundingClientRect().height);
-        console.log(" descell.geometry.height", descell.geometry.height);
-        let height = html.offsetHeight;
-        descell.geometry.height = height;
-        console.log(" descell.geometry.height", descell.geometry.height);
-      }
-    };
-  
-  
     //#region listeners
   
     /**
@@ -689,50 +551,51 @@ class NarrativeAbductionApp {
       let t = this;
       // Handle resizing of the cell
       graph.addListener(mxEvent.RESIZE_CELLS, function (sender, evt) {
-        console.log("evt", evt);
         let cells = evt.getProperty("cells");
         for (let i = 0; i < cells.length; i++) {
-          let cell = cells[i];
-          console.log("Cell", cell);
-  
-          if(NarrativeAbductionApp.isCellDocumentItem(cell)){
-              //the width can be manually adjusted, so the this be
-              let newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
-              cell.geometry.width = newWidth;
-  
-              //the height, however, is based on the height of the description cell.
-              //the problem is, we need to wait until the HTML content inside the description cell to be updated before getting the final height.
-              //thus, the height of the document item can only be adjusted after the next frame animation
-              let descell = (cell);
-              if (descell) {
-              descell.geometry.width = newWidth;
-  
-              //now update the height according to the new height
-              let htmlcontent = t.getDescriptionCellContentHTML(descell);
-              const cellLabel = graph.getLabel(cell);
-              console.log("cellLabel",  cellLabel);
-              console.log("htmlcontent",  htmlcontent);
-              
-              if(htmlcontent)
-              requestAnimationFrame(() => {
-                  console.log("htmlcontent 2", htmlcontent);
-                  console.log("New height 2", htmlcontent.scrollHeight);
-                  let htmlheight = htmlcontent.clientHeight;
-                  htmlheight = (htmlheight > 0)? htmlheight:  t.documentitemminheight;
-  
-                  console.log("htmlheight", htmlheight);
-  
-                  descell.geometry.height = htmlheight;
-                  descell.geometry.y = t.titlecellheight;
-  
-                  cell.geometry.height = htmlheight + t.titlecellheight;
-                  graph.refresh();
-              });
-              }
-          }
+          let cell = cells[i]; 
+          t.updateResponsiveCellSize(cell);
         }
       });
     };
+
+    updateResponsiveCellSize(cell){
+      const t = this;
+      let graph = this.editorui.editor.graph;
+        if(NarrativeAbductionApp.isCellDocumentItem(cell)){
+          //the width can be manually adjusted, so the this be
+          let newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
+          cell.geometry.width = newWidth;
+
+          //the height, however, is based on the height of the description cell.
+          //the problem is, we need to wait until the HTML content inside the description cell to be updated before getting the final height.
+          //thus, the height of the document item can only be adjusted after the next frame animation
+          let descell = (cell);
+          if (descell) {
+          descell.geometry.width = newWidth;
+
+          //now update the height according to the new height
+          let htmlcontent = t.getDescriptionCellContentHTML(descell);
+          const cellLabel = graph.getLabel(cell);
+          console.log("cellLabel",  cellLabel);
+          console.log("htmlcontent",  htmlcontent);
+          
+          if(htmlcontent)
+          requestAnimationFrame(() => {
+              console.log("htmlcontent 2", htmlcontent);
+              console.log("New height 2", htmlcontent.scrollHeight);
+              let htmlheight = htmlcontent.clientHeight;
+              htmlheight = (htmlheight > 0 && htmlheight >= t.documentitemminheight)? htmlheight:  t.documentitemminheight;
+
+              console.log("final height", htmlheight);
+              console.log("final width", newWidth);
+
+              descell.geometry.height = htmlheight;
+              graph.refresh();
+          });
+          }
+      }
+    }
   
     /**
      * Update the height of the document item to accomodate the description
@@ -819,6 +682,10 @@ class NarrativeAbductionApp {
       });
     };
   
+
+    /**
+     * Show contextual menu to select next item after finish editing
+     */
     initListenerShowAddCellAfterEdit(){
       let graph = this.editorui.editor.graph;
       let t = this;
@@ -838,6 +705,8 @@ class NarrativeAbductionApp {
             console.log("cellElement", cellElement);
             console.log("rect", rect);
   
+            //update the size
+            t.updateResponsiveCellSize(cell);
             t.showContextualAddNewCellItem(cell, rect.x + rect.width, rect.y);
           }
        
@@ -883,16 +752,15 @@ class NarrativeAbductionApp {
     initOverrideConnectionConstraints(){
       this.editorui.editor.graph.getAllConnectionConstraints = function(terminal)
           {
-                      if (terminal != null && this.model.isVertex(terminal.cell))
-                      {
-                          return [
-                                  new mxConnectionConstraint(new mxPoint(0.5, 0), true),
-                                  new mxConnectionConstraint(new mxPoint(1, 0.5), true),
-                                    new mxConnectionConstraint(new mxPoint(0.5, 1), true),
-                                    new mxConnectionConstraint(new mxPoint(0, 0.5), true)];
-                      }
-  
-                      return null;
+            if (terminal != null && this.model.isVertex(terminal.cell))
+            {
+              return [
+                      new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+                      new mxConnectionConstraint(new mxPoint(1, 0.5), true),
+                      new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+                      new mxConnectionConstraint(new mxPoint(0, 0.5), true)];
+            }
+            return null;
           };    
     }
   
@@ -1041,7 +909,6 @@ class NarrativeAbductionApp {
      */
     initOverrrideNewCellHandler() {
       let graph = this.editorui.editor.graph;
-      let editor = this.editorui.editor;
   
       let t = this;
       graph.addListener(mxEvent.CELLS_ADDED, function (sender, evt) {

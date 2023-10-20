@@ -1,7 +1,7 @@
 const NASettings = {
     DocumentCellSetting: {
-      minwidth: 250,
-      minheight: 150,
+      minwidth: 100,
+      minheight: 90,
     },  
     Dictionary: {
       CELLS: {

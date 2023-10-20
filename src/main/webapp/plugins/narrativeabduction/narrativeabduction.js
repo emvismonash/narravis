@@ -5,19 +5,18 @@
  */
 // load plugin
 Draw.loadPlugin(function (ui) {
-        mxscript("plugins/narrativeabduction/narrative.js", function(){
-            mxscript("plugins/narrativeabduction/nasettings.js", function(){
-                mxscript("plugins/narrativeabduction/narrativelistviewcontainer.js", function(){
-                    mxscript("plugins/narrativeabduction/narrativelistview.js", function(){
-                        mxscript("plugins/narrativeabduction/nautil.js", function(){
-                          mxscript("plugins/narrativeabduction/narrativelayout.js", function(){
-                            mxscript("plugins/narrativeabduction/narativelayoutswimlane.js", function(){
-                              mxscript("plugins/narrativeabduction/narrativeabductionapp.js", function(){
+        mxscript("plugins/narrativeabduction/js/narrative.js", function(){
+            mxscript("plugins/narrativeabduction/js/nasettings.js", function(){
+                mxscript("plugins/narrativeabduction/js/narrativelistviewcontainer.js", function(){
+                    mxscript("plugins/narrativeabduction/js/narrativelistview.js", function(){
+                        mxscript("plugins/narrativeabduction/js/nautil.js", function(){
+                          mxscript("plugins/narrativeabduction/js/narrativelayout.js", function(){
+                            mxscript("plugins/narrativeabduction/js/narativelayoutswimlane.js", function(){
+                              mxscript("plugins/narrativeabduction/js/narrativeabductionapp.js", function(){
                                 console.log("EditorUi", ui);
                                 console.log("Sidebar", ui.sidebar.graph);
                                 console.log("Editor", ui.editor);            
                                 let na = new NarrativeAbductionApp(ui);
-                                na.init();   
                               });                   
                             });
                           });                  
