@@ -110,7 +110,7 @@ const NAEntries = [
     {
       name: NASettings.Dictionary.CELLS.NARRATIVEITEM,
       style:
-        "editable=1;rounded=1;whiteSpace=wrap;html=1;fontColor=#333333;strokeColor=none;",
+        "editable=1;rounded=1;whiteSpace=wrap;html=1;fontColor=#333333;strokeColor=default;",
       type: "node",
     },
     {

@@ -22,6 +22,8 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
             narratives: [],
             uis: []
         };        
+        this.minHeight = 200;
+        this.minWidth = 900;
         this.verticalLaneSpace = 10;        
         this.lanelabelstyle = "text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=30;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;"; 
         this.laneboundstlye = "connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#D4D4D4;fillColor=default;strokeWidth=3;perimeterSpacing=3;dashed=1;fillStyle=zigzag-line;comic=0;container=0;collapsible=0;dropTarget=0;gradientColor=none;;";
@@ -145,8 +147,8 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
 
     createLaneCell(lane, order){
         let graph = this.graph;
-        let maxWidth = 900;
-        let height = 100;
+        let maxWidth = this.getLaneWidth(lane);
+        let height = this.getLaneHeight(lane);
         let yPos = this.getYPos(order);    
         graph.getModel().beginUpdate();
         try{
@@ -215,7 +217,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
             
             height += t.verticalspace; 
         });
-
+        if(height < this.minHeight) height = this.minHeight;
         return height;
     }
 
@@ -230,6 +232,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
                 maxWidth = narrative.bound.width;
             }
         });
+        if(maxWidth < this.minWidth) maxWidth = this.minWidth;
         maxWidth += this.horizontalspacebetweennarrativeandlayout;
         return maxWidth;
     }
@@ -370,7 +373,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         let graph = this.graph;
         let yPos = this.getYPos(order);
         let height = this.getLaneHeight(lane);
-        let maxWidth = 900;
+        let maxWidth = this.getLaneWidth(lane);
         //get the max width and height
         if(lane.boundcell){           
             graph.getModel().beginUpdate();
