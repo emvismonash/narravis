@@ -323,28 +323,44 @@ class NarrativeAbductionApp {
       this.panelwindow.commonmenu.append(container);
   }
 
+  /**
+   * GPT Setting
+   * Chat Panel
+   *   - Message panel
+   *   - Chat input
+   * Validation
+   *   - JSON text
+   *   - Save JSON
+   */
   createGenerateNarrativeJSONMenu(){
     const container = document.createElement("div");
-    container.classList.add("na-window-content");
-    const textArea = document.createElement('textarea');
+    const textAreaChatInput = document.createElement('textarea');
     const textAreaJSON = document.createElement("textarea");
-    textAreaJSON.setAttribute('id', 'nagpt-jsonoutput');
+    const messagePanel = document.createElement('div');
     const inputElementJSONSetting = document.createElement('input');
     const buttonSaveJSON = document.createElement('button');
     const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
 
+    textAreaJSON.setAttribute('id', 'nagpt-jsonoutput');
+    messagePanel.setAttribute('id', 'nagpt-message');
+    messagePanel.setAttribute('style', 'max-height: 200px;overflow-y: scroll;');
+
+    container.classList.add("na-window-content");
+
     let t = this;
     // Set attributes for the text area
-    textArea.rows = '4';
-    textArea.cols = '50';
+    textAreaChatInput.rows = '4';
+    textAreaChatInput.cols = '50';
 
+    container.append(inputElementJSONSetting); 
+    container.append(messagePanel);
+    container.append(textAreaChatInput);
     
-    container.append(inputElementJSONSetting); // Example: append it to the body
-    container.append(textArea);
-    
-    let btnGenerate = NAUtil.AddButton("Generate", container, function(){
-      t.generateNarrativeJSON(textArea.value);
-      textArea.disabled  = true;
+    let btnGenerate = NAUtil.AddButton("Send", container, function(){
+      messagePanel.innerHTML += t.formatMessage(textAreaChatInput.value);
+      t.chatGPT(textAreaChatInput.value);
+      textAreaChatInput.value = "";
+      textAreaChatInput.disabled  = true;
       btnGenerate.disabled  = true;
       btnGenerate.innerHTML = "Generating <img src='"+loadingURL+"' width='20px'>";
     })
@@ -402,7 +418,7 @@ class NarrativeAbductionApp {
       }
     });
 
-    this.narrativegpt.container.uitext = textArea;
+    this.narrativegpt.container.uitext = textAreaChatInput;
     this.narrativegpt.container.uibuttongenerate = btnGenerate;
 
     let gptiwindow =  NAUtil.CreateWindow("gpt-window", "Auto Generation", container, 0, 0, 500, 500);
@@ -411,6 +427,31 @@ class NarrativeAbductionApp {
 
   applyGPTSetting(jsonData){
     this.narrativegpt.applySetting(jsonData);
+  }
+
+  formatMessage(message){
+    return "<div style='margin-bottom:5px'>" + message + "</div>";
+  }
+
+  async chatGPT(text){
+    console.log("Sending ...");
+    this.narrativegpt.chat(text)
+    .then(result => {
+      console.log(result);
+      if(result.status == "success"){
+        let jsonText = result.message;
+        // Do something with the parsed JSON data
+        const messagePanel = document.getElementById("nagpt-message");
+        if(messagePanel) messagePanel.innerHTML += this.formatMessage(jsonText);
+        // enable uis
+        this.narrativegpt.container.uitext.disabled = false;
+        this.narrativegpt.container.uibuttongenerate.disabled = false;
+        this.narrativegpt.container.uibuttongenerate.innerHTML = "Generate";
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
   }
 
   async generateNarrativeJSON(text){

@@ -4,6 +4,7 @@ class NarrativeGPT{
         this.prompt;
         this.apirURL;
         this.container = {};
+        this.messages = [];
     }
 
     applySetting(jsonData){
@@ -21,11 +22,8 @@ class NarrativeGPT{
         return escapedString.slice(1, escapedString.length - 1);
     }
 
-    async extractNarrativesJSON(text) {
-        text = this.jsonStringifySafe(text);
-        const apiKey = this.apikey;
-        const apiUrl = this.apiURL; // Replace with the appropriate engine and endpoint
-        let prompt = this.prompt + "\n\n" + text;
+
+    createRequest(prompt){
         const requestBody = {
             model: this.model, 
             messages: [
@@ -36,22 +34,31 @@ class NarrativeGPT{
             ]
             //max_tokens: 50
         };
-        
 
-        console.log("request", requestBody);
-        let result = {};
-        let response = await  fetch(apiUrl, {
+        let request = {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
+                'Authorization': `Bearer ${this.apikey}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(requestBody),
-        });
+        }
+
+        return {
+            request: request, 
+            url: this.apiURL
+        }
+    }
+
+    async chat(prompt){
+        const request = this.createRequest(prompt);
+        
+        let result = {};
+        let response = await fetch(request.url, request.request);
+
         if (response.ok) {
             try {
                 let data = await response.json(); // This line awaits the response to be parsed as JSON
-                console.log("json", data);
                 if(data.choices[0]){
                     result.status = "success";
                     result.message = data.choices[0].message.content;   
@@ -64,7 +71,55 @@ class NarrativeGPT{
             result.status = "error";
             result.message = response.status;   
         }
-
         return result;
+    }
+
+    async extractNarrativesJSON(text) {
+        text = this.jsonStringifySafe(text);
+        let prompt = this.prompt + "\n\n" + text;
+        let res = await this.chat(prompt);
+
+        // const apiKey = this.apikey;
+        // const apiUrl = this.apiURL; // Replace with the appropriate engine and endpoint
+        // let prompt = this.prompt + "\n\n" + text;
+        // const requestBody = {
+        //     model: this.model, 
+        //     messages: [
+        //         {
+        //             role: "user",
+        //             content: prompt
+        //         }
+        //     ]
+        //     //max_tokens: 50
+        // };
+        
+        // console.log("request", requestBody);
+        // let result = {};
+        // let response = await  fetch(apiUrl, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Authorization': `Bearer ${apiKey}`,
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(requestBody),
+        // });
+        // if (response.ok) {
+        //     try {
+        //         let data = await response.json(); // This line awaits the response to be parsed as JSON
+        //         console.log("json", data);
+        //         if(data.choices[0]){
+        //             result.status = "success";
+        //             result.message = data.choices[0].message.content;   
+        //         }
+        //     } catch (error) {
+        //       console.error('Error parsing JSON:', error);
+        //     }
+        // } else {
+        //     console.error('Network response was not ok. Status:', response.status);
+        //     result.status = "error";
+        //     result.message = response.status;   
+        // }
+
+        return res;
     }
 }
