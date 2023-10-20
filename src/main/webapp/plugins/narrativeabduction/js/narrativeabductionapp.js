@@ -193,7 +193,6 @@ class NarrativeAbductionApp {
         this.panelwindow.commonmenu.append(title);
         this.createUpdateLinksMenu();
         this.createLoadJSONMenu();
-        this.createAutoSizeMenu();
     }
 
     createLoadJSONMenu(){
@@ -252,7 +251,9 @@ class NarrativeAbductionApp {
             cell.setAttribute("label", t.getContentFromNode(node));
             if(cell) cells.push(cell);
             node.cell = cell;
+            t.updateResponsiveCellSize(cell);
           });
+
           graph.addCells(cells, parent);
           //create links
           links.forEach(link => {
@@ -277,8 +278,7 @@ class NarrativeAbductionApp {
           t.narrativelayout.applyCellsLayout(cells);
         }
     }
-  
-  
+   
     createCommonMenu(label, menucontainer){
         let container = document.createElement("div");
         let labelcontainer = document.createElement("div");
@@ -289,24 +289,6 @@ class NarrativeAbductionApp {
         this.panelwindow.commonmenu.append(container);
     }
   
-    createAutoSizeMenu(){
-      let container = document.createElement("div");
-      let graph = this.editorui.editor.graph;
-
-      let btnFlex = NAUtil.AddButton("Auto Size", container, function(){
-        let cell = graph.getSelectionCells()[0];
-        console.log(cell);
-        graph.getModel().beginUpdate();
-        try{
-          graph.autoSizeCell(cell);
-        }finally{
-          graph.getModel().endUpdate();
-        }
-      })
-     
-      this.createCommonMenu("Autosize Test", container);
-    }
-
     createSelectLayoutModeMenu(){
       let container = document.createElement("div");
       let t = this;
@@ -993,6 +975,7 @@ class NarrativeAbductionApp {
         let cells = evt.getProperty("cells");
         console.log("new cells", cells);
         let newCell = cells[0];
+        //if is edge
         if (newCell && newCell.isEdge()) {
           //edge type based on target node
           let edge = newCell;
@@ -1040,11 +1023,10 @@ class NarrativeAbductionApp {
               graph.startEditingAtCell(target);
           });
           }
+          
   
           // t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
         }
-  
-  
   
         //if the cell is Narrative, trigger create a new narrative action
         if (
@@ -1053,6 +1035,10 @@ class NarrativeAbductionApp {
         ) {
           graph.removeCells([newCell]);
           t.newNarrative();
+        }
+
+        if(newCell && newCell.isVertex()){
+          t.updateResponsiveCellSize(newCell);
         }
        
       });
