@@ -47,9 +47,9 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         this.createLaneCells();
         this.createAssignButtons();
 
-        this.createLabelCell("Top lane", this.toplane);
-        this.createLabelCell("Middle lane", this.midlane);
-        this.createLabelCell("Bottom lane", this.botlane);
+        // this.createLabelCell("Top lane", this.toplane);
+        // this.createLabelCell("Middle lane", this.midlane);
+        // this.createLabelCell("Bottom lane", this.botlane);
 
         this.initListenerNewNarrative();
         this.initOverrideUpDowButton();
@@ -347,6 +347,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
     }
 
     updateLabelPosition(lane){
+        if(!lane.labelcell) return;
         let boundcell = lane.boundcell;
         let yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;
         let graph = this.graph;
@@ -458,9 +459,9 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
                 graph.getModel().remove(this.midlane.boundcell);
                 graph.getModel().remove(this.botlane.boundcell);
 
-                graph.getModel().remove(this.toplane.labelcell);
-                graph.getModel().remove(this.midlane.labelcell);
-                graph.getModel().remove(this.botlane.labelcell);
+                if(this.toplane.labelcell) graph.getModel().remove(this.toplane.labelcell);
+                if(this.midlane.labelcell) graph.getModel().remove(this.midlane.labelcell);
+                if(this.botlane.labelcell) graph.getModel().remove(this.botlane.labelcell);
             }finally{
               graph.getModel().endUpdate(); 
               graph.refresh();             
