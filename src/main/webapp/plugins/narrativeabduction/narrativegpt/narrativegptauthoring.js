@@ -1,10 +1,22 @@
 class NarrativeGPTAuthoring extends NarrativeGPT{
-    constructor(){
+    constructor(app){
         super();
+        this.app = app;
         this.container = {};
         this.messages = [];
         this.createChatWindow();
         this.jsonvalidator = new NarrativeGPTJSONValidator();
+        this.iniListenerJSON2Diagram();
+    }
+
+    iniListenerJSON2Diagram(){
+      let t = this;
+      document.addEventListener(NASettings.Dictionary.EVENTS.INSERTJSON2DIAGRAM, function(evt){
+        let data = evt.detail;
+        let json = data.jsontext;
+        t.app.createDocumentItemsFromJSON(JSON.parse(json));
+      });
+      
     }
 
     applySetting(jsonData){
@@ -20,7 +32,8 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
         const container = document.createElement('div');
         const selectButton = document.createElement('button');
         const messageContainer = document.createElement('div');
-        messageContainer.innerHTML = message;
+        const formattedText = message.replace(/\n/g, '<br>');
+        messageContainer.innerHTML = formattedText;
 
         selectButton.style = "font-size:8px;";
         selectButton.innerHTML = "select";
@@ -65,7 +78,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
       textAreaChatInput.value = "";
       textAreaChatInput.disabled  = true;
       btnGenerate.disabled  = true;
-      btnGenerate.innerHTML = "Sending <img src='"+loadingURL+"' width='20px'>";
+      btnGenerate.innerHTML = "Waiting response <img src='"+loadingURL+"' width='20px'>";
     })
 
     //    //const buttonSaveJSON = document.createElement('button');

@@ -41,7 +41,7 @@ class NarrativeAbductionApp {
     this.narrativeaviewscontainer;
     this.narratives = [];
     this.narrativelayout = new NarrativeLayout(this);
-    this.narrativegptauthor = new NarrativeGPTAuthoring();
+    this.narrativegptauthor = new NarrativeGPTAuthoring(this);
     this.narrativelayout.graph = ui.editor.graph;
 
     this.settings = {

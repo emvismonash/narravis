@@ -19,6 +19,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         const messagePanel = document.createElement('textarea');
         const textAreaJSON = document.createElement('textarea');
         const buttonSaveJSON = document.createElement('button');    
+        const buttonDraw = document.createElement('button');
 
         const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
     
@@ -43,6 +44,19 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
             a.click();
             
         });
+
+        buttonDraw.innerHTML = "Turn to diagram";
+        buttonDraw.addEventListener('click', function(){
+            // Get the text you want to save
+            var textToSave = textAreaJSON.value;              
+            //trigger new narrative event
+            let event = new CustomEvent(NASettings.Dictionary.EVENTS.INSERTJSON2DIAGRAM, {
+              detail: {
+                jsontext: textToSave
+              },
+            });
+            document.dispatchEvent(event);
+        });
         
         container.append(messagePanel);
         this.textareamessage = messagePanel;
@@ -59,11 +73,13 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
 
         container.append(textAreaJSON);
         container.append(buttonSaveJSON);
+        container.append(buttonDraw);
+
 
 
         this.uibuttongenerate = btnGenerate;
 
-        let gptiwindow =  NAUtil.CreateWindow("gpt-window-json", "Validator", container, 0, 0, 500, 400);
+        let gptiwindow =  NAUtil.CreateWindow("gpt-window-json", "JSON Generation", container, 0, 0, 500, 400);
         gptiwindow.setVisible(true);
       }
 
