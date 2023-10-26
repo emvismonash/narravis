@@ -294,13 +294,13 @@ class NarrativeAbductionApp {
     createSelectLayoutModeMenu(){
       let container = document.createElement("div");
       let t = this;
-      let btnFlex = NAUtil.AddButton("Flexible Mode", container, function(){
+      let btnFlex = NAUIHelper.AddButton("Flexible Mode", container, function(){
         t.narrativelayout.remove();
         t.narrativelayout = new NarrativeLayout(t);
       })
       btnFlex.style.backgroundColor = "#dadce0";
   
-      let btnSwim = NAUtil.AddButton("Swimlane Mode", container, function(){
+      let btnSwim = NAUIHelper.AddButton("Swimlane Mode", container, function(){
         t.narrativelayout = new NarrativeLayoutSwimlanes(t);
       })
   
@@ -320,7 +320,7 @@ class NarrativeAbductionApp {
     createLoadNarrativeMenu(){
       let container = document.createElement("div");
       let t = this;
-      NAUtil.AddButton("Load narratives", container, function () {
+      NAUIHelper.AddButton("Load narratives", container, function () {
         t.loadExistingNarratives();
       });
   
@@ -335,7 +335,7 @@ class NarrativeAbductionApp {
       let t = this;
       this.naentries.forEach(function (element) {
         if (element.type == "edge") {
-          NAUtil.AddButton(
+          NAUIHelper.AddButton(
             element.name.replace("Link", ""),
             setlinktypecontainer,
             function () {
@@ -1145,7 +1145,7 @@ class NarrativeAbductionApp {
             highlight.hide();
           };
   
-          let wnd = NAUtil.CreateWindow(
+          let wnd = NAUIHelper.CreateWindow(
             NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
             NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
             formContainer,
@@ -1270,7 +1270,7 @@ class NarrativeAbductionApp {
             highlight.hide();
           };
   
-          let wnd = NAUtil.CreateWindow(
+          let wnd = NAUIHelper.CreateWindow(
             NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
             NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
             formContainer,
@@ -1480,7 +1480,7 @@ class NarrativeAbductionApp {
       let t = this;
       this.naentries.forEach(function (element) {
         if (element.type == "edge") {
-          NAUtil.AddButton(
+          NAUIHelper.AddButton(
             element.name.replace("Link", ""),
             container,
             function () {
@@ -1513,7 +1513,7 @@ class NarrativeAbductionApp {
       let buttons = [];
       this.naentries.forEach(function (element) {
         if (t.isValidShapePickerItem(element)) {
-          let btn = NAUtil.AddButton(
+          let btn = NAUIHelper.AddButton(
             element.name.replace("Link", ""),
             container,
             function () {

@@ -75,7 +75,7 @@ class NarrativeListView {
                 docitems.push(cell);
             }
         });
-        if(NAUtil.arraysContainSameItems(docitems, this.narrative.cells)){
+        if(NAUtil.ArraysContainSameItems(docitems, this.narrative.cells)){
             return true;
         }else{
             return false;

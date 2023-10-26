@@ -66,7 +66,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         this.textareamessage = messagePanel;
         this.textareajson = textAreaJSON;
 
-        let btnGenerate = NAUtil.AddButton("Generate", container, function(){
+        let btnGenerate = NAUIHelper.AddButton("Generate", container, function(){
             let text = messagePanel.value;
             let prompt = t.formatPrompt(text);
             t.chatGPT(prompt);
@@ -84,7 +84,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
 
         this.uibuttongenerate = btnGenerate;
 
-        let gptiwindow =  NAUtil.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 700, 800, 500, 400);
+        let gptiwindow =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 700, 800, 500, 400);
         gptiwindow.setVisible(true);
         gptiwindow.setResizable(true);
       }

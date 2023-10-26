@@ -10,6 +10,7 @@ Draw.loadPlugin(function (ui) {
         mxscript("plugins/narrativeabduction/view/narrativelistviewcontainer.js", function(){
         mxscript("plugins/narrativeabduction/view/narrativelistview.js", function(){
         mxscript("plugins/narrativeabduction/utility/nautil.js", function(){
+        mxscript("plugins/narrativeabduction/utility/nauihelper.js", function(){  
         mxscript("plugins/narrativeabduction/layout/narrativelayout.js", function(){
         mxscript("plugins/narrativeabduction/layout/narativelayoutswimlane.js", function(){
         mxscript("plugins/narrativeabduction/gpt/narrativegpt.js", function(){   
@@ -26,6 +27,7 @@ Draw.loadPlugin(function (ui) {
         });               
         });
         });                  
+        });
         });
         });
         });

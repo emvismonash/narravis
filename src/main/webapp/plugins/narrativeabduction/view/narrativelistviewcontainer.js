@@ -35,11 +35,9 @@ class NarrativeListViewContainer {
 
           // add create narrative buttion
       let t = this;
-      NAUtil.AddButton(NASettings.Language.English.newnarrative, this.menucontainer, () => {
+      NAUIHelper.AddButton(NASettings.Language.English.newnarrative, this.menucontainer, () => {
         t.app.newNarrative();
       });
-      
-
     }
   
     /**

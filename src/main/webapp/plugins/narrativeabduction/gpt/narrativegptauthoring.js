@@ -32,16 +32,20 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
         const container = document.createElement('div');
         const selectButton = document.createElement('button');
         const copyTextButton = document.createElement('button');
+        const downloadTextButton = document.createElement('button');
+
         const messageContainer = document.createElement('div');
         const formattedText = message.replace(/\n/g, '<br>');
         messageContainer.innerHTML = formattedText;
-        selectButton.style = "font-size:8px;";
+
+        let buttonStyle = "font-size:8px;"
+        selectButton.style = buttonStyle;
         selectButton.innerHTML = "select";
 
         selectButton.title = "Copy and paste this response to the GPT JSON Generation window.";
         copyTextButton.title = "Insert this text into the chat."
         
-        copyTextButton.style = "font-size:8px;";
+        copyTextButton.style = buttonStyle;
         copyTextButton.innerHTML = "copy to chat";
 
         let t = this;
@@ -54,8 +58,11 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
         }
 
         container.append(messageContainer);
-        if(system) container.append(selectButton);
-        if(system) container.append(copyTextButton);
+        if(system){
+          container.append(selectButton);
+          container.append(copyTextButton);
+          container.append(downloadTextButton);
+        } 
 
         let systemstyle = "margin-bottom: 5px;border: 1px solid white; background:lightblue; border-radius: 5px;padding: 5px;";
         let userstyle =  "margin-bottom: 5px;border: 1px solid lightgray; font-style:italic; border-radius: 5px;padding: 5px;"
@@ -65,6 +72,19 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
           messageContainer.style = systemstyle;
         }
         container.style = "margin-bottom:5px";
+
+        downloadTextButton.style = buttonStyle;
+        downloadTextButton.innerHTML = "download";
+        downloadTextButton.title = "Save this response as a text file";
+        downloadTextButton.addEventListener('click', function(){
+          let blob = new Blob([message], { type: "text/plain" });
+          let a = document.createElement("a");
+          a.href = window.URL.createObjectURL(blob);
+
+          let filename = "gpt-response-" + (new Date()).toISOString();;
+          a.download = filename + ".txt";
+          a.click();         
+        });
 
         return container;
     }
@@ -80,23 +100,26 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
 
     messagePanel.setAttribute('id', 'nagpt-message');
-    messagePanel.setAttribute('style', 'height:200px;overflow-y: scroll;');
+    messagePanel.setAttribute('style', 'height:100%;min-height:300px;overflow-y: scroll;');
 
     container.classList.add("na-window-content");
     
+    NAUIHelper.CreateHelpText(container, "Chat with GPT to craft a clear causal story. Start by loading the GPT setting JSON file using the Browse button. Use the chat window to compose the narrative, ensuring it conveys the intended cause-and-effect sequence. Once the narrative is ready, transfer it to the GPT JSON Generation window using the button under the response to create a properly formatted document for importing into a diagram. Note: the chat is 'stateless', meaning GPT does not store the context of the coversation.", false);
+
 
     let t = this;
     // Set attributes for the text area
     textAreaChatInput.rows = '4';
     textAreaChatInput.cols = '40';
     textAreaChatInput.setAttribute('style', 'resize: none; ');
+    textAreaChatInput.value = "Put your chat here, and say hello to GPT."
 
     container.append(inputElementJSONSetting); 
     container.append(messagePanel);
     container.append(chatPanel);
     chatPanel.append(textAreaChatInput);
     
-    let btnGenerate = NAUtil.AddButton("Send", chatPanel, function(){
+    let btnGenerate = NAUIHelper.AddButton("Send", chatPanel, function(){
       messagePanel.append(t.formatMessage(textAreaChatInput.value, false));
       t.chatGPT(textAreaChatInput.value);
       textAreaChatInput.value = "";
@@ -104,6 +127,18 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
       btnGenerate.disabled  = true;
       btnGenerate.innerHTML = "Waiting response <img src='"+loadingURL+"' width='20px'>";
     })
+
+    // Add an event listener to the textarea for the 'keydown' event
+    textAreaChatInput.addEventListener("keydown", function (event) {
+      // Check if the Ctrl key (or Command key on Mac) is pressed
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+          // Prevent the default behavior of a newline character
+          event.preventDefault();
+
+          // Add your custom action here
+          btnGenerate.click();
+      }
+    });
 
     //    //const buttonSaveJSON = document.createElement('button');
    // textAreaJSON.setAttribute('id', 'nagpt-jsonoutput');
@@ -161,11 +196,16 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     this.container.uitext = textAreaChatInput;
     this.container.uibuttongenerate = btnGenerate;
 
-    let gptiwindow =  NAUtil.CreateWindow("gpt-window", "GPT Authoring Window", container, 200, 800, 500, 400);
+    let gptiwindow =  NAUIHelper.CreateWindow("gpt-window", "GPT Authoring Window", container, 200, 800, 500, 400);
     gptiwindow.setVisible(true);
     gptiwindow.setResizable(true);
   }
 
+  enableChat(){
+    this.container.uitext.disabled = false;
+    this.container.uibuttongenerate.disabled = false;
+    this.container.uibuttongenerate.innerHTML = "Send";
+  }
 
   async chatGPT(text){
         console.log("Sending ..." + text);
@@ -178,13 +218,15 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
             const messagePanel = document.getElementById("nagpt-message");
             if(messagePanel) messagePanel.append(this.formatMessage(jsonText, true));
             // enable uis
-            this.container.uitext.disabled = false;
-            this.container.uibuttongenerate.disabled = false;
-            this.container.uibuttongenerate.innerHTML = "Send";
+          }else{
+            alert(result);
           }
+          this.enableChat();
         })
         .catch(error => {
           console.error('Error:', error);
+          alert(error);
+          this.enableChat();
         });
       }
 
