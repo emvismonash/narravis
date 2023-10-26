@@ -21,6 +21,7 @@
 
 .na-window-content{
   padding: 10px;
+  height: 100%;
 }
 .na-window-content textarea{
   width: 100%;

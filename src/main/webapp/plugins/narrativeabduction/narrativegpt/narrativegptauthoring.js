@@ -31,6 +31,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     formatMessage(message, system){
         const container = document.createElement('div');
         const selectButton = document.createElement('button');
+        const copyTextButton = document.createElement('button');
         const messageContainer = document.createElement('div');
         const formattedText = message.replace(/\n/g, '<br>');
         messageContainer.innerHTML = formattedText;
@@ -38,12 +39,22 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
         selectButton.style = "font-size:8px;";
         selectButton.innerHTML = "select";
 
+        
+        copyTextButton.style = "font-size:8px;";
+        copyTextButton.innerHTML = "copy to chat";
+
         let t = this;
         selectButton.onclick = function(){
             t.jsonvalidator.setText(message);
         }
 
+        copyTextButton.onclick = function(){
+          t.container.uitext.value += message;
+        }
+
         if(system) container.append(selectButton);
+        if(system) container.append(copyTextButton);
+
         container.append(messageContainer);
         container.style = "margin-bottom:5px";
 
@@ -54,6 +65,9 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     const container = document.createElement("div");
     const textAreaChatInput = document.createElement('textarea');
     const messagePanel = document.createElement('div');
+    const chatPanel = document.createElement('div');
+
+    chatPanel.style = "width:95%; position:absolute; bottom:5px;";
     const inputElementJSONSetting = document.createElement('input');
     const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
 
@@ -61,6 +75,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     messagePanel.setAttribute('style', 'height:200px;overflow-y: scroll;');
 
     container.classList.add("na-window-content");
+    
 
     let t = this;
     // Set attributes for the text area
@@ -70,9 +85,10 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
 
     container.append(inputElementJSONSetting); 
     container.append(messagePanel);
-    container.append(textAreaChatInput);
+    container.append(chatPanel);
+    chatPanel.append(textAreaChatInput);
     
-    let btnGenerate = NAUtil.AddButton("Send", container, function(){
+    let btnGenerate = NAUtil.AddButton("Send", chatPanel, function(){
       messagePanel.append(t.formatMessage(textAreaChatInput.value, false));
       t.chatGPT(textAreaChatInput.value);
       textAreaChatInput.value = "";

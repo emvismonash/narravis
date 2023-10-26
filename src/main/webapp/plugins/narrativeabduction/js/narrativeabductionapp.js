@@ -29,14 +29,13 @@ class NarrativeAbductionApp {
       this.initListenerEdgeDoubleClickEditHandler();
       this.initListenerShowAddCellAfterEdit();
       this.updateMoreShapesButton();
-      
+      this.narrativelayout =  new NarrativeLayoutSwimlanes(this);
+
       let t = this;
       this.editorui.editor.addListener("fileLoaded", function(sender, evt) {
         t.narrativelayout =  new NarrativeLayoutSwimlanes(t);
         t.loadExistingNarratives();
       });
-      t.narrativelayout =  new NarrativeLayoutSwimlanes(t);
-
       
 
     }
