@@ -1,0 +1,18 @@
+{
+    "nodes": [
+      { "id": "Strikes", "title": "Strikes on Russian Bases in Crimea", "description": "A pair of strikes against Russian bases in Crimea sent shockwaves through observers of the ongoing conflict.", "type": "NarrativeItem" },
+      { "id": "Nature", "title": "Nature of the Attacks", "description": "The text discusses two major attacks on Russian facilities in Crimea. The first attack occurred on Saki airfield, causing massive explosions and destroying aircraft. The second attack targeted an ammunition depot and possibly another airbase, resulting in civilian casualties and debris clearance by Russian teams.", "type": "NarrativeItem" },
+      { "id": "Explanations", "title": "Possible Explanations for the Attacks", "description": "The text explores five theories to explain the attacks: 1) An accident caused by careless operations, 2) Sabotage by Ukrainian special forces or insurgents, 3) Long-range missile strikes, 4) Unmanned drone strikes, and 5) Attacks conducted by Ukrainian aircraft.", "type": "NarrativeItem" },
+      { "id": "Challenges", "title": "Challenges with Each Theory", "description": "Each theory has its challenges and limitations. For example, the first theory (accident) is deemed unlikely due to the extent of the damage. The second theory (sabotage) raises questions about Russian security and the presence of a sympathetic population in Crimea. The third theory (missiles) faces issues with the lack of reports of low-flying missiles. The fourth theory (drones) is questioned for its range and visibility. The fifth theory (Ukraine's Air Force) is challenged by the absence of reports of low-flying aircraft and radar detection.", "type": "NarrativeItem" },
+      { "id": "Significance", "title": "Significance of Knowing the Attack Mechanism", "description": "Understanding how the attacks were conducted is crucial as it can guide Russia's response and resource allocation. It can also help predict future attack targets and assess the cumulative damage to the Russian military. The attacks serve as a reminder to the Russian population of the costs of waging war on a neighbor.", "type": "NarrativeItem" },
+      { "id": "Resolution", "title": "Resolution of the Mystery", "description": "The text suggests that the mystery behind the attacks will likely be resolved soon, as the Russians have access to data from radar surveillance, observer reports, and bomb damage assessment.", "type": "NarrativeItem" }
+    ],
+    "links": [
+      { "source": "Strikes", "target": "Nature", "type": "relation" },
+      { "source": "Nature", "target": "Explanations", "type": "relation" },
+      { "source": "Explanations", "target": "Challenges", "type": "relation" },
+      { "source": "Explanations", "target": "Significance", "type": "relation" },
+      { "source": "Challenges", "target": "Significance", "type": "relation" },
+      { "source": "Significance", "target": "Resolution", "type": "relation" }
+    ]
+  }
