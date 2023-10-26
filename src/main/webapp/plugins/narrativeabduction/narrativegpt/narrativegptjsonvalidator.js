@@ -1,7 +1,7 @@
 class NarrativeGPTJSONValidator extends NarrativeGPT{
     constructor(){
         super();
-        this.createChatWindow();
+        this.createWindow();
     }
 
     formatPrompt(text){
@@ -12,7 +12,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         this.textareamessage.value = text;
     }
 
-    createChatWindow(){
+    createWindow(){
         const container = document.createElement("div");
         container.classList.add("na-window-content");
 
@@ -20,25 +20,29 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         const textAreaJSON = document.createElement('textarea');
         const buttonSaveJSON = document.createElement('button');    
         const buttonDraw = document.createElement('button');
-
+        const fileNameInput = document.createElement('input');      
         const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
     
 
-    
+        fileNameInput.style = "font-size:small; witdth:200px;";
+        fileNameInput.value = "generated-diagram";
+
         let t = this;
 
         buttonSaveJSON.innerHTML = "Save JSON";
         buttonSaveJSON.addEventListener('click', function(){
             // Get the text you want to save
-            var textToSave = textAreaJSON.value;
+            let textToSave = textAreaJSON.value;
     
             // Create a Blob with the text content
-            var blob = new Blob([textToSave], { type: "text/plain" });
+            let blob = new Blob([textToSave], { type: "text/plain" });
     
             // Create a temporary link element for triggering the download
-            var a = document.createElement("a");
+            let a = document.createElement("a");
             a.href = window.URL.createObjectURL(blob);
-            a.download = "generateddiagram.json";
+
+            let filename = fileNameInput.value;
+            a.download = filename + ".json";
     
             // Trigger a click event on the link to initiate the download
             a.click();
@@ -68,18 +72,19 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
             t.chatGPT(prompt);
             messagePanel.disabled = true;
             btnGenerate.disabled  = true;
-            btnGenerate.innerHTML = "Sending <img src='"+loadingURL+"' width='20px'>";
+            btnGenerate.innerHTML = "Generating <img src='"+loadingURL+"' width='20px'>";
           })
 
         container.append(textAreaJSON);
-        container.append(buttonSaveJSON);
         container.append(buttonDraw);
+        container.append(fileNameInput);
+        container.append(buttonSaveJSON);
 
 
 
         this.uibuttongenerate = btnGenerate;
 
-        let gptiwindow =  NAUtil.CreateWindow("gpt-window-json", "JSON Generation", container, 700, 800, 500, 400);
+        let gptiwindow =  NAUtil.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 700, 800, 500, 400);
         gptiwindow.setVisible(true);
         gptiwindow.setResizable(true);
       }
@@ -94,7 +99,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
             this.textareajson.value = jsonText;
             this.textareamessage.disabled = false;
             this.uibuttongenerate.disabled = false;
-            this.uibuttongenerate.innerHTML = "Send";
+            this.uibuttongenerate.innerHTML = "Generate";
           }
         })
         .catch(error => {

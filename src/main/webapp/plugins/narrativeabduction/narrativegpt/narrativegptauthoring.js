@@ -35,10 +35,11 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
         const messageContainer = document.createElement('div');
         const formattedText = message.replace(/\n/g, '<br>');
         messageContainer.innerHTML = formattedText;
-
         selectButton.style = "font-size:8px;";
         selectButton.innerHTML = "select";
 
+        selectButton.title = "Copy and paste this response to the GPT JSON Generation window.";
+        copyTextButton.title = "Insert this text into the chat."
         
         copyTextButton.style = "font-size:8px;";
         copyTextButton.innerHTML = "copy to chat";
@@ -52,10 +53,17 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
           t.container.uitext.value += message;
         }
 
+        container.append(messageContainer);
         if(system) container.append(selectButton);
         if(system) container.append(copyTextButton);
 
-        container.append(messageContainer);
+        let systemstyle = "margin-bottom: 5px;border: 1px solid white; background:lightblue; border-radius: 5px;padding: 5px;";
+        let userstyle =  "margin-bottom: 5px;border: 1px solid lightgray; font-style:italic; border-radius: 5px;padding: 5px;"
+        if(!system) {
+          messageContainer.style = userstyle;
+        } else{
+          messageContainer.style = systemstyle;
+        }
         container.style = "margin-bottom:5px";
 
         return container;
@@ -153,7 +161,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     this.container.uitext = textAreaChatInput;
     this.container.uibuttongenerate = btnGenerate;
 
-    let gptiwindow =  NAUtil.CreateWindow("gpt-window", "Chat Window", container, 200, 800, 500, 400);
+    let gptiwindow =  NAUtil.CreateWindow("gpt-window", "GPT Authoring Window", container, 200, 800, 500, 400);
     gptiwindow.setVisible(true);
     gptiwindow.setResizable(true);
   }
