@@ -32,11 +32,12 @@ class NarrativeAbductionApp {
       
       let t = this;
       this.editorui.editor.addListener("fileLoaded", function(sender, evt) {
-        console.log("File loaded");
         t.narrativelayout =  new NarrativeLayoutSwimlanes(t);
-        t.narrativelayout.initiate();
         t.loadExistingNarratives();
       });
+      t.narrativelayout =  new NarrativeLayoutSwimlanes(t);
+
+      
 
     }
   

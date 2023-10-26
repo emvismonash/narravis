@@ -79,7 +79,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
 
         this.uibuttongenerate = btnGenerate;
 
-        let gptiwindow =  NAUtil.CreateWindow("gpt-window-json", "JSON Generation", container, 800, 0, 500, 400);
+        let gptiwindow =  NAUtil.CreateWindow("gpt-window-json", "JSON Generation", container, 700, 800, 500, 400);
         gptiwindow.setVisible(true);
         gptiwindow.setResizable(true);
       }

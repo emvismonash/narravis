@@ -25,17 +25,20 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         this.minHeight = 200;
         this.minWidth = 900;
         this.verticalLaneSpace = 10;        
-        this.lanelabelstyle = "text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=30;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;"; 
-        this.laneboundstlye = "connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#D4D4D4;fillColor=default;strokeWidth=3;perimeterSpacing=3;dashed=1;fillStyle=zigzag-line;comic=0;container=0;collapsible=0;dropTarget=0;gradientColor=none;;";
+        this.lanelabelstyle = "text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=30;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;"; 
+        this.laneboundstlye = "connectable=0;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=1;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#D4D4D4;fillColor=default;strokeWidth=3;perimeterSpacing=3;dashed=1;fillStyle=zigzag-line;comic=0;container=0;collapsible=0;dropTarget=0;gradientColor=none;;";
+        this.remove();
+        this.initiate();
     }
 
     
     initiate(){
         this.toplane.narratives = this.app.narratives;
         console.log("narratives", this.app.narratives);
-        this.createLaneContainer(this.toplane, "<b>Top Lane</b>");
-        this.createLaneContainer(this.midlane, "<b>Middle Lane</b>");
-        this.createLaneContainer(this.botlane, "<b>Bottom Lane</b>");
+
+        if(!this.toplane.container) this.createLaneContainer(this.toplane, "<b>Top Lane</b>");
+        if(!this.midlane.container) this.createLaneContainer(this.midlane, "<b>Middle Lane</b>");
+        if(!this.botlane.container) this.createLaneContainer(this.botlane, "<b>Bottom Lane</b>");
         this.app.narrativeaviewscontainer.listcontainer.append(this.toplane.container);
         this.app.narrativeaviewscontainer.listcontainer.append(this.midlane.container);
         this.app.narrativeaviewscontainer.listcontainer.append(this.botlane.container);
@@ -156,6 +159,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
             vertex.setStyle(this.laneboundstlye);
             lane.boundcell = vertex;
             graph.orderCells(true, [vertex]);
+            graph.setCellStyles(mxConstants.STYLE_EDITABLE, '0', [vertex]);
         }finally{
           graph.getModel().endUpdate(); 
           graph.refresh();             
@@ -446,8 +450,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
 
     }
     
-    remove(){
-        //remove cells
+    removeLaneCells(){
         let graph = this.graph;
         graph.getModel().beginUpdate();
             try{
@@ -462,6 +465,12 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
               graph.getModel().endUpdate(); 
               graph.refresh();             
         }
+    }
+
+    remove(){
+        //remove cells
+        this.removeLaneCells();
+
         this.removeLane(this.toplane);
         this.removeLane(this.midlane);
         this.removeLane(this.botlane);
@@ -493,14 +502,16 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
     removeLane(lane){
         lane.uis.forEach(element => {
             element.remove();
-        });
-        let children = Array.from(lane.container.children); 
+        });        
+        let children;
+        if(lane.container && lane.container.children) children = Array.from(lane.container.children); 
         console.log("Remove lane", children);
+        if(children)
         children.forEach(child => {
             this.app.narrativeaviewscontainer.listcontainer.append(child);
         });        
 
-        lane.container.remove();
+        if(lane.container) lane.container.remove();
     }
 
 

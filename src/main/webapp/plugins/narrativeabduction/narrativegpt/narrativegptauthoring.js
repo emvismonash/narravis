@@ -137,7 +137,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     this.container.uitext = textAreaChatInput;
     this.container.uibuttongenerate = btnGenerate;
 
-    let gptiwindow =  NAUtil.CreateWindow("gpt-window", "Chat Window", container, 0, 0, 500, 400);
+    let gptiwindow =  NAUtil.CreateWindow("gpt-window", "Chat Window", container, 200, 800, 500, 400);
     gptiwindow.setVisible(true);
     gptiwindow.setResizable(true);
   }
