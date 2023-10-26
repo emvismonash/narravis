@@ -139,6 +139,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
 
     let gptiwindow =  NAUtil.CreateWindow("gpt-window", "Chat Window", container, 0, 0, 500, 400);
     gptiwindow.setVisible(true);
+    gptiwindow.setResizable(true);
   }
 
 

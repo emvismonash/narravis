@@ -6,6 +6,8 @@ class NarrativeAbductionApp {
       this.narrativeaviewscontainer = {};
       this.panelwindow = {};
       this.naentries = NAEntries;
+      this.narrativegptauthor = new NarrativeGPTAuthoring(this);
+
       this.excludefrompicker = [
         NASettings.Dictionary.CELLS.NARRATIVELIST,
         NASettings.Dictionary.CELLS.NARRATIVE,
