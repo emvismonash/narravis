@@ -11,13 +11,17 @@ Draw.loadPlugin(function (ui) {
                     mxscript("plugins/narrativeabduction/narrativelistview.js", function(){
                         mxscript("plugins/narrativeabduction/nautil.js", function(){
                           mxscript("plugins/narrativeabduction/narrativelayout.js", function(){
-                            mxscript("plugins/narrativeabduction/narativelayoutswimlane.js", function(){   
-                              mxscript("plugins/narrativeabduction/narrativegpt.js", function(){
+                            mxscript("plugins/narrativeabduction/narativelayoutswimlane.js", function(){
+                              mxscript("plugins/narrativeabduction/narrativegpt/narrativegpt.js", function(){   
+                              mxscript("plugins/narrativeabduction/narrativegpt/narrativegptauthoring.js", function(){
+                              mxscript("plugins/narrativeabduction/narrativegpt/narrativegptjsonvalidator.js", function(){
                                 console.log("EditorUi", ui);
                                 console.log("Sidebar", ui.sidebar.graph);
                                 console.log("Editor", ui.editor);            
                                 let na = new NarrativeAbductionApp(ui);
-                                na.init();                      
+                                na.init();      
+                              });
+                              });                                                              
                               });               
                             });
                           });                  
@@ -37,7 +41,7 @@ class NarrativeAbductionApp {
     this.narrativeaviewscontainer;
     this.narratives = [];
     this.narrativelayout = new NarrativeLayout(this);
-    this.narrativegpt = new NarrativeGPT();
+    this.narrativegptauthor = new NarrativeGPTAuthoring();
     this.narrativelayout.graph = ui.editor.graph;
 
     this.settings = {
@@ -308,7 +312,6 @@ class NarrativeAbductionApp {
       this.createUpdateLinksMenu();
       this.createLoadJSONMenu();
       this.createLoadNarrativeMenu();
-      this.createGenerateNarrativeJSONMenu();
       //    
   }
 
@@ -323,161 +326,30 @@ class NarrativeAbductionApp {
       this.panelwindow.commonmenu.append(container);
   }
 
-  /**
-   * GPT Setting
-   * Chat Panel
-   *   - Message panel
-   *   - Chat input
-   * Validation
-   *   - JSON text
-   *   - Save JSON
-   */
-  createGenerateNarrativeJSONMenu(){
-    const container = document.createElement("div");
-    const textAreaChatInput = document.createElement('textarea');
-    const textAreaJSON = document.createElement("textarea");
-    const messagePanel = document.createElement('div');
-    const inputElementJSONSetting = document.createElement('input');
-    const buttonSaveJSON = document.createElement('button');
-    const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
+  // async generateNarrativeJSON(text){
+  //   console.log("Generating ...");
+  //   this.narrativegptauthor.extractNarrativesJSON(text)
+  //   .then(result => {
+  //     console.log(result);
+  //     if(result.status == "success"){
+  //       let jsonText = result.message;
+  //       let jsonData = JSON.parse(jsonText);
+  //       // Do something with the parsed JSON data
+  //       console.log('Done, parsed JSON data:', jsonData);
+  //       const textArea = document.getElementById("nagpt-jsonoutput");
+  //       if(textArea) textArea.value = JSON.stringify(jsonData);
+  //       this.createDocumentItemsFromJSON(jsonData);
 
-    textAreaJSON.setAttribute('id', 'nagpt-jsonoutput');
-    messagePanel.setAttribute('id', 'nagpt-message');
-    messagePanel.setAttribute('style', 'max-height: 200px;overflow-y: scroll;');
-
-    container.classList.add("na-window-content");
-
-    let t = this;
-    // Set attributes for the text area
-    textAreaChatInput.rows = '4';
-    textAreaChatInput.cols = '50';
-
-    container.append(inputElementJSONSetting); 
-    container.append(messagePanel);
-    container.append(textAreaChatInput);
-    
-    let btnGenerate = NAUtil.AddButton("Send", container, function(){
-      messagePanel.innerHTML += t.formatMessage(textAreaChatInput.value);
-      t.chatGPT(textAreaChatInput.value);
-      textAreaChatInput.value = "";
-      textAreaChatInput.disabled  = true;
-      btnGenerate.disabled  = true;
-      btnGenerate.innerHTML = "Generating <img src='"+loadingURL+"' width='20px'>";
-    })
-
-    buttonSaveJSON.innerHTML = "Save JSON";
-    buttonSaveJSON.addEventListener('click', function(){
-        // Get the text you want to save
-        var textToSave = textAreaJSON.value;
-
-        // Create a Blob with the text content
-        var blob = new Blob([textToSave], { type: "text/plain" });
-
-        // Create a temporary link element for triggering the download
-        var a = document.createElement("a");
-        a.href = window.URL.createObjectURL(blob);
-        a.download = "generateddiagram.json";
-
-        // Trigger a click event on the link to initiate the download
-        a.click();
-        
-    });
-
-    container.append(textAreaJSON);
-    container.append(buttonSaveJSON);
-
-    //Load the setting
-    // Create a new input element
-
-    // Set the type attribute to 'file' for a file input
-    inputElementJSONSetting.setAttribute('type', 'file');
-
-    // Optionally, set other attributes or properties, such as an ID or name
-    inputElementJSONSetting.setAttribute('id', 'fileInput-gpt-setting');
-    inputElementJSONSetting.setAttribute('name', 'fileInputGptSetting');
-
-    // Add event listener to handle selected file
-    inputElementJSONSetting.addEventListener('change', function(e) {
-      e.preventDefault();
-      const selectedFile = inputElementJSONSetting.files[0];
-      if (selectedFile) {
-        // Read the selected JSON file
-        const fileReader = new FileReader();
-        fileReader.onload = function(event) {
-          // Parse the JSON data into a JavaScript object
-          try {
-            const jsonData = JSON.parse(event.target.result);
-            // Do something with the parsed JSON data
-            console.log('Parsed JSON data:', jsonData);
-            t.applyGPTSetting(jsonData);
-          } catch (error) {
-            console.error('Error parsing JSON:', error);
-          }
-        };
-        fileReader.readAsText(selectedFile);
-      }
-    });
-
-    this.narrativegpt.container.uitext = textAreaChatInput;
-    this.narrativegpt.container.uibuttongenerate = btnGenerate;
-
-    let gptiwindow =  NAUtil.CreateWindow("gpt-window", "Auto Generation", container, 0, 0, 500, 500);
-    gptiwindow.setVisible(true);
-  }
-
-  applyGPTSetting(jsonData){
-    this.narrativegpt.applySetting(jsonData);
-  }
-
-  formatMessage(message){
-    return "<div style='margin-bottom:5px'>" + message + "</div>";
-  }
-
-  async chatGPT(text){
-    console.log("Sending ...");
-    this.narrativegpt.chat(text)
-    .then(result => {
-      console.log(result);
-      if(result.status == "success"){
-        let jsonText = result.message;
-        // Do something with the parsed JSON data
-        const messagePanel = document.getElementById("nagpt-message");
-        if(messagePanel) messagePanel.innerHTML += this.formatMessage(jsonText);
-        // enable uis
-        this.narrativegpt.container.uitext.disabled = false;
-        this.narrativegpt.container.uibuttongenerate.disabled = false;
-        this.narrativegpt.container.uibuttongenerate.innerHTML = "Generate";
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  }
-
-  async generateNarrativeJSON(text){
-    console.log("Generating ...");
-    this.narrativegpt.extractNarrativesJSON(text)
-    .then(result => {
-      console.log(result);
-      if(result.status == "success"){
-        let jsonText = result.message;
-        let jsonData = JSON.parse(jsonText);
-        // Do something with the parsed JSON data
-        console.log('Done, parsed JSON data:', jsonData);
-        const textArea = document.getElementById("nagpt-jsonoutput");
-        if(textArea) textArea.value = JSON.stringify(jsonData);
-        this.createDocumentItemsFromJSON(jsonData);
-
-        // enable uis
-        this.narrativegpt.container.uitext.disabled = false;
-        this.narrativegpt.container.uibuttongenerate.disabled = false;
-        this.narrativegpt.container.uibuttongenerate.innerHTML = "Generate";
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  }
+  //       // enable uis
+  //       this.narrativegptauthor.container.uitext.disabled = false;
+  //       this.narrativegptauthor.container.uibuttongenerate.disabled = false;
+  //       this.narrativegptauthor.container.uibuttongenerate.innerHTML = "Generate";
+  //     }
+  //   })
+  //   .catch(error => {
+  //     console.error('Error:', error);
+  //   });
+  // }
 
   createSelectLayoutModeMenu(){
     let container = document.createElement("div");
