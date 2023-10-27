@@ -7,17 +7,23 @@ class NarrativeGPT{
         this.apiURL = jsonData.apiURL;
         this.model = jsonData.model;
         this.formatjsonprompt = jsonData.formatjsonprompt;
+        this.messages = [];
+    }
+
+    addMessage(mrole, mcontent){
+        this.messages.push({
+            role: mrole, 
+            content: mcontent
+        });
     }
 
     createRequest(prompt){
+        
+        this.addMessage("user", prompt);
+
         const requestBody = {
             model: this.model, 
-            messages: [
-                {
-                    role: "user",
-                    content: prompt
-                }
-            ]
+            messages: this.messages
             //max_tokens: 50
         };
 
@@ -48,6 +54,7 @@ class NarrativeGPT{
                 if(data.choices[0]){
                     result.status = "success";
                     result.message = data.choices[0].message.content;   
+                    this.addMessage("system", result.message);
                 }
             } catch (error) {
               console.error('Error parsing JSON:', error);

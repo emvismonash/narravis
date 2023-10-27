@@ -19,12 +19,9 @@ class NarrativeAbductionApp {
       this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives, this);  
       this.createPalette();
       this.initListenerResponsiveSizeHandler();
-      //this.initListenerDocumentSizeAfterDescriptionEdit();
-     // this.initOverrideConvertValueString();
       this.initOverrideShapePickerHandler();
       this.initOverrrideNewCellHandler();
       this.initOverrideConnectionConstraints();
-      //this.initOverrideSnapToFixedPoints();
       this.initListenerRemoveNarrativeCellHandler();
       this.initListenerEdgeDoubleClickEditHandler();
       this.initListenerShowAddCellAfterEdit();
@@ -276,7 +273,7 @@ class NarrativeAbductionApp {
           console.log(e);
         }finally{
           graph.getModel().endUpdate();
-          t.narrativelayout.applyCellsLayout(cells);
+          NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
         }
     }
    
@@ -643,7 +640,7 @@ class NarrativeAbductionApp {
         let cells = evt.getProperty("cells");
         for (let i = 0; i < cells.length; i++) {
           let cell = cells[i]; 
-          t.updateResponsiveCellSize(cell);
+          if(NarrativeAbductionApp.isCellDocumentItem(cell)) t.updateResponsiveCellSize(cell);
         }
       });
     };
@@ -657,27 +654,6 @@ class NarrativeAbductionApp {
       cell.geometry.width = newWidth;
     }
   
-    /**
-     * Update the height of the document item to accomodate the description
-     */
-    initListenerDocumentSizeAfterDescriptionEdit() {
-      let graph = this.editorui.editor.graph;
-      graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
-        let cell = evt.getProperty("cell"); // Get the cell whose label changed
-        let newValue = evt.getProperty("value"); // Get the new label value
-        let natype = cell.natype;
-        console.log("cell", cell);
-        console.log("natype", natype);
-  
-        if(!cell.natype) return;
-  
-        if (natype == NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION) {
-          console.log("cell", cell);
-          console.log("new value", newValue);
-          console.log("geometry", cell.geometry);
-        }
-      });
-    };
   
     /**
      * Prevent editing with double click
@@ -827,35 +803,7 @@ class NarrativeAbductionApp {
   
   
   
-    /**
-     * Override label presentation of the narrative document items
-     */
-    initOverrideConvertValueString() {
-      let graph = this.editorui.editor.graph;
-      let t = this;
-      let value;
-      graph.convertValueToString = function (cell) {
-        //if the cell is document item, return empty string
-        if (NarrativeAbductionApp.isCellDocumentItem(cell)) {
-          value = t.getDocumentItemCellValue(cell);
-          value = (value == null)? cell.getValue().getAttribute("natype"): value;
-          return "<div id='" + cell.id + "-cell'>" + value + "</div>";
-        } else if (t.isCellNarrativeCell(cell)){
-          //console.log("Narrative");
-          value = t.getNarrativeCellValue(cell);
-         // console.log("val", val); 
-          return value;        
-      } else {
-          //check title or description
-          if (cell.value != null) {                 
-            // Here, you can customize how the cell's value is displayed as a string
-            return cell.value.toString(); // Example: Convert the value to a string
-          } else {
-            return ''; // Return an empty string if the value is null or undefined
-          }
-        }
-      };
-    };
+
   
     parseDocumentContent(content){
         return  NarrativeAbductionApp.getTextBetweenAsterisks(content);
@@ -1404,7 +1352,7 @@ class NarrativeAbductionApp {
       graph.getModel().beginUpdate();
       //add the narrative cell
       try {
-        narrativecell = graph.insertVertex(parent, null, objna, 0, 0, 100, 100);
+        narrativecell = graph.insertVertex(parent, null, objna, 0, 0, 50, 100);
         narrativecell.value.setAttribute('label', NASettings.Language.English.newnarrative);
         graph.setCellStyle(narrativeentry.style, [narrativecell]);
       } finally {
@@ -1417,7 +1365,6 @@ class NarrativeAbductionApp {
           narrativecell.id
         );
         this.narratives.push(na);
-        console.log("naabduction", this);
         narrview = this.narrativeaviewscontainer.addNarrativeListView(
           na,
           narrativecell,

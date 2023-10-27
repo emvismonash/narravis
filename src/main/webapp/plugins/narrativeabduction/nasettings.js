@@ -104,7 +104,7 @@ const NAEntries = [
   {
     name: NASettings.Dictionary.CELLS.NARRATIVE,
     style:
-      "text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=35;connectable=0;",
+      "text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;",
     type: "node",
   },
   {
