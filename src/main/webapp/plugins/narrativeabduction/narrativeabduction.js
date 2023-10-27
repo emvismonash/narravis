@@ -5,24 +5,32 @@
  */
 // load plugin
 Draw.loadPlugin(function (ui) {
-        mxscript("plugins/narrativeabduction/js/narrative.js", function(){
-            mxscript("plugins/narrativeabduction/js/nasettings.js", function(){
-                mxscript("plugins/narrativeabduction/js/narrativelistviewcontainer.js", function(){
-                    mxscript("plugins/narrativeabduction/js/narrativelistview.js", function(){
-                        mxscript("plugins/narrativeabduction/js/nautil.js", function(){
-                          mxscript("plugins/narrativeabduction/js/narrativelayout.js", function(){
-                            mxscript("plugins/narrativeabduction/js/narativelayoutswimlane.js", function(){
-                              mxscript("plugins/narrativeabduction/js/narrativeabductionapp.js", function(){
-                                console.log("EditorUi", ui);
-                                console.log("Sidebar", ui.sidebar.graph);
-                                console.log("Editor", ui.editor);            
-                                let na = new NarrativeAbductionApp(ui);
-                              });                   
-                            });
-                          });                  
-                        });
-                    });
-                });
-            });   
+        mxscript("plugins/narrativeabduction/core/narrative.js", function(){
+        mxscript("plugins/narrativeabduction/nasettings.js", function(){
+        mxscript("plugins/narrativeabduction/view/narrativelistviewcontainer.js", function(){
+        mxscript("plugins/narrativeabduction/view/narrativelistview.js", function(){
+        mxscript("plugins/narrativeabduction/utility/nautil.js", function(){
+        mxscript("plugins/narrativeabduction/utility/nauihelper.js", function(){  
+        mxscript("plugins/narrativeabduction/layout/narrativelayout.js", function(){
+        mxscript("plugins/narrativeabduction/layout/narativelayoutswimlane.js", function(){
+        mxscript("plugins/narrativeabduction/gpt/narrativegpt.js", function(){   
+        mxscript("plugins/narrativeabduction/gpt/narrativegptauthoring.js", function(){
+        mxscript("plugins/narrativeabduction/gpt/narrativegptjsonvalidator.js", function(){
+        mxscript("plugins/narrativeabduction/core/narrativeabductionapp.js", function(){
+          console.log("EditorUi", ui);
+          console.log("Sidebar", ui.sidebar.graph);
+          console.log("Editor", ui.editor);            
+          new NarrativeAbductionApp(ui);
+        });
+        });
+        });                                                              
+        });               
+        });
+        });                  
+        });
+        });
+        });
+        });
+        });   
         });
 });

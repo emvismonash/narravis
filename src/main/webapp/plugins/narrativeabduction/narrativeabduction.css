@@ -19,6 +19,14 @@
   /* styles for NodeContainer */
 }
 
+.na-window-content{
+  padding: 10px;
+  height: 100%;
+}
+.na-window-content textarea{
+  width: 100%;
+}
+
 .nalv-container {
   /* styles for Container */
   border: 1px solid #ccc;

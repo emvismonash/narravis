@@ -5,7 +5,7 @@ class NAUtil {
       return newArray1;
     }
 
-    static arraysContainSameItems(arr1, arr2) {
+    static ArraysContainSameItems(arr1, arr2) {
         if (arr1.length !== arr2.length) {
           return false; // If the arrays have different lengths, they can't contain the same items
         }
@@ -88,35 +88,5 @@ class NAUtil {
       sidebar.setCurrentSearchEntryLibrary();
     };
   
-    /**
-     * Create window if the id does not exist in registry, otherwise return existing one
-     * @param {*} id
-     * @param {*} title
-     * @param {*} content
-     * @param {*} x
-     * @param {*} y
-     * @param {*} width
-     * @param {*} height
-     * @returns
-     */
-    static CreateWindow (id, title, content, x, y, width, height) {
-      var wnd = new mxWindow(title, content, x, y, width, height, true, true);
-      wnd.id = id;
-      return wnd;
-    };
-  
-    static AddButton (label, container, funct) {
-      var btn = document.createElement("button");
-      btn.innerHTML = label;
-      btn.classList.add(NASettings.CSSClasses.NAUtils.Button);
-  
-      mxEvent.addListener(btn, "click", function (evt) {
-        funct();
-        mxEvent.consume(evt);
-      });
-  
-      container.appendChild(btn);
-
-      return btn;
-    };
+   
   }

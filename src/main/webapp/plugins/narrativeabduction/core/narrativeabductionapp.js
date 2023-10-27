@@ -6,6 +6,8 @@ class NarrativeAbductionApp {
       this.narrativeaviewscontainer = {};
       this.panelwindow = {};
       this.naentries = NAEntries;
+      this.narrativegptauthor = new NarrativeGPTAuthoring(this);
+
       this.excludefrompicker = [
         NASettings.Dictionary.CELLS.NARRATIVELIST,
         NASettings.Dictionary.CELLS.NARRATIVE,
@@ -18,7 +20,7 @@ class NarrativeAbductionApp {
       this.createPalette();
       this.initListenerResponsiveSizeHandler();
       //this.initListenerDocumentSizeAfterDescriptionEdit();
-      this.initOverrideConvertValueString();
+     // this.initOverrideConvertValueString();
       this.initOverrideShapePickerHandler();
       this.initOverrrideNewCellHandler();
       this.initOverrideConnectionConstraints();
@@ -27,14 +29,13 @@ class NarrativeAbductionApp {
       this.initListenerEdgeDoubleClickEditHandler();
       this.initListenerShowAddCellAfterEdit();
       this.updateMoreShapesButton();
-      
+      this.narrativelayout;
+
       let t = this;
       this.editorui.editor.addListener("fileLoaded", function(sender, evt) {
-        console.log("File loaded");
-        t.narrativelayout =  new NarrativeLayoutSwimlanes(t);
-        t.narrativelayout.initiate();
         t.loadExistingNarratives();
       });
+      
 
     }
   
@@ -292,13 +293,13 @@ class NarrativeAbductionApp {
     createSelectLayoutModeMenu(){
       let container = document.createElement("div");
       let t = this;
-      let btnFlex = NAUtil.AddButton("Flexible Mode", container, function(){
+      let btnFlex = NAUIHelper.AddButton("Flexible Mode", container, function(){
         t.narrativelayout.remove();
         t.narrativelayout = new NarrativeLayout(t);
       })
       btnFlex.style.backgroundColor = "#dadce0";
   
-      let btnSwim = NAUtil.AddButton("Swimlane Mode", container, function(){
+      let btnSwim = NAUIHelper.AddButton("Swimlane Mode", container, function(){
         t.narrativelayout = new NarrativeLayoutSwimlanes(t);
       })
   
@@ -318,7 +319,7 @@ class NarrativeAbductionApp {
     createLoadNarrativeMenu(){
       let container = document.createElement("div");
       let t = this;
-      NAUtil.AddButton("Load narratives", container, function () {
+      NAUIHelper.AddButton("Load narratives", container, function () {
         t.loadExistingNarratives();
       });
   
@@ -333,7 +334,7 @@ class NarrativeAbductionApp {
       let t = this;
       this.naentries.forEach(function (element) {
         if (element.type == "edge") {
-          NAUtil.AddButton(
+          NAUIHelper.AddButton(
             element.name.replace("Link", ""),
             setlinktypecontainer,
             function () {
@@ -1143,7 +1144,7 @@ class NarrativeAbductionApp {
             highlight.hide();
           };
   
-          let wnd = NAUtil.CreateWindow(
+          let wnd = NAUIHelper.CreateWindow(
             NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
             NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
             formContainer,
@@ -1268,7 +1269,7 @@ class NarrativeAbductionApp {
             highlight.hide();
           };
   
-          let wnd = NAUtil.CreateWindow(
+          let wnd = NAUIHelper.CreateWindow(
             NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
             NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
             formContainer,
@@ -1386,6 +1387,11 @@ class NarrativeAbductionApp {
      * Create a new narrative, trigger create narrative view and narrative cell
      */
     newNarrative() {
+      //if the layout is not defined, initiate 
+      if(!this.narrativelayout){
+        this.narrativelayout = new NarrativeLayoutSwimlanes(this);
+      }
+
       let narrativeentry = this.getNarrativeEntry(); //get narrative entry from the entries list
       let graph = this.editorui.editor.graph;
       let parent = graph.getDefaultParent();
@@ -1478,7 +1484,7 @@ class NarrativeAbductionApp {
       let t = this;
       this.naentries.forEach(function (element) {
         if (element.type == "edge") {
-          NAUtil.AddButton(
+          NAUIHelper.AddButton(
             element.name.replace("Link", ""),
             container,
             function () {
@@ -1511,7 +1517,7 @@ class NarrativeAbductionApp {
       let buttons = [];
       this.naentries.forEach(function (element) {
         if (t.isValidShapePickerItem(element)) {
-          let btn = NAUtil.AddButton(
+          let btn = NAUIHelper.AddButton(
             element.name.replace("Link", ""),
             container,
             function () {
