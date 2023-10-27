@@ -7,7 +7,7 @@ class NarrativeLayout {
         this.graph = app.editorui.editor.graph;
         this.narrativecellslayout = [];
         this.verticalspace = 20;
-        this.horizontalspacebetweennarrativeandlayout = 200;
+        this.horizontalspacebetweennarrativeandlayout = 400;
         this.narrativesbounds = [];
         
     }
@@ -183,10 +183,10 @@ class NarrativeLayout {
         return pos;
     }
 
-    getExcludedCells(selectedNodes){
-        this.graph.selectAll();
+    static getExcludedCells(graph, selectedNodes){
+        graph.selectAll();
         let excludeNodes = [];
-        let selectedCells = this.graph.getSelectionCells();
+        let selectedCells = graph.getSelectionCells();
 
         selectedCells.forEach((cell) => {
           if (!selectedNodes.includes(cell) && cell.children != null) {
@@ -197,21 +197,19 @@ class NarrativeLayout {
             });
           }
         });
-        this.graph.clearSelection();
+        graph.clearSelection();
 
         console.log("Excluded nodes", excludeNodes);
 
         return excludeNodes;
     }
 
-    applyCellsLayout(cells, callback, change, post){
+    static applyCellsLayout(graph, model, cells, callback, change, post){
         //update excluded cells position
-        let graph = this.graph;
-        let model = this.graph.getModel();
         let targetCells = cells; // Array of parent node cells
         let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
-        let excludeNodes = this.getExcludedCells(targetCells);
+        let excludeNodes = NarrativeLayout.getExcludedCells(graph, targetCells);
 
         graph.getModel().beginUpdate();
         try
@@ -263,7 +261,7 @@ class NarrativeLayout {
         let targetCells = narrative.cells; // Array of parent node cells
         let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
-        let excludeNodes = this.getExcludedCells(targetCells);
+        let excludeNodes = NarrativeLayout.getExcludedCells(graph, targetCells);
 
         graph.getModel().beginUpdate();
         try
