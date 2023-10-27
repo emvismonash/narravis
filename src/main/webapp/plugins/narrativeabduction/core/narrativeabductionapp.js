@@ -29,11 +29,10 @@ class NarrativeAbductionApp {
       this.initListenerEdgeDoubleClickEditHandler();
       this.initListenerShowAddCellAfterEdit();
       this.updateMoreShapesButton();
-      this.narrativelayout =  new NarrativeLayoutSwimlanes(this);
+      this.narrativelayout;
 
       let t = this;
       this.editorui.editor.addListener("fileLoaded", function(sender, evt) {
-        t.narrativelayout =  new NarrativeLayoutSwimlanes(t);
         t.loadExistingNarratives();
       });
       
@@ -1388,6 +1387,11 @@ class NarrativeAbductionApp {
      * Create a new narrative, trigger create narrative view and narrative cell
      */
     newNarrative() {
+      //if the layout is not defined, initiate 
+      if(!this.narrativelayout){
+        this.narrativelayout = new NarrativeLayoutSwimlanes(this);
+      }
+
       let narrativeentry = this.getNarrativeEntry(); //get narrative entry from the entries list
       let graph = this.editorui.editor.graph;
       let parent = graph.getDefaultParent();
