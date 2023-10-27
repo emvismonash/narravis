@@ -131,6 +131,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
       textAreaChatInput.disabled  = true;
       btnGenerate.disabled  = true;
       btnGenerate.innerHTML = "Waiting response <img src='"+loadingURL+"' width='20px'>";
+      t.scrollDown(t.container.messagepanel.scrollHeight);
     })
 
     // Add an event listener to the textarea for the 'keydown' event
@@ -177,6 +178,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
       }
     });
 
+    this.container.messagepanel = messagePanel;
     this.container.uitext = textAreaChatInput;
     this.container.uibuttongenerate = btnGenerate;
 
@@ -191,8 +193,20 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     this.container.uibuttongenerate.innerHTML = "Send";
   }
 
+  scrollDown(value){
+    let t = this;
+    requestAnimationFrame(function(){
+      t.container.messagepanel.scrollTo({
+        top: value,
+        behavior: 'smooth'
+      });
+    })
+  }
+
   async chatGPT(text){
         console.log("Sending ..." + text);
+        let t = this;
+        let currentScrollHeight = this.container.messagepanel.scrollHeight;
         this.chat(text)
         .then(result => {
           console.log(result);
@@ -200,7 +214,10 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
             let jsonText = result.message;
             // Do something with the parsed JSON data
             const messagePanel = document.getElementById("nagpt-message");
-            if(messagePanel) messagePanel.append(this.formatMessage(jsonText, true));
+            if(messagePanel) {
+              messagePanel.append(this.formatMessage(jsonText, true));
+              t.scrollDown(currentScrollHeight + 5);
+            }
             // enable uis
           }else{
             alert(result);
