@@ -111,7 +111,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
 
     container.classList.add("na-window-content");
     
-    NAUIHelper.CreateHelpText(container, "Chat with GPT to craft a clear causal story. Start by loading the GPT setting JSON file using the Browse button. Use the chat window to compose the narrative, ensuring it conveys the intended cause-and-effect sequence. Once the narrative is ready, transfer it to the GPT JSON Generation window using the button under the response to create a properly formatted document for importing into a diagram. Note: the chat is 'stateless', meaning GPT does not store the context of the coversation.", false);
+    NAUIHelper.CreateHelpText(container, "Chat with GPT to craft a clear causal story. Start by loading the GPT setting JSON file using the Browse button. Use the chat window to compose the narrative, ensuring it conveys the intended cause-and-effect sequence. Once the narrative is ready, transfer it to the GPT JSON Generation window using the button under the response to create a properly formatted document for importing into a diagram.", false);
 
 
     let t = this;
