@@ -16,7 +16,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         const container = document.createElement("div");
         container.classList.add("na-window-content");
 
-        const messagePanel = document.createElement('textarea');
+        const responseTextArea = document.createElement('textarea');
         const textAreaJSON = document.createElement('textarea');
         const buttonSaveJSON = document.createElement('button');    
         const buttonDraw = document.createElement('button');
@@ -24,12 +24,19 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
     
 
+        NAUIHelper.CreateHelpText(container, "This window can turn narrative text into the JSON format needed to create diaram. It requires gtp setting from GPT Authoring Window to work properly.")
+
+        let textAreaStyle = "resize: vertical;";
+        textAreaJSON.style = textAreaStyle;
+        responseTextArea.style = textAreaStyle;
+
         fileNameInput.style = "font-size:small; witdth:200px;";
         fileNameInput.value = "generated-diagram";
 
         let t = this;
 
-        buttonSaveJSON.innerHTML = "Save JSON";
+        buttonSaveJSON.innerHTML = "Download";
+        buttonSaveJSON.title = "Download the JSON data into file";
         buttonSaveJSON.addEventListener('click', function(){
             // Get the text you want to save
             let textToSave = textAreaJSON.value;
@@ -49,7 +56,9 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
             
         });
 
-        buttonDraw.innerHTML = "Turn to diagram";
+        buttonDraw.innerHTML = "Visualise";
+        buttonDraw.title = "Parse the JSON data into cells";
+        buttonDraw.style.marginRight = "20px";
         buttonDraw.addEventListener('click', function(){
             // Get the text you want to save
             var textToSave = textAreaJSON.value;              
@@ -62,15 +71,15 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
             document.dispatchEvent(event);
         });
         
-        container.append(messagePanel);
-        this.textareamessage = messagePanel;
+        container.append(responseTextArea);
+        this.textareamessage = responseTextArea;
         this.textareajson = textAreaJSON;
 
         let btnGenerate = NAUIHelper.AddButton("Generate", container, function(){
-            let text = messagePanel.value;
+            let text = responseTextArea.value;
             let prompt = t.formatPrompt(text);
             t.chatGPT(prompt);
-            messagePanel.disabled = true;
+            responseTextArea.disabled = true;
             btnGenerate.disabled  = true;
             btnGenerate.innerHTML = "Generating <img src='"+loadingURL+"' width='20px'>";
           })
@@ -84,7 +93,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
 
         this.uibuttongenerate = btnGenerate;
 
-        let gptiwindow =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 700, 800, 500, 400);
+        let gptiwindow =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 300);
         gptiwindow.setVisible(true);
         gptiwindow.setResizable(true);
       }
@@ -96,14 +105,22 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
           console.log(result);
           if(result.status == "success"){
             let jsonText = result.message;
-            this.textareajson.value = jsonText;
-            this.textareamessage.disabled = false;
-            this.uibuttongenerate.disabled = false;
-            this.uibuttongenerate.innerHTML = "Generate";
+            this.textareajson.value = jsonText;            
+          }else{
+            alert(result);
           }
+          this.enableChat();
         })
         .catch(error => {
           console.error('Error:', error);
+          alert(error);
+          this.enableChat();
         });
+      }
+
+      enableChat(){
+        this.textareamessage.disabled = false;
+        this.uibuttongenerate.disabled = false;
+        this.uibuttongenerate.innerHTML = "Generate";
       }
 }

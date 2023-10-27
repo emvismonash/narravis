@@ -92,15 +92,22 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
    createChatWindow(){
     const container = document.createElement("div");
     const textAreaChatInput = document.createElement('textarea');
+    const chatContainer = document.createElement('div');
     const messagePanel = document.createElement('div');
     const chatPanel = document.createElement('div');
 
-    chatPanel.style = "width:95%; position:absolute; bottom:5px;";
+    chatContainer.style = "display:flex; flex-direction: column; height:100%";
+    messagePanel.style = 'padding-top:10px;padding-bot:5px;overflow-y: scroll;flex:1;';
+    chatPanel.style = "height: 200px;";
+
+    chatContainer.append(messagePanel);
+    chatContainer.append(chatPanel);
+    chatPanel.append(textAreaChatInput);
+    
     const inputElementJSONSetting = document.createElement('input');
     const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
 
     messagePanel.setAttribute('id', 'nagpt-message');
-    messagePanel.setAttribute('style', 'height:100%;min-height:300px;overflow-y: scroll;');
 
     container.classList.add("na-window-content");
     
@@ -110,14 +117,12 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     let t = this;
     // Set attributes for the text area
     textAreaChatInput.rows = '4';
-    textAreaChatInput.cols = '40';
+    textAreaChatInput.cols = '20';
     textAreaChatInput.setAttribute('style', 'resize: none; ');
     textAreaChatInput.value = "Put your chat here, and say hello to GPT."
 
     container.append(inputElementJSONSetting); 
-    container.append(messagePanel);
-    container.append(chatPanel);
-    chatPanel.append(textAreaChatInput);
+    container.append(chatContainer);
     
     let btnGenerate = NAUIHelper.AddButton("Send", chatPanel, function(){
       messagePanel.append(t.formatMessage(textAreaChatInput.value, false));
@@ -139,27 +144,6 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
           btnGenerate.click();
       }
     });
-
-    //    //const buttonSaveJSON = document.createElement('button');
-   // textAreaJSON.setAttribute('id', 'nagpt-jsonoutput');
-
-    // buttonSaveJSON.innerHTML = "Save JSON";
-    // buttonSaveJSON.addEventListener('click', function(){
-    //     // Get the text you want to save
-    //     var textToSave = textAreaJSON.value;
-
-    //     // Create a Blob with the text content
-    //     var blob = new Blob([textToSave], { type: "text/plain" });
-
-    //     // Create a temporary link element for triggering the download
-    //     var a = document.createElement("a");
-    //     a.href = window.URL.createObjectURL(blob);
-    //     a.download = "generateddiagram.json";
-
-    //     // Trigger a click event on the link to initiate the download
-    //     a.click();
-        
-    // });
 
     //Load the setting
     // Create a new input element
@@ -196,7 +180,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     this.container.uitext = textAreaChatInput;
     this.container.uibuttongenerate = btnGenerate;
 
-    let gptiwindow =  NAUIHelper.CreateWindow("gpt-window", "GPT Authoring Window", container, 200, 800, 500, 400);
+    let gptiwindow =  NAUIHelper.CreateWindow("gpt-window", "GPT Authoring Window", container, 1000, 100, 400, 300);
     gptiwindow.setVisible(true);
     gptiwindow.setResizable(true);
   }
