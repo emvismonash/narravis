@@ -43,7 +43,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
                 name: "JSON Generation",
                 title: "Show JSON generation window",
                 func: ()=>{
-  
+                    this.toggleJSONGenerationWindow();
                 }
               }
             ]
@@ -66,6 +66,10 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
         t.app.createDocumentItemsFromJSON(JSON.parse(json));
       });
       
+    }
+
+    toggleJSONGenerationWindow(){
+      this.jsonvalidator.window.setVisible(!this.jsonvalidator.window.isVisible());
     }
 
     applySetting(jsonData){

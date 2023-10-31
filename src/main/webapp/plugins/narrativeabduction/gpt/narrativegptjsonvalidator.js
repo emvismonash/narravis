@@ -2,6 +2,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
     constructor(){
         super();
         this.createWindow();
+        this.window;
     }
 
     formatPrompt(text){
@@ -93,9 +94,9 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
 
         this.uibuttongenerate = btnGenerate;
 
-        let gptiwindow =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 300);
-        gptiwindow.setVisible(true);
-        gptiwindow.setResizable(true);
+        this.window =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 300);
+        this.window.setVisible(true);
+        this.window.setResizable(true);
       }
 
       async chatGPT(text){
