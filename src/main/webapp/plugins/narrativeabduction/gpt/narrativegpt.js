@@ -121,7 +121,6 @@ class NarrativeGPT{
                                                             if(contents){
                                                                 contents.forEach(element => {
                                                                     if(element != undefined){
-                                                                        console.log(element);
                                                                         t.currentmesage += element;
                                                                         streamfunc(element, t);    
                                                                     }

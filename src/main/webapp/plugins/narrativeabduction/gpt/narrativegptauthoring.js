@@ -11,7 +11,11 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
                 name: "New chat",
                 title: "Create a new chat. The current one will be removed.",
                 func: ()=>{
-                  console.log("New chat")
+                  console.log("New chat");
+                  var userResponse = window.confirm("Current chat will be gone, cancel and donwload chat first to keep it. Confirm ignore current chat and start a new chat?");
+                  if (userResponse) {
+                    this.newChat();
+                  }
                 }
               },
               {
@@ -84,6 +88,13 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
       this.enableChat();
     }
 
+
+  /**
+   * this.container
+   *    this.container.chatcontainer
+   *        this.messagepanel
+   *        this.chatpanel
+   */
    createChatWindow(){
     const container = document.createElement("div");
     this.window =  NAUIHelper.CreateWindow("gpt-window", "GPT Authoring Window", container, 1000, 100, 400, 400);
@@ -179,7 +190,9 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
       }
     });
 
+    this.container.chatcontaienr = chatContainer;
     this.container.messagepanel = messagePanel;
+    this.container.chatpanel = chatPanel;
     this.container.uitext = textAreaChatInput;
     this.container.uibuttonstopgenerate = btnStopGenerate;
     this.container.uibuttongenerate = btnGenerate;
@@ -187,8 +200,11 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     this.container.uitext.disabled = true;
     this.container.uibuttongenerate.disabled = true;
     this.container.uibuttonstopgenerate.style.display = "none";
+  }
 
-
+  newChat(){
+    this.container.messagepanel.innerHTML = "";
+    this.messages = [];
   }
 
   downloadChat(){
