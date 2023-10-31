@@ -38,14 +38,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
           },
           {
             name:"Other",
-            actions: [
-              {
-                name: "Stream",
-                title: "Stream response (might not be supported by all browsers).", 
-                func: ()=>{
-  
-                }
-              }, 
+            actions: [              
               {
                 name: "JSON Generation",
                 title: "Show JSON generation window",
@@ -204,37 +197,17 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
   }
 
   loadChat(){
-    this.loadJSONFile((n, data)=>{
-      console.log(data);
-    })
-  }
-
-  loadJSONFile(callback) {
-    var fileInput = document.createElement('fileInput');
-    this.container.chatcontainer.append(fileInput);
-    // Add an event listener to the file input to handle the selected file
-    fileInput.addEventListener('change', function() {
-      var selectedFile = fileInput.files[0];
-      if (selectedFile) {
-        var reader = new FileReader();
-  
-        reader.onload = function(event) {
-          try {
-            var jsonData = JSON.parse(event.target.result);
-            callback(null, jsonData);
-          } catch (error) {
-            callback(error, null);
-          }
-        };
-
-        reader.readAsText(selectedFile);
-        fileInput.remove();
-      }
+    let t = this;
+    NAUtil.loadJSONFile("json", async (messages)=>{
+        console.log(messages);
+        this.messages = messages;
+        for (const message of messages) {
+          t.container.messagepanel.append(t.createNewMessage(message.content, message.role == "system").container);
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          t.scrollDown(this.container.messagepanel.scrollHeight + 5);
+        }
     });
-
-    fileInput.click();
   }
-  
 
   newChat(){
     this.container.messagepanel.innerHTML = "";
@@ -247,7 +220,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     a.href = window.URL.createObjectURL(blob);
 
     let filename = "chat-" + (new Date()).toISOString();;
-    a.download = filename + ".txt";
+    a.download = filename + ".json";
     a.click();   
     a.remove();
   }
@@ -286,7 +259,6 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     })
   }
   
-
   async chatGPTStream(text){
     console.log("Sending ..." + text);
     this.createNewMessage("", true);
@@ -343,8 +315,6 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     container.append(copyTextButton);
     container.append(downloadTextButton);
   }
-
-
 
   updateStreamResponse(content, t){
     t.currentmessage.appendMessage(content);
