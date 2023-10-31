@@ -2,6 +2,9 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
     constructor(){
         super();
         this.createWindow();
+        this.window;        
+        this.loadingurl = "plugins/narrativeabduction/assets/loading.gif";
+        this.streamparser;
     }
 
     formatPrompt(text){
@@ -9,7 +12,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
     }
 
     setText(text){
-        this.textareamessage.value = text;
+        this.container.textareamessage.value = text;
     }
 
     createWindow(){
@@ -21,12 +24,10 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         const buttonSaveJSON = document.createElement('button');    
         const buttonDraw = document.createElement('button');
         const fileNameInput = document.createElement('input');      
-        const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
-    
 
         NAUIHelper.CreateHelpText(container, "This window can turn narrative text into the JSON format needed to create diaram. It requires gtp setting from GPT Authoring Window to work properly.")
 
-        let textAreaStyle = "resize: vertical;";
+        let textAreaStyle = "min-height:200px;resize: vertical;";
         textAreaJSON.style = textAreaStyle;
         responseTextArea.style = textAreaStyle;
 
@@ -72,55 +73,151 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         });
         
         container.append(responseTextArea);
-        this.textareamessage = responseTextArea;
-        this.textareajson = textAreaJSON;
+        this.container = container;
+        this.container.textareamessage = responseTextArea;
+        this.container.textareajson = textAreaJSON;
 
         let btnGenerate = NAUIHelper.AddButton("Generate", container, function(){
             let text = responseTextArea.value;
             let prompt = t.formatPrompt(text);
-            t.chatGPT(prompt);
-            responseTextArea.disabled = true;
-            btnGenerate.disabled  = true;
-            btnGenerate.innerHTML = "Generating <img src='"+loadingURL+"' width='20px'>";
+            t.container.textareajson.value = "";
+            t.chatGPTStream(prompt);           
+            t.disableChat();            
           })
+
+       let btnStopGenerate = NAUIHelper.AddButton("Stop", container, function(){
+            t.stopGenerate();
+       })
 
         container.append(textAreaJSON);
         container.append(buttonDraw);
         container.append(fileNameInput);
         container.append(buttonSaveJSON);
 
+        this.container.uibuttongenerate = btnGenerate;
+        this.container.uibuttonstopgenerate = btnStopGenerate;
+        this.container.uibuttonstopgenerate.style.display = "none";
 
 
-        this.uibuttongenerate = btnGenerate;
-
-        let gptiwindow =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 300);
-        gptiwindow.setVisible(true);
-        gptiwindow.setResizable(true);
+        this.window =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 600);
+        this.window.setVisible(true);
+        this.window.setResizable(true);
       }
 
-      async chatGPT(text){
-        console.log("Sending ..." + text);
-        this.chat(text)
-        .then(result => {
-          console.log(result);
-          if(result.status == "success"){
-            let jsonText = result.message;
-            this.textareajson.value = jsonText;            
-          }else{
-            alert(result);
-          }
-          this.enableChat();
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert(error);
-          this.enableChat();
-        });
+      async chatGPTStream(text){
+        this.streamparser = new NarrativeGPTJSONStreamParser();
+        await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
       }
 
+      updateStreamResponse(content, t){
+          t.container.textareajson.value += content;
+          t.streamparser.evaluate(content);
+      }
+    
       enableChat(){
-        this.textareamessage.disabled = false;
-        this.uibuttongenerate.disabled = false;
-        this.uibuttongenerate.innerHTML = "Generate";
+        this.container.textareamessage.disabled = false;
+        this.container.uibuttongenerate.disabled = false;
+        this.container.uibuttongenerate.innerHTML = "Generate";
+        this.container.uibuttonstopgenerate.style.display = "none";
       }
+    
+      stopGenerate(){
+        super.stopStream()
+        this.enableChat();
+      }
+
+      disableChat(){
+        this.container.textareamessage.disabled = true;
+        this.container.uibuttongenerate.disabled = true;
+        this.container.uibuttongenerate.innerHTML = "Generating <img src='"+this.loadingurl+"' width='20px'>";
+        this.container.uibuttonstopgenerate.style.display = "block";    
+      }
+
+      completeStreamResponse(t){
+        console.log("Complete"); 
+        console.log(t.streamparser.links);
+        console.log(t.streamparser.nodes);
+        t.enableChat();
+      }
+}
+
+
+class NarrativeGPTJSONStreamParser {
+    constructor(){
+      this.nodes = [];
+      this.links = [];
+      this.currenttext = "";
+      this.currentprocces = "";
+    }
+
+    static match(text, pattern){
+      return text.match(pattern);
+    }
+
+    static findJSONObjectsExcludeArrays(inputString) {
+      const jsonObjectRegex = /{[^[\]{}]+}/g;
+      const jsonObjects = inputString.match(jsonObjectRegex);
+    
+      if (jsonObjects) {
+        return jsonObjects.map((jsonStr) => JSON.parse(jsonStr));
+      } else {
+        return [];
+      }
+    }
+
+    elementExists(arr, elminput){
+      let res = false;
+      arr.forEach(elm => {
+        if(elm.id == elminput.id) res = true;      
+      });
+      return res;
+    }
+
+
+    addItem(arr, isnode){
+      let jsonPattern = /\{[^{}]*\}/g;
+      let items = NarrativeGPTJSONStreamParser.findJSONObjectsExcludeArrays(this.currenttext, jsonPattern);
+      items.forEach(item => {
+        try {
+          if(!this.elementExists(arr, item)) {
+            arr.push(item);
+            let event = new CustomEvent(NASettings.Dictionary.EVENTS.JSON2ITEM, {
+              detail: {
+                itemobject: item,
+                isnode: isnode,
+                nodes: this.nodes,
+                links: this.links
+              },
+            });
+            document.dispatchEvent(event);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    }
+
+    evaluate(textchunk){
+      let nodePattern =  /"nodes": \[/;
+      let linkPattern =  /"links": \[/;
+
+      this.currenttext += textchunk;
+
+      let nodeFound = nodePattern.test(this.currenttext);
+      let linkFound = linkPattern.test(this.currenttext);
+
+      if (nodeFound && !linkFound) {
+        if(this.currentprocces != "node") {
+          this.currentprocces = "node";
+        }
+        this.addItem(this.nodes, true);
+      } 
+      if(linkFound){
+        if(this.currentprocces != "link") {
+          this.currentprocces = "link";
+          this.currenttext = '"links":' + textchunk;
+        }
+        this.addItem(this.links, false);
+      }
+    }
 }

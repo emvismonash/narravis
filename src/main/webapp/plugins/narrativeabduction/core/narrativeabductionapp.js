@@ -232,6 +232,79 @@ class NarrativeAbductionApp {
       this.createCommonMenu("Load JSON", container);
     }  
   
+    insertDocumentItemFromJSONObject(jsonObject){
+        let graph = this.editorui.editor.graph;
+        let parent = graph.getDefaultParent();
+        let t = this;
+        let cells = [];
+  
+        graph.getModel().beginUpdate();
+        try{
+          t.createDocumentItemFromJSONObject(jsonObject, cells);          
+          graph.addCells(cells, parent);
+        }catch(e){
+          console.log(e);
+        }finally{
+          graph.getModel().endUpdate();
+          this.updateLayoutOfNonNarrativeCells();
+        }
+    }
+
+    updateLayoutOfNonNarrativeCells(){
+      let graph = this.editorui.editor.graph;
+      graph.selectAll();
+      let allcells = graph.getSelectionCells();
+      let cells = [];
+      allcells.forEach(cell => {
+          if(!this.isCellPartOfExistingNarrative(cell)) cells.push(cell);
+      });
+      NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
+    }
+
+    insertDocumentLinkFromJSONObject(jsonObject, nodes){
+      let graph = this.editorui.editor.graph;
+      let parent = graph.getDefaultParent();
+      let t = this;
+      let cells = [];
+
+      graph.getModel().beginUpdate();
+      try{
+        t.createDocumentLinkFromJSONObject(jsonObject, nodes, graph);
+        graph.addCells(cells, parent);
+      }catch(e){
+        console.log(e);
+      }finally{
+        graph.getModel().endUpdate();
+        this.updateLayoutOfNonNarrativeCells();
+      }
+  }
+
+    createDocumentItemFromJSONObject(node, cells){
+      console.log(node);
+      let documentitem = this.nodeToDocumentItem(node);
+      let cell = documentitem.cell;
+      cell.setAttribute("label", this.getContentFromNode(node));
+      if(cell) cells.push(cell);
+      node.cell = cell;
+      this.updateResponsiveCellSize(cell);
+    }
+
+    createDocumentLinkFromJSONObject(link, nodes, graph){
+      let sourceId = link.source;
+      let targetId = link.target;
+      let sourceCell, targetCell;
+      //get cell
+      nodes.forEach(node => {
+        if(node.id == sourceId) sourceCell = node.cell;
+        if(node.id == targetId) targetCell = node.cell;
+      });
+      if(sourceCell && targetCell){
+        let label = link.type;
+        let linkCell = graph.insertEdge(graph.getDefaultParent(), null, "", sourceCell, targetCell);
+        this.setEdgeType(linkCell, label);
+      }
+    }
+
     createDocumentItemsFromJSON(parsedObject){
         //create nodes
         let graph = this.editorui.editor.graph;
@@ -244,30 +317,13 @@ class NarrativeAbductionApp {
         graph.getModel().beginUpdate();
         try{
           nodes.forEach(node => {
-            let documentitem = t.nodeToDocumentItem(node);
-            let cell = documentitem.cell;
-            cell.setAttribute("label", t.getContentFromNode(node));
-            if(cell) cells.push(cell);
-            node.cell = cell;
-            t.updateResponsiveCellSize(cell);
+            t.createDocumentItemFromJSONObject(node, cells);
           });
 
           graph.addCells(cells, parent);
           //create links
           links.forEach(link => {
-            let sourceId = link.source;
-            let targetId = link.target;
-            let sourceCell, targetCell;
-            //get cell
-            nodes.forEach(node => {
-              if(node.id == sourceId) sourceCell = node.cell;
-              if(node.id == targetId) targetCell = node.cell;
-            });
-            if(sourceCell && targetCell){
-              let label = link.type;
-              let linkCell = graph.insertEdge(parent, null, "", sourceCell, targetCell);
-              t.setEdgeType(linkCell, label);
-            }
+            t.createDocumentLinkFromJSONObject(link, nodes, graph);
           });
         }catch(e){
           console.log(e);

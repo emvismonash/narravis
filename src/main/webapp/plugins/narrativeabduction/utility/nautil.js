@@ -5,6 +5,38 @@ class NAUtil {
       return newArray1;
     }
 
+    static loadJSONFile(filetype, callback) {
+      // Create an input element for file selection
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.'+filetype;
+
+      // Create a function to handle the file selection
+      function handleFileSelection() {
+        const selectedFile = fileInput.files[0];
+        if (!selectedFile) {
+          alert('No file selected. Please choose a JSON file.');
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const fileContent = e.target.result;
+          const jsonData = JSON.parse(fileContent);
+          callback(jsonData);
+        };
+
+        reader.readAsText(selectedFile);
+        fileInput.remove();
+      }
+
+      fileInput.addEventListener('change', handleFileSelection);
+
+      // Trigger the file picker dialog
+      fileInput.click();
+  }
+
     static ArraysContainSameItems(arr1, arr2) {
         if (arr1.length !== arr2.length) {
           return false; // If the arrays have different lengths, they can't contain the same items
