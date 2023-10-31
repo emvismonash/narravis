@@ -2,7 +2,9 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
     constructor(){
         super();
         this.createWindow();
-        this.window;
+        this.window;        
+        this.loadingurl = "plugins/narrativeabduction/assets/loading.gif";
+
     }
 
     formatPrompt(text){
@@ -10,7 +12,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
     }
 
     setText(text){
-        this.textareamessage.value = text;
+        this.container.textareamessage.value = text;
     }
 
     createWindow(){
@@ -22,12 +24,10 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         const buttonSaveJSON = document.createElement('button');    
         const buttonDraw = document.createElement('button');
         const fileNameInput = document.createElement('input');      
-        const loadingURL = "plugins/narrativeabduction/assets/loading.gif";
-    
 
         NAUIHelper.CreateHelpText(container, "This window can turn narrative text into the JSON format needed to create diaram. It requires gtp setting from GPT Authoring Window to work properly.")
 
-        let textAreaStyle = "resize: vertical;";
+        let textAreaStyle = "min-height:200px;resize: vertical;";
         textAreaJSON.style = textAreaStyle;
         responseTextArea.style = textAreaStyle;
 
@@ -73,55 +73,90 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         });
         
         container.append(responseTextArea);
-        this.textareamessage = responseTextArea;
-        this.textareajson = textAreaJSON;
+        this.container = container;
+        this.container.textareamessage = responseTextArea;
+        this.container.textareajson = textAreaJSON;
 
         let btnGenerate = NAUIHelper.AddButton("Generate", container, function(){
             let text = responseTextArea.value;
             let prompt = t.formatPrompt(text);
-            t.chatGPT(prompt);
-            responseTextArea.disabled = true;
-            btnGenerate.disabled  = true;
-            btnGenerate.innerHTML = "Generating <img src='"+loadingURL+"' width='20px'>";
+            t.container.textareajson.value = "";
+            t.chatGPTStream(prompt);           
+            t.disableChat();            
           })
+
+       let btnStopGenerate = NAUIHelper.AddButton("Stop", container, function(){
+            t.stopGenerate();
+       })
 
         container.append(textAreaJSON);
         container.append(buttonDraw);
         container.append(fileNameInput);
         container.append(buttonSaveJSON);
 
+        this.container.uibuttongenerate = btnGenerate;
+        this.container.uibuttonstopgenerate = btnStopGenerate;
+        this.container.uibuttonstopgenerate.style.display = "none";
 
 
-        this.uibuttongenerate = btnGenerate;
-
-        this.window =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 300);
+        this.window =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 600);
         this.window.setVisible(true);
         this.window.setResizable(true);
       }
 
-      async chatGPT(text){
-        console.log("Sending ..." + text);
-        this.chat(text)
-        .then(result => {
-          console.log(result);
-          if(result.status == "success"){
-            let jsonText = result.message;
-            this.textareajson.value = jsonText;            
-          }else{
-            alert(result);
-          }
-          this.enableChat();
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert(error);
-          this.enableChat();
-        });
+      async chatGPTStream(text){
+        await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
       }
 
-      enableChat(){
-        this.textareamessage.disabled = false;
-        this.uibuttongenerate.disabled = false;
-        this.uibuttongenerate.innerHTML = "Generate";
+      updateStreamResponse(content, t){
+          t.container.textareajson.value += content;
       }
+    
+      enableChat(){
+        this.container.textareamessage.disabled = false;
+        this.container.uibuttongenerate.disabled = false;
+        this.container.uibuttongenerate.innerHTML = "Generate";
+        this.container.uibuttonstopgenerate.style.display = "none";
+      }
+    
+      stopGenerate(){
+        super.stopStream()
+        this.enableChat();
+      }
+
+      disableChat(){
+        this.container.textareamessage.disabled = true;
+        this.container.uibuttongenerate.disabled = true;
+        this.container.uibuttongenerate.innerHTML = "Generating <img src='"+this.loadingurl+"' width='20px'>";
+        this.container.uibuttonstopgenerate.style.display = "block";    
+      }
+
+      completeStreamResponse(t){
+        
+      }
+      // async chatGPT(text){
+      //   console.log("Sending ..." + text);
+      //   this.chat(text)
+      //   .then(result => {
+      //     console.log(result);
+      //     if(result.status == "success"){
+      //       let jsonText = result.message;
+      //       this.textareajson.value = jsonText;            
+      //     }else{
+      //       alert(result);
+      //     }
+      //     this.enableChat();
+      //   })
+      //   .catch(error => {
+      //     console.error('Error:', error);
+      //     alert(error);
+      //     this.enableChat();
+      //   });
+      // }
+
+      // enableChat(){
+      //   this.textareamessage.disabled = false;
+      //   this.uibuttongenerate.disabled = false;
+      //   this.uibuttongenerate.innerHTML = "Generate";
+      // }
 }

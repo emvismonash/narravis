@@ -155,32 +155,6 @@ class NarrativeGPT{
        
     }
 
-    async chat(prompt){
-        const request = this.createRequest(prompt);
-        
-        let result = {};
-        let response = await fetch(request.url, request.request);
-
-        if (response.ok) {
-            try {
-                let data = await response.json(); // This line awaits the response to be parsed as JSON
-                if(data.choices[0]){
-                    result.status = "success";
-                    result.message = data.choices[0].message.content;   
-                    this.addMessage("system", result.message);
-                }
-            } catch (error) {
-              console.error('Error parsing JSON:', error);
-            }
-        } else {
-            console.error('Network response was not ok. Status:', response.status);
-            result.status = "error";
-            result.message = response.status;   
-        }
-        return result;
-    }
-
-
     jsonStringifySafe(inputString) {
         // Escape special characters and enclose the string in double quotes
         const escapedString = JSON.stringify(inputString);

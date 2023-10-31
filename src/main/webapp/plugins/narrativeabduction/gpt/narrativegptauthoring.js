@@ -334,35 +334,35 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     t.container.uitext.focus();
   }
 
-  async chatGPT(text){
-        console.log("Sending ..." + text);
-        let t = this;
-        let currentScrollHeight = this.container.messagepanel.scrollHeight;
-        this.chat(text)
-        .then(result => {
-          console.log(result);
-          if(result.status == "success"){
-            let jsonText = result.message;
-            // Do something with the parsed JSON data
-            const messagePanel = this.container.messagepanel;
-            if(messagePanel) {              
-              t.currentmessage =  t.createNewMessage(jsonText, true);
-              messagePanel.append(t.currentmessage.container);
-              t.scrollDown(currentScrollHeight + 5);
-            }
-            // enable uis
-          }else{
-            alert(result);
-          }
-          this.enableChat();
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert(error);
-          this.enableChat();
-        });
-  }
-
+// Only streaming is allowed
+//   async chatGPT(text){
+//         console.log("Sending ..." + text);
+//         let t = this;
+//         let currentScrollHeight = this.container.messagepanel.scrollHeight;
+//         this.chat(text)
+//         .then(result => {
+//           console.log(result);
+//           if(result.status == "success"){
+//             let jsonText = result.message;
+//             // Do something with the parsed JSON data
+//             const messagePanel = this.container.messagepanel;
+//             if(messagePanel) {              
+//               t.currentmessage =  t.createNewMessage(jsonText, true);
+//               messagePanel.append(t.currentmessage.container);
+//               t.scrollDown(currentScrollHeight + 5);
+//             }
+//             // enable uis
+//           }else{
+//             alert(result);
+//           }
+//           this.enableChat();
+//         })
+//         .catch(error => {
+//           console.error('Error:', error);
+//           alert(error);
+//           this.enableChat();
+//         });
+//   }
 }
 
 
