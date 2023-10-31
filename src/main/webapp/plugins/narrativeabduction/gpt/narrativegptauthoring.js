@@ -18,7 +18,8 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
                 name: "Download chat",
                 title: "Download current chat as a JSON file.",
                 func: ()=>{
-                  console.log("Download chat")
+                  console.log("Download chat");
+                  this.downloadChat();
                 }
               },
               {
@@ -190,6 +191,17 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
 
   }
 
+  downloadChat(){
+    let blob = new Blob([JSON.stringify(this.messages)], { type: "text/plain" });
+    let a = document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+
+    let filename = "chat-" + (new Date()).toISOString();;
+    a.download = filename + ".txt";
+    a.click();   
+    a.remove();
+  }
+
   sendMessage(){
     this.currentmessage = this.createNewMessage(this.container.uitext.value, false);
     this.container.messagepanel.append(this.currentmessage.container);
@@ -282,37 +294,14 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     container.append(downloadTextButton);
   }
 
-  parseChunksString(dataString){
-    // Split the input string by newline characters to separate individual data objects
-    const dataEntries = dataString.split('\n').filter(entry => entry.trim() !== '');
-    // Initialize an array to store the parsed objects
-    const result = [];
 
-    // Iterate through each data entry and parse it as JSON
-    for (const entry of dataEntries) {
-      try {
-        const parsedObject = JSON.parse(entry.replace('data: ', ''));
-        result.push(parsedObject);
-      } catch (error) {
-        console.error(`Error parsing data entry: ${entry}`);
-      }
-    }
 
-    return result;
-  }
-
-  updateStreamResponse(value, t){
-    let string = new TextDecoder('utf-8').decode(value);
-    let chunks = t.parseChunksString(string);
-    chunks.forEach(chunk => {
-        //console.log(chunk);
-        let content = super.extractChunkContent(chunk);
-        t.currentmessage.appendMessage(content);
-        let currentScrollHeight = t.container.messagepanel.scrollHeight;
-        let wndw = t.window.getElement;
-        t.window.setSize(wndw.width, wndw.height + 10);
-        t.scrollDown(currentScrollHeight);
-    });
+  updateStreamResponse(content, t){
+    t.currentmessage.appendMessage(content);
+    let currentScrollHeight = t.container.messagepanel.scrollHeight;
+    let wndw = t.window.getElement;
+    t.window.setSize(wndw.width, wndw.height + 10);
+    t.scrollDown(currentScrollHeight);
   }
 
   completeStreamResponse(t){

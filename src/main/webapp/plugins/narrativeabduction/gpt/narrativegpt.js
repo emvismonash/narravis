@@ -2,7 +2,8 @@ class NarrativeGPT{
     constructor(){
         this.messages = [];
         this.currentchunk;
-        this.readablestream = new ReadableStream();
+        this.lastmessage;
+        this.readablestream = new ReadableStream();        
     }
 
     //TODO
@@ -61,15 +62,45 @@ class NarrativeGPT{
         this.readablestream.cancel();
     }
 
+    parseChunksString(dataString){
+        // Split the input string by newline characters to separate individual data objects
+        const dataEntries = dataString.split('\n').filter(entry => entry.trim() !== '');
+        // Initialize an array to store the parsed objects
+        const result = [];
+    
+        // Iterate through each data entry and parse it as JSON
+        for (const entry of dataEntries) {
+          try {
+            const parsedObject = JSON.parse(entry.replace('data: ', ''));
+            result.push(parsedObject);
+          } catch (error) {
+            console.error(`Error parsing data entry: ${entry}`);
+          }
+        }
+    
+        return result;
+    }
+
+    extractChunksContent(chunks){
+        let content = [];
+        chunks.forEach(chunk => {
+            //console.log(chunk);
+            let msg = this.extractChunkContent(chunk);
+            content.push(msg);
+        });
+
+        return content;
+    }
+
     async chatStream(prompt, streamfunc, completefunc, t){
+        this.currentmesage = "";
         const request = this.createRequest(prompt);
-        let c = this;
         try {
             const response =  await fetch(request.url, request.request)
                                         .then((response) => response.body)
                                         .then((rb) => {
                                             const reader = rb.getReader();      
-                                            c.readablestream = new ReadableStream({
+                                            t.readablestream = new ReadableStream({
                                             start(controller) {
                                                 // The following function handles each data chunk
                                                 function push() {
@@ -77,13 +108,26 @@ class NarrativeGPT{
                                                         // If there is no more data to read
                                                         if (done) {
                                                             console.log("done", done);
+                                                            t.addMessage("system", t.currentmesage);
                                                             completefunc(t);
                                                             controller.close();
                                                             return;
                                                         }
                                                         try{
                                                             controller.enqueue(value);
-                                                            streamfunc(value, t);                                          
+                                                            let string = new TextDecoder('utf-8').decode(value);
+                                                            let chunks = t.parseChunksString(string);
+                                                            let contents = t.extractChunksContent(chunks);
+                                                            if(contents){
+                                                                contents.forEach(element => {
+                                                                    if(element != undefined){
+                                                                        console.log(element);
+                                                                        t.currentmesage += element;
+                                                                        streamfunc(element, t);    
+                                                                    }
+                                    
+                                                                });
+                                                            }
                                                             push();
                                                         }catch(err){
 
@@ -94,7 +138,7 @@ class NarrativeGPT{
                                                 push();
                                             },
                                             });
-                                            return c.readablestream;
+                                            return t.readablestream;
                                         });
           
             if (!response.ok) {
