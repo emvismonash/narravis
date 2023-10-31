@@ -137,6 +137,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         console.log("Complete"); 
         console.log(t.streamparser.links);
         console.log(t.streamparser.nodes);
+        t.enableChat();
       }
 }
 
