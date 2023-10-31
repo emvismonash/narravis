@@ -30,7 +30,8 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
                 name: "Load chat",
                 title: "Load a chat from a JSON file.",
                 func: ()=>{
-                  console.log("Load chat")
+                  console.log("Load chat");
+                  this.loadChat();
                 }
               }         
             ]
@@ -190,7 +191,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
       }
     });
 
-    this.container.chatcontaienr = chatContainer;
+    this.container.chatcontainer = chatContainer;
     this.container.messagepanel = messagePanel;
     this.container.chatpanel = chatPanel;
     this.container.uitext = textAreaChatInput;
@@ -201,6 +202,39 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     this.container.uibuttongenerate.disabled = true;
     this.container.uibuttonstopgenerate.style.display = "none";
   }
+
+  loadChat(){
+    this.loadJSONFile((n, data)=>{
+      console.log(data);
+    })
+  }
+
+  loadJSONFile(callback) {
+    var fileInput = document.createElement('fileInput');
+    this.container.chatcontainer.append(fileInput);
+    // Add an event listener to the file input to handle the selected file
+    fileInput.addEventListener('change', function() {
+      var selectedFile = fileInput.files[0];
+      if (selectedFile) {
+        var reader = new FileReader();
+  
+        reader.onload = function(event) {
+          try {
+            var jsonData = JSON.parse(event.target.result);
+            callback(null, jsonData);
+          } catch (error) {
+            callback(error, null);
+          }
+        };
+
+        reader.readAsText(selectedFile);
+        fileInput.remove();
+      }
+    });
+
+    fileInput.click();
+  }
+  
 
   newChat(){
     this.container.messagepanel.innerHTML = "";
