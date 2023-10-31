@@ -4,7 +4,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         this.createWindow();
         this.window;        
         this.loadingurl = "plugins/narrativeabduction/assets/loading.gif";
-
+        this.streamparser;
     }
 
     formatPrompt(text){
@@ -105,11 +105,13 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
       }
 
       async chatGPTStream(text){
+        this.streamparser = new NarrativeGPTJSONStreamParser();
         await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
       }
 
       updateStreamResponse(content, t){
           t.container.textareajson.value += content;
+          t.streamparser.evaluate(content);
       }
     
       enableChat(){
@@ -132,31 +134,89 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
       }
 
       completeStreamResponse(t){
-        
+        console.log("Complete"); 
+        console.log(t.streamparser.links);
+        console.log(t.streamparser.nodes);
       }
-      // async chatGPT(text){
-      //   console.log("Sending ..." + text);
-      //   this.chat(text)
-      //   .then(result => {
-      //     console.log(result);
-      //     if(result.status == "success"){
-      //       let jsonText = result.message;
-      //       this.textareajson.value = jsonText;            
-      //     }else{
-      //       alert(result);
-      //     }
-      //     this.enableChat();
-      //   })
-      //   .catch(error => {
-      //     console.error('Error:', error);
-      //     alert(error);
-      //     this.enableChat();
-      //   });
-      // }
+}
 
-      // enableChat(){
-      //   this.textareamessage.disabled = false;
-      //   this.uibuttongenerate.disabled = false;
-      //   this.uibuttongenerate.innerHTML = "Generate";
-      // }
+
+class NarrativeGPTJSONStreamParser {
+    constructor(){
+      this.nodes = [];
+      this.links = [];
+      this.currenttext = "";
+      this.currentprocces = "";
+    }
+
+    static match(text, pattern){
+      return text.match(pattern);
+    }
+
+    static findJSONObjectsExcludeArrays(inputString) {
+      const jsonObjectRegex = /{[^[\]{}]+}/g;
+      const jsonObjects = inputString.match(jsonObjectRegex);
+    
+      if (jsonObjects) {
+        return jsonObjects.map((jsonStr) => JSON.parse(jsonStr));
+      } else {
+        return [];
+      }
+    }
+
+    elementExists(arr, elminput){
+      let res = false;
+      arr.forEach(elm => {
+        if(elm.id == elminput.id) res = true;      
+      });
+      return res;
+    }
+
+
+    addItem(arr, isnode){
+      let jsonPattern = /\{[^{}]*\}/g;
+      let items = NarrativeGPTJSONStreamParser.findJSONObjectsExcludeArrays(this.currenttext, jsonPattern);
+      items.forEach(item => {
+        try {
+          if(!this.elementExists(arr, item)) {
+            arr.push(item);
+            let event = new CustomEvent(NASettings.Dictionary.EVENTS.JSON2ITEM, {
+              detail: {
+                itemobject: item,
+                isnode: isnode,
+                nodes: this.nodes,
+                links: this.links
+              },
+            });
+            document.dispatchEvent(event);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    }
+
+    evaluate(textchunk){
+      let nodePattern =  /"nodes": \[/;
+      let linkPattern =  /"links": \[/;
+
+      this.currenttext += textchunk;
+
+      let nodeFound = nodePattern.test(this.currenttext);
+      let linkFound = linkPattern.test(this.currenttext);
+
+      if (nodeFound && !linkFound) {
+        if(this.currentprocces != "node") {
+          this.currentprocces = "node";
+        }
+        this.addItem(this.nodes, true);
+      } 
+      if(linkFound){
+        if(this.currentprocces != "link") {
+          this.currentprocces = "link";
+          this.currenttext = '"links":' + textchunk;
+        }
+        this.addItem(this.links, false);
+      }
+    }
 }
