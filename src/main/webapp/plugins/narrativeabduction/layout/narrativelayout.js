@@ -8,8 +8,7 @@ class NarrativeLayout {
         this.narrativecellslayout = [];
         this.verticalspace = 20;
         this.horizontalspacebetweennarrativeandlayout = 400;
-        this.narrativesbounds = [];
-        
+        this.narrativesbounds = [];        
     }
 
     updateNarrativeCellsLayout(){
@@ -184,12 +183,15 @@ class NarrativeLayout {
     }
 
     static getExcludedCells(graph, selectedNodes){
+        //first select all cells in the editor and get all selected celss
         graph.selectAll();
         let excludeNodes = [];
         let selectedCells = graph.getSelectionCells();
 
+        //for each selected cell, excluded cell is
+        //not part of the selectedNodes array
         selectedCells.forEach((cell) => {
-          if (!selectedNodes.includes(cell) && cell.children != null) {
+          if (!selectedNodes.includes(cell)) {
             excludeNodes.push({
               excell: cell,
               x: cell.geometry.x,
@@ -251,6 +253,9 @@ class NarrativeLayout {
         }
     }
 
+    /***
+     * Apply mxHierarchicalLayout layout to a narrative group
+     */
     applyLayout(narrative, callback, change, post){
         //do not apply layout if narrative is hidden
         if(!narrative.isvisible) return;

@@ -25,8 +25,8 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         this.minHeight = 200;
         this.minWidth = 900;
         this.verticalLaneSpace = 10;        
-        this.lanelabelstyle = "text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=30;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;"; 
-        this.laneboundstlye = "connectable=0;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=1;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#D4D4D4;fillColor=default;strokeWidth=3;perimeterSpacing=3;dashed=1;fillStyle=zigzag-line;comic=0;container=0;collapsible=0;dropTarget=0;gradientColor=none;;";
+        this.lanelabelstyle = "text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;"; 
+        this.laneboundstlye = "connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#dae8fc;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=1;";
         this.initiate();
     }
 
@@ -49,9 +49,9 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         this.createLaneCells();
         this.createAssignButtons();
 
-        // this.createLabelCell("Top lane", this.toplane);
-        // this.createLabelCell("Middle lane", this.midlane);
-        // this.createLabelCell("Bottom lane", this.botlane);
+         this.createLabelCell("Top narratives", this.toplane);
+         this.createLabelCell("Common evidence", this.midlane);
+         this.createLabelCell("Bottom narratives", this.botlane);
 
         this.initListenerNewNarrative();
         this.initOverrideUpDowButton();
@@ -380,7 +380,7 @@ class NarrativeLayoutSwimlanes extends NarrativeLayout{
         let graph = this.graph;
         let yPos = this.getYPos(order);
         let height = this.getLaneHeight(lane);
-        let maxWidth = this.getLaneWidth(lane);
+        let maxWidth = 10;
         //get the max width and height
         if(lane.boundcell){           
             graph.getModel().beginUpdate();
