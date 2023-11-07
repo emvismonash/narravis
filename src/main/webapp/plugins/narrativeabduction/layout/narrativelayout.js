@@ -15,7 +15,6 @@ class NarrativeLayout {
         this.narrativecellslayout = [];
         let narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;
         let sum = 0;
-        console.log("narrativeListViews", narrativeListViews);
         for(let i = 0; i < narrativeListViews.length; i++){
             let bound, posY, height;
             let na = narrativeListViews[i].narrative;
@@ -28,8 +27,6 @@ class NarrativeLayout {
                 height = bound.height;
             }
 
-            console.log("bound", bound);
-            console.log("height", height);
             if(i == 0 ){         
                 posY = 0;               
             }else{                    
@@ -73,8 +70,6 @@ class NarrativeLayout {
                     geom.x = geom.x;
                     let naCellPos = t.getNarrativeCellLayout(narrative.rootCell);
                     if(naCellPos){
-                        console.log("geom Y", geom.y);     
-                        console.log("Layout pos", naCellPos);    
                         let dy = naCellPos.positionY;
                         geom.y = dy;
                         model.setGeometry(cell, geom);
@@ -200,9 +195,6 @@ class NarrativeLayout {
           }
         });
         graph.clearSelection();
-
-        console.log("Excluded nodes", excludeNodes);
-
         return excludeNodes;
     }
 

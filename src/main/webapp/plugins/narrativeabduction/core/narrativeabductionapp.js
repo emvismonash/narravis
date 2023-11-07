@@ -7,20 +7,18 @@ class NarrativeAbductionApp {
       this.panelwindow = {};
       this.naentries = NAEntries;
       this.narrativegptauthor = new NarrativeGPTAuthoring(this);
-
       this.excludefrompicker = [
         NASettings.Dictionary.CELLS.NARRATIVELIST,
         NASettings.Dictionary.CELLS.NARRATIVE,
       ];
       this.documentitemminwidth = NASettings.DocumentCellSetting.minwidth;
       this.documentitemminheight = NASettings.DocumentCellSetting.minheight;
-
       this.createNAPanel();
       this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives, this);  
       this.createPalette();
       this.initListenerResponsiveSizeHandler();
       this.initOverrideShapePickerHandler();
-      this.initOverrrideNewCellHandler();
+      this.initListenerNewCellHandler();
       this.initOverrideConnectionConstraints();
       this.initListenerRemoveNarrativeCellHandler();
       this.initListenerEdgeDoubleClickEditHandler();
@@ -33,7 +31,13 @@ class NarrativeAbductionApp {
         t.loadExistingNarratives();
       });
       
-
+      (async () => {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        if(!this.narrativelayout){
+          this.narrativelayout = new NarrativeLayoutSwimlane(this);
+          this.narrativelayoutwindow = new NarrativeLayoutSwimlaneWindow(this, this.narrativelayout);
+        }
+      })();
     }
   
 
@@ -43,7 +47,6 @@ class NarrativeAbductionApp {
      */
     addNarrativeCellToList(cell) {
       if (this.narrativelistcell) {
-        //console.log("this.narrativelistcell", this.narrativelistcell);
         const graph = this.editorui.editor.graph;
         graph.getModel().beginUpdate();
         try {
@@ -57,6 +60,27 @@ class NarrativeAbductionApp {
       }
     };
   
+      
+    /** Assign cell to a narrative */
+    assignNodes(nalistview, targets){
+      let validated = this.getValidatedAssignedCells(targets);
+      let validTargets = validated.validcells;
+      let invalidTargets = validated.invalidcells;
+  
+      if(validTargets.length > 0)  {
+        if(nalistview) {
+          nalistview.assignNodes(validTargets);
+        } 
+      }
+      if(invalidTargets.length > 0){
+        let msg = "Some of selected cells are ignored because they are part of existing narrative";
+        console.warn(msg);
+      }
+  
+    }
+  
+
+
     /**
      * Create link. This is still not working well as it creates two empty nodes
      * @param {*} itemname
@@ -217,10 +241,8 @@ class NarrativeAbductionApp {
             try {
               const jsonData = JSON.parse(event.target.result);
               // Do something with the parsed JSON data
-              console.log('Parsed JSON data:', jsonData);
               t.createDocumentItemsFromJSON(jsonData);
             } catch (error) {
-              console.error('Error parsing JSON:', error);
             }
           };
           fileReader.readAsText(selectedFile);
@@ -243,7 +265,6 @@ class NarrativeAbductionApp {
           t.createDocumentItemFromJSONObject(jsonObject, cells);          
           graph.addCells(cells, parent);
         }catch(e){
-          console.log(e);
         }finally{
           graph.getModel().endUpdate();
           this.updateLayoutOfNonNarrativeCells();
@@ -272,7 +293,6 @@ class NarrativeAbductionApp {
         t.createDocumentLinkFromJSONObject(jsonObject, nodes, graph);
         graph.addCells(cells, parent);
       }catch(e){
-        console.log(e);
       }finally{
         graph.getModel().endUpdate();
         this.updateLayoutOfNonNarrativeCells();
@@ -280,7 +300,6 @@ class NarrativeAbductionApp {
   }
 
     createDocumentItemFromJSONObject(node, cells){
-      console.log(node);
       let documentitem = this.nodeToDocumentItem(node);
       let cell = documentitem.cell;
       cell.setAttribute("label", this.getContentFromNode(node));
@@ -326,7 +345,6 @@ class NarrativeAbductionApp {
             t.createDocumentLinkFromJSONObject(link, nodes, graph);
           });
         }catch(e){
-          console.log(e);
         }finally{
           graph.getModel().endUpdate();
           NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
@@ -396,9 +414,7 @@ class NarrativeAbductionApp {
                 alert("Select an edge");
                 return;
               }
-              console.log("Selection", selectedCells);
               selectedCells.forEach(function (selected) {
-                console.log("Is Edege", selected.isEdge());
                 if (selected.isEdge()) {
                   let graph = t.editorui.editor.graph;
                   graph.getModel().beginUpdate();
@@ -449,7 +465,6 @@ class NarrativeAbductionApp {
             )
           );
         }
-        console.log("Entires", entries);
       }
       //else{
       //     res = this.createLinkItem(this.naentries[i].name, this.naentries[i].style);
@@ -466,7 +481,6 @@ class NarrativeAbductionApp {
       let doc = mxUtils.createXmlDocument();
       let obj = doc.createElement(entry.name);
   
-      console.log("entry", entry);
       graph.getModel().beginUpdate();
       try {
         let cell = graph.insertVertex(
@@ -480,7 +494,6 @@ class NarrativeAbductionApp {
         );
         cell.setStyle(entry.style);
         this.narrativelistcell = cell;
-        console.log("cell", cell);
       } finally {
         graph.getModel().endUpdate();
       }
@@ -518,7 +531,6 @@ class NarrativeAbductionApp {
       if (nacells.length == 0) {
         cells.forEach((cell) => {
           if (this.isCellNarrativeList(cell)) {
-            console.log("Narrative list", cell);
             let children = cell.children;
             if (children) {
               children.forEach((child) => {
@@ -667,15 +679,45 @@ class NarrativeAbductionApp {
         });
         return na;
       }
+
+      getValidatedAssignedCells(targets){
+        let validTargets = [];
+        let invalidTargets = [];
+        targets.forEach(cell => {
+           if(this.isAssignedCellValid(cell)){
+            validTargets.push(cell);
+           } else{
+            invalidTargets.push(cell);
+           }
+        });
+    
+        return {validcells: validTargets, invalidcells: invalidTargets}
+      }
   
+  
+        
+    getDocumentItemTitle(cell){
+      let value = this.getDocumentItemCellValue(cell);
+      if(value){
+        const regex = /<b>(.*?)<\/b>/g;
+        let content = NarrativeAbductionApp.extractTitleContentFromText(value, regex);
+        if(content){
+          return content.title
+        }else{
+          return value;
+        }
+      }else{
+        return cell.getAttribute("natype");
+      }
+    }
+  
+
     /**
      * Hide Mode Shapes button on the Side bar
      */
     hideMoreShapesButton() {
       let buttons = document.getElementsByClassName("geSidebarFooter");
-      console.log("Buttons", buttons);
       Array.from(buttons).forEach(function (elm) {
-        console.log("Element", elm.innerHTML);
         if (elm.innerHTML.includes("More Shapes")) {
           elm.style.display = "none";
         }
@@ -701,15 +743,106 @@ class NarrativeAbductionApp {
       });
     };
 
-    updateResponsiveCellSize(cell){
-      const t = this;
-      let graph = this.editorui.editor.graph;
 
-      graph.autoSizeCell(cell);
-      let newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
-      cell.geometry.width = newWidth;
-    }
   
+    /**
+     * Trigger custom functions everytime a new cell is added
+     * 1. Assign the cell to a new narrative if it is not connected to any cell
+     * 2. Assign the cell to an existing narrative the cell is connected to another cell
+     */
+    initListenerNewCellHandler() {
+      let graph = this.editorui.editor.graph;
+  
+      let t = this;
+      graph.addListener(mxEvent.CELLS_ADDED, function (sender, evt) {
+        let cells = evt.getProperty("cells");
+        let newCell = cells[0];
+        NAUtil.Log("newCell", newCell);
+
+        //if the target cell is narrative item and is not part of narrative, create a new narrative. However, to remove conflict with the condition after this, we set a timer of 1 seconds. 
+        if(newCell.isVertex() && newCell.source == null && newCell.target == null){
+          (async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            if(!t.isCellPartOfExistingNarrative(newCell) && NarrativeAbductionApp.isCellDocumentItem(newCell)){
+              //check the position, if it is within a narrative lane, assign to that narrative, otherwise create a new narrative group. 
+              //then move the group to the lane 
+              //if evidence, move to evidence group
+              if(NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
+  
+              }else{
+                let res = t.newNarrative();
+                t.assignNodes(res.narrativeview, [newCell]);
+                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+                  cell: newCell, 
+                  narrative: res.narrative
+                });
+              }                 
+            }
+          })();
+        }  
+
+        //if edge, show Contextual Edge Option Menu
+        //if is edge
+        //#region 
+        if (newCell.isEdge()) {
+          //edge type based on target node
+          let edge = newCell;
+          let targetType = edge.target.value.getAttribute(
+            NASettings.Dictionary.ATTRIBUTES.NATYPE
+          );
+          switch (targetType) {
+            case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
+              t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
+              break;
+            default:
+              t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
+              break;
+          }
+
+          let source = edge.source;
+          let target = edge.target;
+          let sourceNarrative = t.getDocumentItemNarrative(source);
+
+          //if the target cell is narrative item and source cell is part of a narrative, make the cell part of the same narrative
+          //if the target cell in evidence, assign to evidence group
+          //#region 
+          if(sourceNarrative){
+              if(NarrativeAbductionApp.isCellDocumentItemType(target, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE))
+              {
+
+              }else{
+                let naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);  
+                if(naListVIew){
+                  t.assignNodes(naListVIew, [target]);
+                }
+              }
+          }
+    
+          NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+            cell: newCell, 
+            narrative: sourceNarrative
+          });
+    
+          if(target && target.isVertex()){
+              graph.refresh();
+              requestAnimationFrame(() => {
+                graph.startEditingAtCell(target);
+              });
+            }       
+        } 
+        //#endregion
+
+        //update responsive size
+        if(newCell && newCell.isVertex()){
+          t.updateResponsiveCellSize(newCell);
+        }
+      });
+    };
+  
+  
+  
+    //#endregion
+
   
     /**
      * Prevent editing with double click
@@ -742,11 +875,6 @@ class NarrativeAbductionApp {
           let target = graph.getModel().getTerminal(edge, false);
           let event = evt.getProperty("event");
   
-          console.log("Connected");
-          console.log("Source", source);
-          console.log("Target", target);
-          console.log("evt", evt);
-  
           //t.showContextualEdgeOptionMenu(edge, event.x, event.y); //no contextual menu by default
           //by default the link will be causes link
           t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
@@ -763,11 +891,9 @@ class NarrativeAbductionApp {
   
       graph.addListener(mxEvent.CELLS_REMOVED, function (sender, evt) {
         let cells = evt.getProperty("cells");
-        console.log("Cell removed", cells[0]);
         cells.forEach((cell) => {
           //if the cell is narrative, remove the view as well
           if (Narrative.isCellNarrative(cell)) {
-            console.log("Narrative removed", cell);
             t.narrativeaviewscontainer.removeListView(cell);
           }
         });
@@ -794,8 +920,6 @@ class NarrativeAbductionApp {
             
             // Now, you can access and manipulate the DOM element of the cell as needed
             let rect = cellElement.getBoundingClientRect();
-            console.log("cellElement", cellElement);
-            console.log("rect", rect);
   
             //update the size
             t.updateResponsiveCellSize(cell);
@@ -806,6 +930,262 @@ class NarrativeAbductionApp {
       })
     }
   
+      /**
+     * This is the listener to the new HTML document item, lots of duplicates with insertListenerDocumentItemDoubleClick
+     * TODO: remove duplicates
+     * @param {*} entry
+     */
+      insertListenerHTMLDocumentItemDoubleClick(entry) {
+        let currgraph = this.editorui.editor.graph;
+        let t = this;
+        // Add on click listener to show the Narrative Item window
+        NAUtil.AddNodeDoubleClickListener(
+          currgraph,
+          entry.name,
+          function (cell, evt) {
+            if (!cell || !cell.children) return;
+    
+            let contentcell = cell.children[0].value;
+    
+            // get x and y position of triggered event
+            let x = evt.getProperty("event").x;
+            let y = evt.getProperty("event").y;
+    
+            // create form
+            let formContainer = document.createElement("div");
+            formContainer.style.width = "150px";
+            formContainer.style.padding = "20px";
+    
+            const form = document.createElement("form");
+            form.id = "narrativeitemform";
+    
+            const nameLabel = document.createElement("label");
+            nameLabel.textContent = "Name:";
+            const nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.id = "name";
+            nameInput.name = "name";
+            nameInput.required = true;
+            nameInput.value = cell.getAttribute(
+              NASettings.Dictionary.ATTRIBUTES.DOCTITLE
+            );
+    
+            const br = document.createElement("br");
+    
+            const descriptionLabel = document.createElement("label");
+            descriptionLabel.textContent = "Description:";
+            const descriptionTextarea = document.createElement("textarea");
+            descriptionTextarea.id = "description";
+            descriptionTextarea.name = "description";
+            descriptionTextarea.rows = 4;
+            descriptionTextarea.cols = 30;
+            descriptionTextarea.value = cell.getAttribute(
+              NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION
+            );
+    
+            const applyButton = document.createElement("button");
+            applyButton.id = "applyButton";
+            applyButton.type = "button";
+            applyButton.textContent = "Apply";
+            applyButton.onclick = applyForm(currgraph, cell, t);
+    
+            // Add elements to the form
+            form.appendChild(nameLabel);
+            form.appendChild(nameInput);
+            form.appendChild(br);
+            form.appendChild(descriptionLabel);
+            form.appendChild(descriptionTextarea);
+            form.appendChild(br.cloneNode(false)); // Create a new line break for spacing
+            form.appendChild(applyButton);
+    
+            // Add the form to the container
+            formContainer.appendChild(form);
+            let highlight = new mxCellHighlight(currgraph, "#000", 2);
+            formContainer.onmouseenter = function () {
+              highlight.highlight(currgraph.view.getState(cell));
+            };
+            formContainer.onmouseleave = function () {
+              highlight.hide();
+            };
+    
+            let wnd = NAUIHelper.CreateWindow(
+              NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
+              NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
+              formContainer,
+              x,
+              y,
+              250,
+              200
+            );
+    
+            wnd.setLocation(x, y);
+            wnd.setClosable(true);
+            wnd.setMinimizable(false);
+            wnd.setVisible(true);
+    
+            form.onsubmit = function (event) {
+              event.preventDefault();
+              return false;
+            };
+    
+            function applyForm(currgraph, c, t, n, d) {
+              return function () {
+                const nameInput = document.getElementById("name");
+                const descriptionTextarea = document.getElementById("description");
+    
+                currgraph.getModel().beginUpdate();
+                try {
+                  let html = t.getHTMLDocumentItemContent(
+                    nameInput.value,
+                    descriptionTextarea.value
+                  );
+                  let contentcell = c.children[0];
+    
+                  currgraph.model.setValue(contentcell, html);
+                  cell.setAttribute(
+                    NASettings.Dictionary.ATTRIBUTES.DOCTITLE,
+                    nameInput.value
+                  );
+                  cell.setAttribute(
+                    NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION,
+                    descriptionTextarea.value
+                  );
+                } finally {
+                  currgraph.getModel().endUpdate();
+                }
+                wnd.destroy();
+                highlight.hide();
+              };
+            }
+          }
+        );
+      };
+    
+    
+
+      /**
+     * This is listener for the old document item with dedicated nodes for the title and description. Lots of duplicated codes with insertListenerHTMLDocumentItemDoubleClick.
+     * TODO: remove duplicates
+     * @param {*} entry
+     */
+      insertListenerDocumentItemDoubleClick(entry) {
+        let currgraph = this.editorui.editor.graph;
+        // Add on click listener to show the Narrative Item window
+        NAUtil.AddNodeDoubleClickListener(
+          currgraph,
+          entry.name,
+          function (cell, evt) {
+            if (!cell || !cell.children) return;
+    
+            let cellName = cell.children[0].value;
+            let cellDesc = cell.children[1].value;
+    
+            let x = evt.getProperty("event").x;
+            let y = evt.getProperty("event").y;
+    
+            let formContainer = document.createElement("div");
+            formContainer.style.width = "150px";
+            formContainer.style.padding = "20px";
+    
+            const form = document.createElement("form");
+            form.id = "narrativeitemform";
+    
+            const nameLabel = document.createElement("label");
+            nameLabel.textContent = "Name:";
+            const nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.id = "name";
+            nameInput.name = "name";
+            nameInput.required = true;
+            nameInput.value = cellName;
+    
+            const br = document.createElement("br");
+    
+            const descriptionLabel = document.createElement("label");
+            descriptionLabel.textContent = "Description:";
+            const descriptionTextarea = document.createElement("textarea");
+            descriptionTextarea.id = "description";
+            descriptionTextarea.name = "description";
+            descriptionTextarea.rows = 4;
+            descriptionTextarea.cols = 30;
+            descriptionTextarea.value = cellDesc;
+    
+            const applyButton = document.createElement("button");
+            applyButton.id = "applyButton";
+            applyButton.type = "button";
+            applyButton.textContent = "Apply";
+            applyButton.onclick = applyForm(currgraph, cell);
+    
+            // Add elements to the form
+            form.appendChild(nameLabel);
+            form.appendChild(nameInput);
+            form.appendChild(br);
+            form.appendChild(descriptionLabel);
+            form.appendChild(descriptionTextarea);
+            form.appendChild(br.cloneNode(false)); // Create a new line break for spacing
+            form.appendChild(applyButton);
+    
+            // Add the form to the container
+            formContainer.appendChild(form);
+            let highlight = new mxCellHighlight(currgraph, "#000", 2);
+            formContainer.onmouseenter = function () {
+              highlight.highlight(currgraph.view.getState(cell));
+            };
+            formContainer.onmouseleave = function () {
+              highlight.hide();
+            };
+    
+            let wnd = NAUIHelper.CreateWindow(
+              NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
+              NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
+              formContainer,
+              x,
+              y,
+              250,
+              200
+            );
+    
+            wnd.setLocation(x, y);
+            wnd.setClosable(true);
+            wnd.setMinimizable(false);
+            wnd.setVisible(true);
+    
+            // const nameInput = document.getElementById("name");
+            // nameInput.value = cellName;
+            // const descriptionTextarea = document.getElementById("description");
+            // descriptionTextarea.value = cellDesc;
+            // const applyButton = document.getElementById("applyButton");
+            // applyButton.onclick = applyForm(currgraph, cell);
+            // const form = document.getElementById("narrativeitemform");
+            form.onsubmit = function (event) {
+              event.preventDefault();
+              return false;
+            };
+    
+            function applyForm(currgraph, c, n, d) {
+              return function () {
+                const nameInput = document.getElementById("name");
+                const descriptionTextarea = document.getElementById("description");
+    
+                currgraph.getModel().beginUpdate();
+                try {
+                  currgraph.model.setValue(c.children[0], nameInput.value);
+                  currgraph.model.setValue(
+                    c.children[1],
+                    descriptionTextarea.value
+                  );
+                } finally {
+                  currgraph.getModel().endUpdate();
+                }
+                wnd.destroy();
+                highlight.hide();
+              };
+            }
+          }
+        );
+      };
+    
+
     /**
      * Shape-picker override to show NA cells
      */
@@ -820,7 +1200,6 @@ class NarrativeAbductionApp {
         //somehow the style fails, we need to override it. This might not be the case anymore, need to revisit this again later
         let newcells = [];
         t.naentries.forEach(function (currentValue, index, arr) {
-          console.log("c", currentValue);
           //only add node items
           if (t.isValidShapePickerItem(currentValue)) {
             let cell = NAUtil.GetCellByNodeName(
@@ -832,7 +1211,6 @@ class NarrativeAbductionApp {
             newcells.push(cell);
           }
         });
-        console.log("Shape-picker new cells", newcells);
         return newcells;
       };
     };
@@ -860,26 +1238,8 @@ class NarrativeAbductionApp {
   
   
 
-  
-    parseDocumentContent(content){
-        return  NarrativeAbductionApp.getTextBetweenAsterisks(content);
-    }
-  
-    getDocumentItemTitle(cell){
-      let value = this.getDocumentItemCellValue(cell);
-      if(value){
-        const regex = /<b>(.*?)<\/b>/g;
-        let content = NarrativeAbductionApp.extractTitleContentFromText(value, regex);
-        if(content){
-          return content.title
-        }else{
-          return value;
-        }
-      }else{
-        return cell.getAttribute("natype");
-      }
-    }
-  
+
+
     static extractTitleContentFromText(text, regex) {
   
     // Use the `exec` method to find the first match
@@ -907,6 +1267,10 @@ class NarrativeAbductionApp {
     static isCellDocumentItem(cell){
       return (cell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE));
     }
+
+    static isCellDocumentItemType(cell, type){
+      return(cell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE) == type)
+    }
   
     isCellNarrativeCell(cell){
       if(cell.value && cell.value.nodeName == NASettings.Dictionary.CELLS.NARRATIVE){
@@ -930,128 +1294,10 @@ class NarrativeAbductionApp {
   
     /** Is cell to be assigned valid */
     isAssignedCellValid(cell){
-      console.log("this.isCellPartOfExistingNarrative(cell);", this.isCellPartOfExistingNarrative(cell));
       return !this.isCellPartOfExistingNarrative(cell);
     }
   
-    getValidatedAssignedCells(targets){
-      let validTargets = [];
-      let invalidTargets = [];
-      targets.forEach(cell => {
-         if(this.isAssignedCellValid(cell)){
-          validTargets.push(cell);
-         } else{
-          invalidTargets.push(cell);
-         }
-      });
-  
-      return {validcells: validTargets, invalidcells: invalidTargets}
-    }
-  
-    /** Assign cell to a narrative */
-    assignNodes(nalistview, targets){
-      let validated = this.getValidatedAssignedCells(targets);
-      let validTargets = validated.validcells;
-      let invalidTargets = validated.invalidcells;
-  
-      console.log("validTargets", validTargets);
-      console.log("invalidTargets", invalidTargets);
-      if(validTargets.length > 0)  {
-        if(nalistview) {
-          nalistview.assignNodes(validTargets);
-        } 
-      }
-      if(invalidTargets.length > 0){
-        let msg = "Some of selected cells are ignored because they are part of existing narrative";
-        console.warn(msg);
-      }
-  
-    }
-  
-    /**
-     * Trigger custom functions everytime a new cell is added
-     */
-    initOverrrideNewCellHandler() {
-      let graph = this.editorui.editor.graph;
-  
-      let t = this;
-      graph.addListener(mxEvent.CELLS_ADDED, function (sender, evt) {
-        //if edge, show Contextual Edge Option Menu
-        let cells = evt.getProperty("cells");
-        console.log("new cells", cells);
-        let newCell = cells[0];
-        //if is edge
-        if (newCell && newCell.isEdge()) {
-          //edge type based on target node
-          let edge = newCell;
-          let targetType = edge.target.value.getAttribute(
-            NASettings.Dictionary.ATTRIBUTES.NATYPE
-          );
-          switch (targetType) {
-            case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
-              t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
-              break;
-            default:
-              t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
-              break;
-          }
-          //if the source cell is narrative item and source cell is part of a narrative, make the cell part of the same narrative
-          let source = edge.source;
-          let target = edge.target;
-          console.log(source, "source");
-          let sourceNarrative = t.getDocumentItemNarrative(source);
-          console.log("sourceNarrative", sourceNarrative);
-          console.log("sourceNarrative", t.narratives);
-  
-  
-          if(sourceNarrative){
-              let naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);
-              console.log("naListVIew", naListVIew);
-  
-              if(naListVIew){
-                t.assignNodes(naListVIew, [target]);
-              }
-          }
-  
-          //trigger new document item
-          let event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-            detail: {
-              cell: newCell, 
-              narrative: sourceNarrative
-            },
-          });
-          document.dispatchEvent(event);
-  
-          if(target && target.isVertex()){
-            graph.refresh();
-            requestAnimationFrame(() => {
-              graph.startEditingAtCell(target);
-          });
-          }
-          
-  
-          // t.showContextualEdgeOptionMenu(cells[0] , sender.lastMouseX, sender.lastMouseY);
-        }
-  
-        //if the cell is Narrative, trigger create a new narrative action
-        if (
-          newCell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE) ==
-          NASettings.Dictionary.CELLS.NARRATIVE
-        ) {
-          graph.removeCells([newCell]);
-          t.newNarrative();
-        }
-
-        if(newCell && newCell.isVertex()){
-          t.updateResponsiveCellSize(newCell);
-        }
-       
-      });
-    };
-  
-  
-  
-    //#endregion
+        
   
     isCellNarrativeList(cell) {
       return (
@@ -1070,265 +1316,8 @@ class NarrativeAbductionApp {
       return entry.type == "node" && !this.excludefrompicker.includes(entry.name);
     };
   
-    /**
-     * This is the listener to the new HTML document item, lots of duplicates with insertListenerDocumentItemDoubleClick
-     * TODO: remove duplicates
-     * @param {*} entry
-     */
-    insertListenerHTMLDocumentItemDoubleClick(entry) {
-      let currgraph = this.editorui.editor.graph;
-      let t = this;
-      // Add on click listener to show the Narrative Item window
-      NAUtil.AddNodeDoubleClickListener(
-        currgraph,
-        entry.name,
-        function (cell, evt) {
-          if (!cell || !cell.children) return;
-  
-          let contentcell = cell.children[0].value;
-  
-          // get x and y position of triggered event
-          let x = evt.getProperty("event").x;
-          let y = evt.getProperty("event").y;
-  
-          // create form
-          let formContainer = document.createElement("div");
-          formContainer.style.width = "150px";
-          formContainer.style.padding = "20px";
-  
-          const form = document.createElement("form");
-          form.id = "narrativeitemform";
-  
-          const nameLabel = document.createElement("label");
-          nameLabel.textContent = "Name:";
-          const nameInput = document.createElement("input");
-          nameInput.type = "text";
-          nameInput.id = "name";
-          nameInput.name = "name";
-          nameInput.required = true;
-          nameInput.value = cell.getAttribute(
-            NASettings.Dictionary.ATTRIBUTES.DOCTITLE
-          );
-  
-          const br = document.createElement("br");
-  
-          const descriptionLabel = document.createElement("label");
-          descriptionLabel.textContent = "Description:";
-          const descriptionTextarea = document.createElement("textarea");
-          descriptionTextarea.id = "description";
-          descriptionTextarea.name = "description";
-          descriptionTextarea.rows = 4;
-          descriptionTextarea.cols = 30;
-          descriptionTextarea.value = cell.getAttribute(
-            NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION
-          );
-  
-          const applyButton = document.createElement("button");
-          applyButton.id = "applyButton";
-          applyButton.type = "button";
-          applyButton.textContent = "Apply";
-          applyButton.onclick = applyForm(currgraph, cell, t);
-  
-          // Add elements to the form
-          form.appendChild(nameLabel);
-          form.appendChild(nameInput);
-          form.appendChild(br);
-          form.appendChild(descriptionLabel);
-          form.appendChild(descriptionTextarea);
-          form.appendChild(br.cloneNode(false)); // Create a new line break for spacing
-          form.appendChild(applyButton);
-  
-          // Add the form to the container
-          formContainer.appendChild(form);
-          let highlight = new mxCellHighlight(currgraph, "#000", 2);
-          formContainer.onmouseenter = function () {
-            highlight.highlight(currgraph.view.getState(cell));
-          };
-          formContainer.onmouseleave = function () {
-            highlight.hide();
-          };
-  
-          let wnd = NAUIHelper.CreateWindow(
-            NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
-            NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
-            formContainer,
-            x,
-            y,
-            250,
-            200
-          );
-  
-          wnd.setLocation(x, y);
-          wnd.setClosable(true);
-          wnd.setMinimizable(false);
-          wnd.setVisible(true);
-  
-          form.onsubmit = function (event) {
-            event.preventDefault();
-            return false;
-          };
-  
-          function applyForm(currgraph, c, t, n, d) {
-            return function () {
-              const nameInput = document.getElementById("name");
-              const descriptionTextarea = document.getElementById("description");
-  
-              currgraph.getModel().beginUpdate();
-              try {
-                let html = t.getHTMLDocumentItemContent(
-                  nameInput.value,
-                  descriptionTextarea.value
-                );
-                let contentcell = c.children[0];
-  
-                currgraph.model.setValue(contentcell, html);
-                cell.setAttribute(
-                  NASettings.Dictionary.ATTRIBUTES.DOCTITLE,
-                  nameInput.value
-                );
-                cell.setAttribute(
-                  NASettings.Dictionary.ATTRIBUTES.DOCDESCRIPTION,
-                  descriptionTextarea.value
-                );
-              } finally {
-                currgraph.getModel().endUpdate();
-              }
-              wnd.destroy();
-              highlight.hide();
-            };
-          }
-        }
-      );
-    };
-  
-    /**
-     * This is listener for the old document item with dedicated nodes for the title and description. Lots of duplicated codes with insertListenerHTMLDocumentItemDoubleClick.
-     * TODO: remove duplicates
-     * @param {*} entry
-     */
-    insertListenerDocumentItemDoubleClick(entry) {
-      let currgraph = this.editorui.editor.graph;
-      // Add on click listener to show the Narrative Item window
-      NAUtil.AddNodeDoubleClickListener(
-        currgraph,
-        entry.name,
-        function (cell, evt) {
-          if (!cell || !cell.children) return;
-  
-          let cellName = cell.children[0].value;
-          let cellDesc = cell.children[1].value;
-  
-          let x = evt.getProperty("event").x;
-          let y = evt.getProperty("event").y;
-  
-          let formContainer = document.createElement("div");
-          formContainer.style.width = "150px";
-          formContainer.style.padding = "20px";
-  
-          const form = document.createElement("form");
-          form.id = "narrativeitemform";
-  
-          const nameLabel = document.createElement("label");
-          nameLabel.textContent = "Name:";
-          const nameInput = document.createElement("input");
-          nameInput.type = "text";
-          nameInput.id = "name";
-          nameInput.name = "name";
-          nameInput.required = true;
-          nameInput.value = cellName;
-  
-          const br = document.createElement("br");
-  
-          const descriptionLabel = document.createElement("label");
-          descriptionLabel.textContent = "Description:";
-          const descriptionTextarea = document.createElement("textarea");
-          descriptionTextarea.id = "description";
-          descriptionTextarea.name = "description";
-          descriptionTextarea.rows = 4;
-          descriptionTextarea.cols = 30;
-          descriptionTextarea.value = cellDesc;
-  
-          const applyButton = document.createElement("button");
-          applyButton.id = "applyButton";
-          applyButton.type = "button";
-          applyButton.textContent = "Apply";
-          applyButton.onclick = applyForm(currgraph, cell);
-  
-          // Add elements to the form
-          form.appendChild(nameLabel);
-          form.appendChild(nameInput);
-          form.appendChild(br);
-          form.appendChild(descriptionLabel);
-          form.appendChild(descriptionTextarea);
-          form.appendChild(br.cloneNode(false)); // Create a new line break for spacing
-          form.appendChild(applyButton);
-  
-          // Add the form to the container
-          formContainer.appendChild(form);
-          let highlight = new mxCellHighlight(currgraph, "#000", 2);
-          formContainer.onmouseenter = function () {
-            highlight.highlight(currgraph.view.getState(cell));
-          };
-          formContainer.onmouseleave = function () {
-            highlight.hide();
-          };
-  
-          let wnd = NAUIHelper.CreateWindow(
-            NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
-            NASettings.Dictionary.UI.DOCUMENTITEMWINDOW,
-            formContainer,
-            x,
-            y,
-            250,
-            200
-          );
-  
-          wnd.setLocation(x, y);
-          wnd.setClosable(true);
-          wnd.setMinimizable(false);
-          wnd.setVisible(true);
-  
-          // const nameInput = document.getElementById("name");
-          // nameInput.value = cellName;
-          // const descriptionTextarea = document.getElementById("description");
-          // descriptionTextarea.value = cellDesc;
-          // const applyButton = document.getElementById("applyButton");
-          // applyButton.onclick = applyForm(currgraph, cell);
-          // const form = document.getElementById("narrativeitemform");
-          form.onsubmit = function (event) {
-            event.preventDefault();
-            return false;
-          };
-  
-          function applyForm(currgraph, c, n, d) {
-            return function () {
-              const nameInput = document.getElementById("name");
-              const descriptionTextarea = document.getElementById("description");
-  
-              console.log("Graph", currgraph);
-              console.log("Cell", c);
-  
-              console.log("Name", n);
-              console.log("Des", d);
-  
-              currgraph.getModel().beginUpdate();
-              try {
-                currgraph.model.setValue(c.children[0], nameInput.value);
-                currgraph.model.setValue(
-                  c.children[1],
-                  descriptionTextarea.value
-                );
-              } finally {
-                currgraph.getModel().endUpdate();
-              }
-              console.log("Cell", c);
-              wnd.destroy();
-              highlight.hide();
-            };
-          }
-        }
-      );
-    };
+
+
   
     /**
      * Check for existing narrative cells and update the view accordingly
@@ -1339,16 +1328,13 @@ class NarrativeAbductionApp {
   
       t.editorui.editor.graph.selectAll();
       let cells = graph.getSelectionCells();
-      console.log("Cells", cells);
   
       let nacells = this.getNarrativeCells(cells);
-      console.log("nacells", nacells);
   
       nacells.forEach((cell) => {
         //if the cell is already bound with a view, ignore
         let narrative = this.getNarrativeFromRootCell(cell);
         if (Narrative.isCellNarrative(cell) && narrative == null) {
-          console.log("loadExistingNarratives", narrative);
           let val = t.getNarrativeCellValue(cell);
           if(val == "") val = NASettings.Language.English.newnarrative;
           let na = new Narrative(
@@ -1374,7 +1360,6 @@ class NarrativeAbductionApp {
             let cell = graph.getModel().getCell(id);
             if (cell) cellsarray.push(cell);
           });
-          console.log("cellsarray", cellsarray);
           t.assignNodes(nalistview, cellsarray);
         }
       });
@@ -1382,7 +1367,6 @@ class NarrativeAbductionApp {
     };
   
     nodeToDocumentItem(node){
-      console.log("node", node);
         let entry = this.getEntryByName(node.type);
         return this.createDocumentItem(entry);
     }
@@ -1391,10 +1375,6 @@ class NarrativeAbductionApp {
      * Create a new narrative, trigger create narrative view and narrative cell
      */
     newNarrative() {
-      //if the layout is not defined, initiate 
-      if(!this.narrativelayout){
-        this.narrativelayout = new NarrativeLayoutSwimlanes(this);
-      }
 
       let narrativeentry = this.getNarrativeEntry(); //get narrative entry from the entries list
       let graph = this.editorui.editor.graph;
@@ -1427,16 +1407,12 @@ class NarrativeAbductionApp {
           this
         ); //add accordion view
   
-        //trigger new narrative event
-        let event = new CustomEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE, {
-          detail: {
-            narrative: na,
-            narrativecell: narrativecell,
-            narrativeview: narrview
-          },
+        NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWNARRATIVE,  {
+          narrative: na,
+          narrativecell: narrativecell,
+          narrativeview: narrview
         });
-        document.dispatchEvent(event);
-  
+        
   
         //if objects are selected, add them automatically to the narrative
         let selectedCells = graph.getSelectionCells();
@@ -1447,7 +1423,7 @@ class NarrativeAbductionApp {
   
   
       //update layout
-      this.narrativelayout.updateLayout();
+      //this.narrativelayout.updateLayout();
   
       return {
         narrative: na,
@@ -1455,6 +1431,11 @@ class NarrativeAbductionApp {
         narrativecell: narrativecell,
       };
     };
+
+      
+    parseDocumentContent(content){
+      return  NarrativeAbductionApp.getTextBetweenAsterisks(content);
+  }
   
     /**
      * Take the edge and turn it into Cause link
@@ -1552,9 +1533,7 @@ class NarrativeAbductionApp {
       wnd.activate();
   
       window.setTimeout(function () { 
-        console.log("buttons", buttons);
         container.click();
-        console.log("button 0", buttons[0]);
         buttons[0].focus();
       }, 0); 
      
@@ -1576,15 +1555,22 @@ class NarrativeAbductionApp {
       contencell.setValue(html);
     };
   
+    updateResponsiveCellSize(cell){
+      const t = this;
+      let graph = this.editorui.editor.graph;
+
+      graph.autoSizeCell(cell);
+      let newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
+      cell.geometry.width = newWidth;
+    }
+
     /**
      * Update position of more shape button
      */
     updateMoreShapesButton() {
       let buttons = document.getElementsByClassName("geSidebarFooter");
-      console.log("Buttons", buttons);
       let t = this;
       Array.from(buttons).forEach(function (elm) {
-        console.log("Element", elm.innerHTML);
         if (elm.innerHTML.includes("More Shapes")) {
           elm.style.position = "relative";
           t.panelwindow.append(elm);

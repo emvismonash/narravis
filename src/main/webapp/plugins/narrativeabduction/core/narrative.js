@@ -228,8 +228,6 @@ class Narrative {
       }
 
       this.bound = bound;
-      console.log("bound", this.bound);
-
       //update bound cell
       const graph = this.graph;
       if(!this.boundcell){
@@ -247,7 +245,6 @@ class Narrative {
           geom.y = this.bound.tcy;
           geom.width = this.bound.width;
           geom.height = this.bound.height;
-          console.log("geom", geom);
           graph.getModel().setGeometry(this.boundcell, geom);
           graph.orderCells(true, [this.boundcell]);
         }finally{
@@ -255,7 +252,6 @@ class Narrative {
           graph.refresh();             
         }
       }
-      console.log("boundcell", this.boundcell);
   };
 
 

@@ -38,7 +38,8 @@ const NASettings = {
       DELETENARRATIVE: "deletenarrative",
       NEWDOCUMENTITEM: "newdocumentitem",
       INSERTJSON2DIAGRAM: "insertjson2diagram", 
-      JSON2ITEM: "json2item"
+      JSON2ITEM: "json2item",
+      LANELAYOUTUPDATED: "lanelayoutupdated"
     },
   },
   Language: {
