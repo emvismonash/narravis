@@ -12,7 +12,12 @@ class NarrativeAbductionApp {
         NASettings.Dictionary.CELLS.NARRATIVE,
       ];
       this.documentitemminwidth = NASettings.DocumentCellSetting.minwidth;
-      this.documentitemminheight = NASettings.DocumentCellSetting.minheight;
+      this.documentitemminheight = NASettings.DocumentCellSetting.minheight;     
+      this.narrativelayout;
+      this.narrativeaviewscontainer;
+    }
+  
+    initiate(){
       this.createNAPanel();
       this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives, this);  
       this.createPalette();
@@ -24,22 +29,8 @@ class NarrativeAbductionApp {
       this.initListenerEdgeDoubleClickEditHandler();
       this.initListenerShowAddCellAfterEdit();
       this.updateMoreShapesButton();
-      this.narrativelayout;
-
-      let t = this;
-      this.editorui.editor.addListener("fileLoaded", function(sender, evt) {
-        t.loadExistingNarratives();
-      });
-      
-      (async () => {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        if(!this.narrativelayout){
-          this.narrativelayout = new NarrativeLayoutSwimlane(this);
-          this.narrativelayoutwindow = new NarrativeLayoutSwimlaneWindow(this, this.narrativelayout);
-        }
-      })();
+      this.narrativelayout = new NarrativeLanesController(this.editorui.editor.graph);
     }
-  
 
     /**
      * Assign the narrative cell into the narrative list

@@ -11,6 +11,10 @@ class NarrativeLayout {
         this.narrativesbounds = [];        
     }
 
+
+    /**
+     * Calculate the bound and order of each narrative
+     */
     updateNarrativeCellsLayout(){
         this.narrativecellslayout = [];
         let narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;

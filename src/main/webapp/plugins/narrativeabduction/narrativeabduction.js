@@ -11,17 +11,20 @@ Draw.loadPlugin(function (ui) {
         mxscript("plugins/narrativeabduction/view/narrativelistview.js", function(){
         mxscript("plugins/narrativeabduction/utility/nautil.js", function(){
         mxscript("plugins/narrativeabduction/utility/nauihelper.js", function(){  
-        mxscript("plugins/narrativeabduction/layout/narrativelayout.js", function(){
-        mxscript("plugins/narrativeabduction/layout/narativelayoutswimlane.js", function(){
-        mxscript("plugins/narrativeabduction/view/narrativelayoutswimlanewindow.js", function(){
+        mxscript("plugins/narrativeabduction/layout/narrativelane.js", function(){
+        mxscript("plugins/narrativeabduction/layout/narrativelanescontroller.js", function(){
         mxscript("plugins/narrativeabduction/gpt/narrativegpt.js", function(){   
         mxscript("plugins/narrativeabduction/gpt/narrativegptauthoring.js", function(){
         mxscript("plugins/narrativeabduction/gpt/narrativegptjsonvalidator.js", function(){
         mxscript("plugins/narrativeabduction/core/narrativeabductionapp.js", function(){
-          console.log("EditorUi", ui);
-          console.log("Sidebar", ui.sidebar.graph);
-          console.log("Editor", ui.editor);            
-          new NarrativeAbductionApp(ui);
+          ui.editor.addListener("fileLoaded", function(sender, evt) {
+            console.log("EditorUi", ui);
+            console.log("Sidebar", ui.sidebar.graph);
+            console.log("Editor", ui.editor);            
+            let app = new NarrativeAbductionApp(ui);
+            app.initiate();
+          });
+
         });
         });
         });
@@ -33,6 +36,5 @@ Draw.loadPlugin(function (ui) {
         });
         });
         });
-        });   
         });
 });

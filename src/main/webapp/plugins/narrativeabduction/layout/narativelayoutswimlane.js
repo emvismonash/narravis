@@ -38,11 +38,11 @@ class NarrativeLayoutSwimlane extends NarrativeLayout{
         if(this.midlane.container) this.midlane.container.remove();
         if(this.botlane.container) this.botlane.container.remove();
 
-        this.createLaneContainer(this.toplane, "<b>Top Lane</b>");
+        this.createLaneContainer(this.toplane, "<b>Top narratives</b>");
         this.app.narrativeaviewscontainer.listcontainer.append(this.toplane.container);
-        this.createLaneContainer(this.midlane, "<b>Middle Lane</b>");
+        this.createLaneContainer(this.midlane, "<b>Common evidence</b>");
         this.app.narrativeaviewscontainer.listcontainer.append(this.midlane.container);
-        this.createLaneContainer(this.botlane, "<b>Bottom Lane</b>");
+        this.createLaneContainer(this.botlane, "<b>Bottom narratives</b>");
         this.app.narrativeaviewscontainer.listcontainer.append(this.botlane.container);
 
         this.updateLaneViews();
@@ -101,7 +101,7 @@ class NarrativeLayoutSwimlane extends NarrativeLayout{
 
     createLaneCell(lane, order){
         let graph = this.graph;
-        let maxWidth = this.getLaneWidth(lane);
+        let maxWidth = this.minWidth;
         let height = this.getLaneHeight(lane);
         let yPos = this.getYPos(order);    
         graph.getModel().beginUpdate();
@@ -154,23 +154,27 @@ class NarrativeLayoutSwimlane extends NarrativeLayout{
     }
 
 
+    /**
+     * The lane height is calculated based on the narrative bound's height and vertical spacing. 
+     * @param {*} lane 
+     * @returns 
+     */
     getLaneHeight(lane){
         let height = 0;
-        let t = this;
         lane.narratives.forEach(narrative => {
             narrative.updateCellsBound();
             if(narrative.bound){
                 height += narrative.bound.height;
-            }
-            
-            height += t.verticalspace; 
+            }            
+            height += this.verticalspace; 
         });
-        if(height < this.minHeight) height = this.minHeight;
+        //set minimun height
+        height = Math.max(this.minHeight, height);
         return height;
     }
 
     getLaneHeightAdjusted(lane){
-        return Math.max(200, this.getLaneHeight(lane));
+        return Math.max(this.minHeight, this.getLaneHeight(lane));
     }
 
     getLaneWidth(lane){
@@ -318,23 +322,17 @@ class NarrativeLayoutSwimlane extends NarrativeLayout{
         }
     }
 
-
-    
-
-
     updateLaneCells(){
         this.updateLaneCell(this.toplane, 1);
         this.updateLaneCell(this.midlane, 2);
         this.updateLaneCell(this.botlane, 3);
     }
 
-
-
     updateLaneCell(lane, order){
         let graph = this.graph;
         let yPos = this.getYPos(order);
         let height = this.getLaneHeight(lane);
-        let maxWidth = 10;
+        let maxWidth = this.minWidth;
         //get the max width and height
         if(lane.boundcell){           
             graph.getModel().beginUpdate();
@@ -355,22 +353,33 @@ class NarrativeLayoutSwimlane extends NarrativeLayout{
 
     
     updateLayout(callback){
-        this.updateLaneCells();
+        // this.updateLaneCells();
+        // this.applyLayoutNarrativeCellsNaive(()=>{
+        //     this.updateNarrativeCellsYPositions(() =>{
+        //         this.toplane.narratives.forEach(narrative => {
+        //                this.applyLayout(narrative);
+        //          });  
+        //          this.midlane.narratives.forEach(narrative => {
+        //             this.applyLayout(narrative);
+        //         }); 
+        //         this.botlane.narratives.forEach(narrative => {
+        //             this.applyLayout(narrative);
+        //         });
+        //         NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {}); 
+        //         if(callback) callback();
+        //     });
+        // })
+
         this.applyLayoutNarrativeCellsNaive(()=>{
-            this.updateNarrativeCellsYPositions(() =>{
-                this.toplane.narratives.forEach(narrative => {
-                       this.applyLayout(narrative);
-                 });  
-                 this.midlane.narratives.forEach(narrative => {
-                    this.applyLayout(narrative);
-                }); 
-                this.botlane.narratives.forEach(narrative => {
-                    this.applyLayout(narrative);
-                });
-                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {}); 
-                if(callback) callback();
-            });
+            // this.updateNarrativeCellsYPositions(() =>{
+            //     NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {}); 
+            //     if(callback) callback();
+            // });
         })
+
+        this.toplane.narratives.forEach(narrative => {
+            this.applyLayout(narrative);
+        });  
     }
     updateNarrativeCellsLayoutLane(lane){
         let layoutdata = [];      

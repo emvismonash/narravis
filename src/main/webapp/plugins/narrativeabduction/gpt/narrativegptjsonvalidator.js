@@ -97,7 +97,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
 
 
         this.window =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 600);
-        this.window.setVisible(true);
+        this.window.setVisible(false);
         this.window.setResizable(true);
       }
 

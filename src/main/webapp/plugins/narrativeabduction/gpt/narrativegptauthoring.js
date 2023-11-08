@@ -114,7 +114,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
    createChatWindow(){
     const container = document.createElement("div");
     this.window =  NAUIHelper.CreateWindow("gpt-window", "GPT Authoring Window", container, 1000, 100, 400, 400);
-    this.window.setVisible(true);
+    this.window.setVisible(false);
     this.window.setResizable(true);
 
     const textAreaChatInput = document.createElement('textarea');
