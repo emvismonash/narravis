@@ -252,13 +252,10 @@ class NarrativeLayout {
     /***
      * Apply mxHierarchicalLayout layout to a narrative group
      */
-    applyLayout(narrative, callback, change, post){
-        //do not apply layout if narrative is hidden
-        if(!narrative.isvisible) return;
+    static applyLayout(narrative, graph, dx, dy, callback, change, post){
 
         //update excluded cells position
-        let graph = this.graph;
-        let model = this.graph.getModel();
+        let model = graph.getModel();
         let targetCells = narrative.cells; // Array of parent node cells
         let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
@@ -272,18 +269,15 @@ class NarrativeLayout {
                 change();
             }
             
-            layout.execute(graph.getDefaultParent(), targetCells);
-            let t = this;
-            let order = this.getNarrativeCellLayout(narrative.rootCell);
-            
-            let dy = (order)? order.positionY: 0;
+            layout.execute(graph.getDefaultParent(), targetCells);           
+
             targetCells.forEach(cell => {
-                let currentgeometry = model.getGeometry(cell);
-                currentgeometry.y = currentgeometry.y + dy;
-                currentgeometry.x = currentgeometry.x + t.horizontalspacebetweennarrativeandlayout;
+                let currentgeometry = cell.getGeometry(cell);
+                currentgeometry.x += dx;
+                currentgeometry.y += dy;
                 model.setGeometry(cell, currentgeometry);
             });
-
+            
             excludeNodes.forEach((cell) => {
                 let currentgeometry = model.getGeometry(cell.excell);
                 currentgeometry.x = cell.x;
@@ -297,7 +291,6 @@ class NarrativeLayout {
         }
         finally
         {
-            // New API for animating graph layout results asynchronously
             let morph = new mxMorphing(graph);
             morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
             {

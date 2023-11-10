@@ -17,6 +17,7 @@ class Narrative {
       }
       this.initListenerUpdateBound();
       this.initListenerRemoveCell();
+      this.initListenerRootCellMoved();
     }
 
     hideBound(){
@@ -49,6 +50,43 @@ class Narrative {
       }
     }
 
+    getDxDy(){
+      let curX = this.boundcell.geometry.x;
+      let curY = this.boundcell.geometry.y;
+      let targetX = this.rootCell.geometry.x + this.rootCell.geometry.width + 50;
+      let targetY = this.rootCell.geometry.y;
+
+      let dx = targetX - curX;
+      let dy = targetY - curY;
+
+      return{dx: dx, dy: dy}
+    }
+
+    updateCellsPositions(){
+      let dxdy = this.getDxDy();
+      let dx = dxdy.dx;
+      let dy = dxdy.dy;
+
+      this.graph.getModel().beginUpdate();
+      try{
+        this.cells.forEach(cell => {
+            cell.geometry.x += dx;
+            cell.geometry.y += dy;
+        });
+      }finally{
+            let morph = new mxMorphing(this.graph);
+            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
+            {
+              this.graph.getModel().endUpdate();
+              this.graph.refresh();
+              this.updateCellsBound();
+            }));
+            
+          morph.startAnimation();
+
+      }
+    }
+
     initListenerRemoveCell(){
       let t = this;
       let graph = this.graph;
@@ -61,6 +99,23 @@ class Narrative {
         });
       })
     }
+
+
+    initListenerRootCellMoved(){
+      let t = this;
+      let graph = this.graph;
+      graph.addListener(mxEvent.CELLS_MOVED, function(sender, evt){
+        let cells = evt.getProperty("cells");
+        let dx = evt.getProperty("dx");
+        let dy = evt.getProperty("dy");
+        cells.forEach(cell => {
+            if(cell == t.rootCell){
+                t.updateCellsPositions();
+            }
+        });        
+      })
+    }
+
     initListenerUpdateBound(){
       const graph = this.graph;
       const t = this;

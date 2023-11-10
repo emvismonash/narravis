@@ -233,7 +233,6 @@ class NarrativeLayoutSwimlane extends NarrativeLayout{
                 }
                 t.updateLayout();
                 t.updateLaneViews();
-
             }
         })  
     }
