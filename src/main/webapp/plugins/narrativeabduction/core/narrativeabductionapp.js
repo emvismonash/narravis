@@ -881,7 +881,12 @@ class NarrativeAbductionApp {
         cells.forEach((cell) => {
           //if the cell is narrative, remove the view as well
           if (Narrative.isCellNarrative(cell)) {
+            let narrative = t.getNarrativeFromRootCell(cell);
             t.narrativeaviewscontainer.removeListView(cell);
+            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.DELETENARRATIVE, {
+              narrative: narrative
+            })
+            t.deleteNarrative(narrative);
           }
         });
       });
@@ -898,7 +903,7 @@ class NarrativeAbductionApp {
       {
         console.log("evt", evt);
         let cell = evt.getProperty("cell");
-        if(cell){
+        if(cell && NarrativeAbductionApp.isCellDocumentItem(cell)){
           var view = graph.view;
           var state = view.getState(cell);
           
@@ -1405,6 +1410,9 @@ class NarrativeAbductionApp {
         let selectedCells = graph.getSelectionCells();
         if (selectedCells && narrview) {
           this.assignNodes(narrview, selectedCells);
+          //move narrative root to the first item
+          na.rootcell.geometry.y = selectedCells[0].geometry.y;
+          na.rootcell.geometry.x = selectedCells[0].geometry.x - 270;
         }
       }
   

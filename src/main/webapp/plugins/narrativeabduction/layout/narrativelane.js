@@ -27,6 +27,7 @@ class NarrativeLane {
         this.createLabelCell();
         this.initListenerNewDocument();
         this.initListenerNarrativeMoved();
+        this.initListenerNarrativeRemoved();
     }
 
     assignNarrative(narrative){        
@@ -77,6 +78,16 @@ class NarrativeLane {
         }finally{
             graph.getModel().endUpdate();                    
         }
+    }
+
+    initListenerNarrativeRemoved(){
+        let t = this;
+        document.addEventListener(NASettings.Dictionary.EVENTS.DELETENARRATIVE, (evt)=>{
+            let data = evt.detail;
+            let narrative = data.narrative;
+            this.narratives.splice(this.narratives.indexOf(narrative), 1);
+            this.updateLaneLayout();
+        });
     }
 
     initListenerNarrativeMoved(){
@@ -174,11 +185,14 @@ class NarrativeLane {
     getLaneHeight(){
         let height = 0;
         this.narratives.forEach(narrative => {
-            narrative.updateCellsBound();
-            if(narrative.bound){
-                let h = Math.max(narrative.rootcell.geometry.height, narrative.bound.height);
-                height += h + this.margin;
-            }            
+            if(narrative){
+                narrative.updateCellsBound();
+                if(narrative.bound){
+                    let h = Math.max(narrative.rootcell.geometry.height, narrative.bound.height);
+                    height += h + this.margin;
+                }
+            }
+            
         });
         //set minimun height
         height = Math.max(this.minheight, height);
