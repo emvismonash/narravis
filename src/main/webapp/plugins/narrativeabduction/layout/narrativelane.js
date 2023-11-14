@@ -29,7 +29,7 @@ class NarrativeLane {
         this.initListenerNarrativeMoved();
     }
 
-    assignNarrative(narrative){
+    assignNarrative(narrative){        
         console.log("Assigning");
         console.log(this.narratives);
         this.narratives.push(narrative); 
@@ -107,6 +107,8 @@ class NarrativeLane {
                     let na = NAUtil.GetNarrativeFromCell(cell, t.narratives);
                     if(na) {
                         t.unAssignNarrative(na)
+                        //reorder
+                        t.reorder();
                         t.updateLaneLayout();
                     } 
                   }
@@ -171,7 +173,6 @@ class NarrativeLane {
      */
     getLaneHeight(){
         let height = 0;
-        console.log("get lane height", this.narratives);
         this.narratives.forEach(narrative => {
             narrative.updateCellsBound();
             if(narrative.bound){
@@ -181,7 +182,6 @@ class NarrativeLane {
         });
         //set minimun height
         height = Math.max(this.minheight, height);
-        console.log("return height", height);
         return height;
     }
 
@@ -222,6 +222,21 @@ class NarrativeLane {
         }
     }
 
+    updateNarrativesPositions(){
+        let prevY =  this.boundcell.geometry.y;
+        for(let i = 0; i < this.narratives.length; i++){
+            let narrative = this.narratives[i];
+            console.log("prevY " + this.name, prevY);
+            narrative.rootcell.geometry.y = prevY;
+            narrative.rootcell.geometry.x = 0;
+            this.graph.refresh();
+            narrative.updateCellsPositions();
+            this.graph.refresh();
+            prevY = Math.max(narrative.rootcell.geometry.y + narrative.rootcell.geometry.height, narrative.rootcell.geometry.y + narrative.bound.height);
+            prevY += this.margin;
+        };
+    }
+
     updateLaneLayout(){
         let currentheight = this.boundcell.geometry.height;
         //get the height
@@ -248,19 +263,7 @@ class NarrativeLane {
                 //this is a default behaviour, do nothing .. 
                 break;
         }
-        let prevY =  this.boundcell.geometry.y;
-        for(let i = 0; i < this.narratives.length; i++){
-            let narrative = this.narratives[i];
-            console.log("prevY " + this.name, prevY);
-            narrative.rootcell.geometry.y = prevY;
-            narrative.rootcell.geometry.x = 0;
-            this.graph.refresh();
-            narrative.updateCellsPositions();
-            this.graph.refresh();
-            prevY = Math.max(narrative.rootcell.geometry.y + narrative.rootcell.geometry.height, narrative.rootcell.geometry.y + narrative.bound.height);
-            prevY += this.margin;
-        };
-
+        this.updateNarrativesPositions();
         NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
         });
     }

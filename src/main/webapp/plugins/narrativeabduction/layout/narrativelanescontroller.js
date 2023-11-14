@@ -42,18 +42,28 @@ class NarrativeLanesController {
     }
 
     updateLanesPosition(){
-        this.graph.refresh();
-        let topHeight = this.toplane.getLaneHeight();
-        let midHeight = this.evidencelane.getLaneHeight();
-        this.toplane.rootcell.geometry.y = 0;
-        this.toplane.boundcell.geometry.y = 0;
 
-        this.evidencelane.rootcell.geometry.y = this.toplane.boundcell.geometry.y + topHeight + this.margin;
-        this.evidencelane.boundcell.geometry.y = this.toplane.boundcell.geometry.y + topHeight + this.margin;
-        this.graph.refresh();
-        this.botlane.rootcell.geometry.y = this.evidencelane.boundcell.geometry.y + midHeight + this.margin;
-        this.botlane.boundcell.geometry.y = this.evidencelane.boundcell.geometry.y + midHeight + this.margin;
-        this.graph.refresh();
+        (async()=>{
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            this.graph.getModel().beginUpdate();
+            try{
+                let topHeight = this.toplane.getLaneHeight();
+                let midHeight = this.evidencelane.getLaneHeight();
+                this.toplane.rootcell.geometry.y = 0;
+                this.toplane.boundcell.geometry.y = 0;
+                this.evidencelane.rootcell.geometry.y = this.toplane.boundcell.geometry.y + topHeight + this.margin;
+                this.evidencelane.boundcell.geometry.y = this.toplane.boundcell.geometry.y + topHeight + this.margin;
+                this.botlane.rootcell.geometry.y = this.evidencelane.boundcell.geometry.y + midHeight + this.margin;
+                this.botlane.boundcell.geometry.y = this.evidencelane.boundcell.geometry.y + midHeight + this.margin;
+            }finally{
+                this.graph.getModel().endUpdate();
+                this.toplane.updateNarrativesPositions();
+                this.evidencelane.updateNarrativesPositions();
+                this.botlane.updateNarrativesPositions();
+            }        
+        })();
+
 
     }
 
