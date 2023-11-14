@@ -30,12 +30,7 @@ class NarrativeLane {
     }
 
     assignNarrative(narrative){        
-        console.log("Assigning");
-        console.log(this.narratives);
         this.narratives.push(narrative); 
-        console.log(this.narratives);
-        NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
-        });
     }
 
     updateLayout(){
@@ -144,8 +139,13 @@ class NarrativeLane {
 
     checkNarrativeInLane(narrative){
         if(narrative){
-            if(this.isCellInLane(narrative.rootcell)){
-                if(!this.narratives.includes(narrative)) this.assignNarrative(narrative);
+            if(this.isCellInLane(narrative.cells[0])){                
+                if(!this.narratives.includes(narrative)){
+                    console.log("In lane of ", this.name);
+                    this.assignNarrative(narrative);
+                    NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+                    });
+                } 
             }
             this.updateLayout();
         }
@@ -226,7 +226,6 @@ class NarrativeLane {
         let prevY =  this.boundcell.geometry.y;
         for(let i = 0; i < this.narratives.length; i++){
             let narrative = this.narratives[i];
-            console.log("prevY " + this.name, prevY);
             narrative.rootcell.geometry.y = prevY;
             narrative.rootcell.geometry.x = 0;
             this.graph.refresh();
@@ -242,8 +241,6 @@ class NarrativeLane {
         //get the height
         let height = this.getLaneHeight();
         let diff = currentheight - height;
-        console.log("height", height);
-        console.log("diff", diff);
 
         //update height
         this.boundcell.geometry.height = height;
