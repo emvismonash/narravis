@@ -1,8 +1,8 @@
 class Narrative {
     #event;
-    constructor(rootCell, graph, name, id) {
+    constructor(rootcell, graph, name, id) {
       this.id = id;
-      this.rootCell = rootCell;
+      this.rootcell = rootcell;
       this.name = name;
       this.cells = [];
       this.boundcell;
@@ -53,8 +53,8 @@ class Narrative {
     getDxDy(){
       let curX = this.boundcell.geometry.x;
       let curY = this.boundcell.geometry.y;
-      let targetX = this.rootCell.geometry.x + this.rootCell.geometry.width + 50;
-      let targetY = this.rootCell.geometry.y;
+      let targetX = this.rootcell.geometry.x + this.rootcell.geometry.width + 50;
+      let targetY = this.rootcell.geometry.y;
 
       let dx = targetX - curX;
       let dy = targetY - curY;
@@ -74,18 +74,13 @@ class Narrative {
             cell.geometry.y += dy;
         });
       }finally{
-            let morph = new mxMorphing(this.graph);
-            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
-            {
-              this.graph.getModel().endUpdate();
-              this.graph.refresh();
-              this.updateCellsBound();
-            }));
-            
-          morph.startAnimation();
+        this.graph.getModel().endUpdate();
+        this.graph.refresh();
+        this.updateCellsBound();
 
       }
     }
+
 
     initListenerRemoveCell(){
       let t = this;
@@ -109,7 +104,7 @@ class Narrative {
         let dx = evt.getProperty("dx");
         let dy = evt.getProperty("dy");
         cells.forEach(cell => {
-            if(cell == t.rootCell){
+            if(cell == t.rootcell){
                 t.updateCellsPositions();
             }
         });        
@@ -153,7 +148,7 @@ class Narrative {
     }
 
     /**
-     * Remove cell from cells list as well as rootCell children. Note that these two arrays are currently redundant.
+     * Remove cell from cells list as well as rootcell children. Note that these two arrays are currently redundant.
      * @param {*} c
      */
     removeCell(c) {
@@ -171,17 +166,17 @@ class Narrative {
     };
   
     /**
-     * Push cell id to the cells attribute of the rootCell.
+     * Push cell id to the cells attribute of the rootcell.
      */
     saveCell(c) {
-      let cellstring = this.rootCell.value.getAttribute(
+      let cellstring = this.rootcell.value.getAttribute(
         NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS
       );
       let cellsarr = Narrative.stringCellsToArray(cellstring);
   
       cellsarr.push(c.id);
       cellstring = Narrative.arrayCellsToString(cellsarr);
-      this.rootCell.value.setAttribute(
+      this.rootcell.value.setAttribute(
         NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS,
         cellstring
       );
@@ -202,14 +197,14 @@ class Narrative {
      * @param {*} c
      */
     unsaveCell(c) {
-      let cellstring = this.rootCell.value.getAttribute(
+      let cellstring = this.rootcell.value.getAttribute(
         NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS
       );
       const cellsarr = Narrative.stringCellsToArray(cellstring);
       const idx = cellsarr.indexOf(c.idx);
       cellsarr.splice(idx, 1);
       cellstring = Narrative.arrayCellsToString(cellsarr);
-      this.rootCell.value.setAttribute(
+      this.rootcell.value.setAttribute(
         NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS,
         cellstring
       );
@@ -221,7 +216,7 @@ class Narrative {
     }
 
     getBoundCellID(){
-      return NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLSBOUND + "-" + this.rootCell.id;
+      return NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLSBOUND + "-" + this.rootcell.id;
     }
 
     /**

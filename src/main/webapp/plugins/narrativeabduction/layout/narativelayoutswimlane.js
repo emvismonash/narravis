@@ -394,7 +394,7 @@ class NarrativeLayoutSwimlane extends NarrativeLayout{
                 sumY += narrative.bound.height + this.verticalspace;
             }
             layoutdata.push({
-                nacell: narrative.rootCell,
+                nacell: narrative.rootcell,
                 lane: lane,
                 positionY: posY 
             });

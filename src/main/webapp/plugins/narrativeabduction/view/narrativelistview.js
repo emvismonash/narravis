@@ -162,7 +162,7 @@ class NarrativeListView {
       let highlight = new mxCellHighlight(graph, "#000", 2);
       this.uinarrativetitle.onmouseenter = function () {
         //t.highlightCells(t.narrative.cells);
-        highlight.highlight(graph.view.getState(t.narrative.rootCell));
+        highlight.highlight(graph.view.getState(t.narrative.rootcell));
       };
       this.uinarrativetitle.onmouseleave = function () {
         //t.unhighlightCells(t.narrative.cells);
@@ -222,7 +222,7 @@ class NarrativeListView {
       graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
         let cell = evt.getProperty("cell"); // Get the cell whose label changed
         let newValue = evt.getProperty("value"); // Get the new label value  
-        if (Narrative.isCellNarrative(cell) && t.narrative.rootCell == cell) {
+        if (Narrative.isCellNarrative(cell) && t.narrative.rootcell == cell) {
           t.uinarrativetitle.innerHTML = newValue;
         }
       });
@@ -539,9 +539,9 @@ class NarrativeListView {
      */
     updateRootCellColor() {
       let style =
-        this.narrative.rootCell.getStyle() + ";fontColor=" + this.color + ";";
+        this.narrative.rootcell.getStyle() + ";fontColor=" + this.color + ";";
         this.editorui.editor.graph
         .getModel()
-        .setStyle(this.narrative.rootCell, style);
+        .setStyle(this.narrative.rootcell, style);
     };
   }

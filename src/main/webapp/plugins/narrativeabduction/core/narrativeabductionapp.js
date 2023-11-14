@@ -15,6 +15,7 @@ class NarrativeAbductionApp {
       this.documentitemminheight = NASettings.DocumentCellSetting.minheight;     
       this.narrativelayout;
       this.narrativeaviewscontainer;
+      this.narrativelayoutwindow;
     }
   
     initiate(){
@@ -29,7 +30,8 @@ class NarrativeAbductionApp {
       this.initListenerEdgeDoubleClickEditHandler();
       this.initListenerShowAddCellAfterEdit();
       this.updateMoreShapesButton();
-      this.narrativelayout = new NarrativeLanesController(this.editorui.editor.graph);
+      this.narrativelayout = new NarrativeLanesController(this.editorui.editor.graph, this);
+      this.narrativelayoutwindow = new NarrativeLayoutSwimlaneWindow(this, this.narrativelayout);
     }
 
     /**
@@ -662,13 +664,7 @@ class NarrativeAbductionApp {
        * @returns 
        */
       getNarrativeFromRootCell(cell){
-        let na = null;
-        this.narratives.forEach(narrative => {
-            if(narrative.rootCell == cell){
-              na = narrative;        
-            }
-        });
-        return na;
+        return NAUtil.GetNarrativeFromCell(cell, this.narratives);
       }
 
       getValidatedAssignedCells(targets){
@@ -1379,7 +1375,7 @@ class NarrativeAbductionApp {
       graph.getModel().beginUpdate();
       //add the narrative cell
       try {
-        narrativecell = graph.insertVertex(parent, null, objna, 0, 0, 50, 100);
+        narrativecell = graph.insertVertex(parent, null, objna, 0, 0, 50, 40);
         narrativecell.value.setAttribute('label', NASettings.Language.English.newnarrative);
         graph.setCellStyle(narrativeentry.style, [narrativecell]);
       } finally {

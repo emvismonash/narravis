@@ -26,7 +26,7 @@ class NarrativeLayout {
             bound  = na.bound;
             //if the height is zero because the narrative has not items, use the height of the narrative cell
             if(!bound){
-                height = na.rootCell.getGeometry().height;
+                height = na.rootcell.getGeometry().height;
             }else{
                 height = bound.height;
             }
@@ -39,7 +39,7 @@ class NarrativeLayout {
 
             sum += height + this.verticalspace;
             this.narrativecellslayout.push({
-                nacell: na.rootCell,
+                nacell: na.rootcell,
                 order: i,
                 positionY: posY 
             });
@@ -72,7 +72,7 @@ class NarrativeLayout {
                 narrative.cells.forEach(cell => {
                     let geom = cell.geometry;
                     geom.x = geom.x;
-                    let naCellPos = t.getNarrativeCellLayout(narrative.rootCell);
+                    let naCellPos = t.getNarrativeCellLayout(narrative.rootcell);
                     if(naCellPos){
                         let dy = naCellPos.positionY;
                         geom.y = dy;

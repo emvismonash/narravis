@@ -27,7 +27,9 @@ const NASettings = {
       DOCTITLE: "doctitle",
       DOCDESCRIPTION: "docdescription",
       NARRATIVECELLS: "cells",
-      NARRATIVECELLSBOUND: "narrativecellsbound"
+      NARRATIVECELLSBOUND: "narrativecellsbound",
+      SWIMLANELABEL: "swimlanelabel",
+      SWIMLANEINDICATOR: "swimlaneindicator"
     },
     UI: {
       NAHTMLCONTENT: "HTMLDocContent",

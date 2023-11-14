@@ -16,6 +16,16 @@ class NAUtil {
       return newArray1;
     }
 
+    static GetNarrativeFromCell(cell, arr){
+      let na = null;
+      arr.forEach(narrative => {
+          if(narrative != null && narrative.rootcell == cell){
+            na = narrative;        
+          }
+      });
+      return na;
+  }
+
     static loadJSONFile(filetype, callback) {
       // Create an input element for file selection
       const fileInput = document.createElement('input');

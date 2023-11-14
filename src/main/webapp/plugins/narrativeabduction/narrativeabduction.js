@@ -9,6 +9,7 @@ Draw.loadPlugin(function (ui) {
         mxscript("plugins/narrativeabduction/nasettings.js", function(){
         mxscript("plugins/narrativeabduction/view/narrativelistviewcontainer.js", function(){
         mxscript("plugins/narrativeabduction/view/narrativelistview.js", function(){
+        mxscript("plugins/narrativeabduction/view/narrativelayoutswimlanewindow.js", function(){
         mxscript("plugins/narrativeabduction/utility/nautil.js", function(){
         mxscript("plugins/narrativeabduction/utility/nauihelper.js", function(){  
         mxscript("plugins/narrativeabduction/layout/narrativelayout.js", function(){
@@ -21,12 +22,11 @@ Draw.loadPlugin(function (ui) {
           ui.editor.addListener("fileLoaded", function(sender, evt) {
             console.log("EditorUi", ui);
             console.log("Sidebar", ui.sidebar.graph);
-            console.log("Editor", ui.editor);            
-           
-            let app = new NarrativeAbductionApp(ui);
-            app.initiate();
-
+            console.log("Editor", ui.editor);                      
           });
+          let app = new NarrativeAbductionApp(ui);
+          app.initiate();
+        });
         });
         });
         });

@@ -22,7 +22,7 @@ class NarrativeLayoutSwimlaneWindow {
 
         let container = document.createElement('div');
         let topLabel = document.createElement('div');
-        topLabel.innerHTML = "Top lane";
+        topLabel.innerHTML = this.layout.toplane.name;
         container.append(topLabel);
         this.layout.toplane.narratives.forEach(narrative => {
             let d = document.createElement('div');
@@ -30,15 +30,15 @@ class NarrativeLayoutSwimlaneWindow {
             container.append(d);               
         });
         let midLabel = document.createElement('div');
-        midLabel.innerHTML = "Mid lane";
+        midLabel.innerHTML = this.layout.evidencelane.name;
         container.append(midLabel);
-        this.layout.midlane.narratives.forEach(narrative => {
+        this.layout.evidencelane.narratives.forEach(narrative => {
             let d = document.createElement('div');
             d.innerHTML = " - " + narrative.name;    
             container.append(d);       
         });
         let botLabel = document.createElement('div');
-        botLabel.innerHTML = "Top lane";
+        botLabel.innerHTML = this.layout.botlane.name;
         container.append(botLabel);
         this.layout.botlane.narratives.forEach(narrative => {
             let d = document.createElement('div');
