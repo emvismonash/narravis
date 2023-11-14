@@ -6,6 +6,7 @@ class NarrativeLanesController {
         this.toplane = new NarrativeLane(graph, "Top Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
         this.evidencelane = new NarrativeLane(graph, "Evidence Lane", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
         this.botlane = new NarrativeLane(graph, "Bottom Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
+        this.envidencegroup;
         this.initated = false;
         this.initListenerNewDocument();
         this.initListenerLayouUpdated();

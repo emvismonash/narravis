@@ -755,7 +755,18 @@ class NarrativeAbductionApp {
               //then move the group to the lane 
               //if evidence, move to evidence group
               if(NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
-  
+                if(t.narrativelayout.eveidencegroup){
+                  t.assignNodes(t.narrativeaviewscontainer.getListViewByNarrative(t.narrativelayout.eveidencegroup), [newCell]);                 
+                }else{
+                  let res = t.newNarrative();
+                  t.narrativelayout.eveidencegroup = res.narrative;
+                  t.assignNodes(res.narrativeview, [newCell]);   
+                  t.narrativelayout.evidencelane.assignNarrative(res.narrative);               
+                }
+                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+                  cell: newCell, 
+                  narrative: t.narrativelayout.eveidencegroup
+                });
               }else{
                 let res = t.newNarrative();
                 t.assignNodes(res.narrativeview, [newCell]);
