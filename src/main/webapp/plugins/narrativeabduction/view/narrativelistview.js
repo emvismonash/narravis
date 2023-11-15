@@ -342,7 +342,6 @@ class NarrativeListView {
           t.headContainer.bottompart.buttonvisibility.innerHTML = "👁";
           t.narrative.isvisible = true;
           t.narrative.updateCellsBound();
-          t.app.narrativelayout.applyLayout(t.narrative);
         }        
       }
     }
@@ -361,7 +360,9 @@ class NarrativeListView {
 
     applyLayout = function(t){
         if(t.narrative){
-            t.app.narrativelayout.applyLayout(t.narrative);
+            let dx = t.narrative.rootcell.geometry.x + t.narrative.rootcell.geometry.width + 50;
+            let dy = t.narrative.rootcell.geometry.y;
+            NarrativeLayout.applyLayout(t.narrative, t.editorui.editor.graph, dx, dy);
         }
     }
   
@@ -523,7 +524,7 @@ class NarrativeListView {
       this.createLayoutButton();
       //this.createToggleHighlightButton();
       this.createToggleVisibilityButton();
-      this.createUpDownButtons();
+      //this.createUpDownButtons();
     };
   
     updateView() {

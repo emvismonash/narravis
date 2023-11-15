@@ -51,7 +51,7 @@ class NarrativeLayoutSwimlaneWindow {
 
     createWindow(){
         this.container = document.createElement("div");
-        this.window = NAUIHelper.CreateWindow("Swimlane Window", "Swimlane Window", this.container, 0, 0, 500, 500);
+        this.window = NAUIHelper.CreateWindow("Swimlane Window", "Swimlane Viewer", this.container, 0, 0, 200, 200);
         this.window.setVisible(true);
     }
 }

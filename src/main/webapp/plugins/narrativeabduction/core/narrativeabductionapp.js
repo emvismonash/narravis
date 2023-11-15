@@ -6,7 +6,6 @@ class NarrativeAbductionApp {
       this.narrativeaviewscontainer = {};
       this.panelwindow = {};
       this.naentries = NAEntries;
-      this.narrativegptauthor = new NarrativeGPTAuthoring(this);
       this.excludefrompicker = [
         NASettings.Dictionary.CELLS.NARRATIVELIST,
         NASettings.Dictionary.CELLS.NARRATIVE,
@@ -16,6 +15,8 @@ class NarrativeAbductionApp {
       this.narrativelayout;
       this.narrativeaviewscontainer;
       this.narrativelayoutwindow;
+      this.narrativegptauthor;
+      this.generatingsession = false;
     }
   
     initiate(){
@@ -31,7 +32,7 @@ class NarrativeAbductionApp {
       this.initListenerShowAddCellAfterEdit();
       this.updateMoreShapesButton();
       this.narrativelayout = new NarrativeLanesController(this.editorui.editor.graph, this);
-      this.narrativelayoutwindow = new NarrativeLayoutSwimlaneWindow(this, this.narrativelayout);
+      this.narrativegptauthor = new NarrativeGPTAuthoring(this);
     }
 
     /**
@@ -323,25 +324,33 @@ class NarrativeAbductionApp {
         let parent = graph.getDefaultParent();
         let nodes = parsedObject.nodes;
         let links = parsedObject.links;
-        let t = this;
         let cells = [];
-  
+        this.generatingsession = true;
+        
+
         graph.getModel().beginUpdate();
         try{
           nodes.forEach(node => {
-            t.createDocumentItemFromJSONObject(node, cells);
+            this.createDocumentItemFromJSONObject(node, cells);
           });
 
           graph.addCells(cells, parent);
           //create links
           links.forEach(link => {
-            t.createDocumentLinkFromJSONObject(link, nodes, graph);
+            this.createDocumentLinkFromJSONObject(link, nodes, graph);
           });
         }catch(e){
+          console.log("error",e);
         }finally{
-          graph.getModel().endUpdate();
+          console.log("cells", cells);
+          graph.getModel().endUpdate();       
           NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
+          graph.setSelectionCells(cells);
+          this.newNarrative();
+          this.generatingsession = false;  
+
         }
+
     }
    
     createCommonMenu(label, menucontainer){
@@ -744,16 +753,17 @@ class NarrativeAbductionApp {
       graph.addListener(mxEvent.CELLS_ADDED, function (sender, evt) {
         let cells = evt.getProperty("cells");
         let newCell = cells[0];
-        NAUtil.Log("newCell", newCell);
 
         //if the target cell is narrative item and is not part of narrative, create a new narrative. However, to remove conflict with the condition after this, we set a timer of 1 seconds. 
-        if(newCell.isVertex() && newCell.source == null && newCell.target == null){
+        if(!t.generatingsession){
           (async () => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             if(!t.isCellPartOfExistingNarrative(newCell) && NarrativeAbductionApp.isCellDocumentItem(newCell)){
               //check the position, if it is within a narrative lane, assign to that narrative, otherwise create a new narrative group. 
               //then move the group to the lane 
               //if evidence, move to evidence group
+              console.log("newCell", newCell);
+
               if(NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
                 if(t.narrativelayout.eveidencegroup){
                   t.assignNodes(t.narrativeaviewscontainer.getListViewByNarrative(t.narrativelayout.eveidencegroup), [newCell]);                 
@@ -777,13 +787,15 @@ class NarrativeAbductionApp {
               }                 
             }
           })();
-        }  
+        }
+       
 
         //if edge, show Contextual Edge Option Menu
         //if is edge
         //#region 
         if (newCell.isEdge()) {
           //edge type based on target node
+          console.log("New link");
           let edge = newCell;
           let targetType = edge.target.value.getAttribute(
             NASettings.Dictionary.ATTRIBUTES.NATYPE
