@@ -50,7 +50,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
           }
         ];
         this.createChatWindow();
-        this.jsonvalidator = new NarrativeGPTJSONValidator();
+        this.jsonvalidator = new NarrativeGPTJSONValidator(app);
         this.initListenerJSON2Diagram();
         this.initListenerJSON2DocumentItem();
         this.currentmessage;        
