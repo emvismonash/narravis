@@ -1,6 +1,7 @@
 class NarrativeGPTJSONValidator extends NarrativeGPT{
-    constructor(){
+    constructor(app){
         super();
+        this.app = app;
         this.createWindow();
         this.window;        
         this.loadingurl = "plugins/narrativeabduction/assets/loading.gif";
@@ -64,12 +65,9 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
             // Get the text you want to save
             var textToSave = textAreaJSON.value;              
             //trigger new narrative event
-            let event = new CustomEvent(NASettings.Dictionary.EVENTS.INSERTJSON2DIAGRAM, {
-              detail: {
-                jsontext: textToSave
-              },
+            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.INSERTJSON2DIAGRAM, {
+              jsontext: textToSave
             });
-            document.dispatchEvent(event);
         });
         
         container.append(responseTextArea);
@@ -105,6 +103,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
       }
 
       async chatGPTStream(text){
+        this.app.generatingsession = true;
         this.streamparser = new NarrativeGPTJSONStreamParser();
         await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
       }
@@ -138,6 +137,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         console.log(t.streamparser.links);
         console.log(t.streamparser.nodes);
         t.enableChat();
+        t.app.generatingsession = false;
       }
 }
 
@@ -181,15 +181,12 @@ class NarrativeGPTJSONStreamParser {
         try {
           if(!this.elementExists(arr, item)) {
             arr.push(item);
-            let event = new CustomEvent(NASettings.Dictionary.EVENTS.JSON2ITEM, {
-              detail: {
-                itemobject: item,
-                isnode: isnode,
-                nodes: this.nodes,
-                links: this.links
-              },
+            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.JSON2ITEM, {
+              itemobject: item,
+              isnode: isnode,
+              nodes: this.nodes,
+              links: this.links
             });
-            document.dispatchEvent(event);
           }
         } catch (error) {
           console.log(error);

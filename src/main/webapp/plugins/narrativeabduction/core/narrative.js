@@ -1,8 +1,8 @@
 class Narrative {
     #event;
-    constructor(rootCell, graph, name, id) {
+    constructor(rootcell, graph, name, id) {
       this.id = id;
-      this.rootCell = rootCell;
+      this.rootcell = rootcell;
       this.name = name;
       this.cells = [];
       this.boundcell;
@@ -17,6 +17,7 @@ class Narrative {
       }
       this.initListenerUpdateBound();
       this.initListenerRemoveCell();
+      this.initListenerRootCellMoved();
     }
 
     hideBound(){
@@ -49,6 +50,38 @@ class Narrative {
       }
     }
 
+    getDxDy(){
+      let curX = this.boundcell.geometry.x;
+      let curY = this.boundcell.geometry.y;
+      let targetX = this.rootcell.geometry.x + this.rootcell.geometry.width + 50;
+      let targetY = this.rootcell.geometry.y;
+
+      let dx = targetX - curX;
+      let dy = targetY - curY;
+
+      return{dx: dx, dy: dy}
+    }
+
+    updateCellsPositions(){
+      let dxdy = this.getDxDy();
+      let dx = dxdy.dx;
+      let dy = dxdy.dy;
+
+      this.graph.getModel().beginUpdate();
+      try{
+        this.cells.forEach(cell => {
+            cell.geometry.x += dx;
+            cell.geometry.y += dy;
+        });
+      }finally{
+        this.graph.getModel().endUpdate();
+        this.graph.refresh();
+        this.updateCellsBound();
+
+      }
+    }
+
+
     initListenerRemoveCell(){
       let t = this;
       let graph = this.graph;
@@ -61,6 +94,23 @@ class Narrative {
         });
       })
     }
+
+
+    initListenerRootCellMoved(){
+      let t = this;
+      let graph = this.graph;
+      graph.addListener(mxEvent.CELLS_MOVED, function(sender, evt){
+        let cells = evt.getProperty("cells");
+        let dx = evt.getProperty("dx");
+        let dy = evt.getProperty("dy");
+        cells.forEach(cell => {
+            if(cell == t.rootcell){
+                t.updateCellsPositions();
+            }
+        });        
+      })
+    }
+
     initListenerUpdateBound(){
       const graph = this.graph;
       const t = this;
@@ -98,12 +148,11 @@ class Narrative {
     }
 
     /**
-     * Remove cell from cells list as well as rootCell children. Note that these two arrays are currently redundant.
+     * Remove cell from cells list as well as rootcell children. Note that these two arrays are currently redundant.
      * @param {*} c
      */
     removeCell(c) {
-      const idx = this.cells.indexOf(c);
-      this.cells.splice(idx, 1);
+
       this.unsaveCell(c);
     };
   
@@ -116,17 +165,17 @@ class Narrative {
     };
   
     /**
-     * Push cell id to the cells attribute of the rootCell.
+     * Push cell id to the cells attribute of the rootcell.
      */
     saveCell(c) {
-      let cellstring = this.rootCell.value.getAttribute(
+      let cellstring = this.rootcell.value.getAttribute(
         NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS
       );
       let cellsarr = Narrative.stringCellsToArray(cellstring);
   
       cellsarr.push(c.id);
       cellstring = Narrative.arrayCellsToString(cellsarr);
-      this.rootCell.value.setAttribute(
+      this.rootcell.value.setAttribute(
         NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS,
         cellstring
       );
@@ -147,14 +196,14 @@ class Narrative {
      * @param {*} c
      */
     unsaveCell(c) {
-      let cellstring = this.rootCell.value.getAttribute(
+      let cellstring = this.rootcell.value.getAttribute(
         NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS
       );
       const cellsarr = Narrative.stringCellsToArray(cellstring);
       const idx = cellsarr.indexOf(c.idx);
       cellsarr.splice(idx, 1);
       cellstring = Narrative.arrayCellsToString(cellsarr);
-      this.rootCell.value.setAttribute(
+      this.rootcell.value.setAttribute(
         NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLS,
         cellstring
       );
@@ -166,7 +215,7 @@ class Narrative {
     }
 
     getBoundCellID(){
-      return NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLSBOUND + "-" + this.rootCell.id;
+      return NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLSBOUND + "-" + this.rootcell.id;
     }
 
     /**
@@ -228,8 +277,6 @@ class Narrative {
       }
 
       this.bound = bound;
-      console.log("bound", this.bound);
-
       //update bound cell
       const graph = this.graph;
       if(!this.boundcell){
@@ -247,7 +294,6 @@ class Narrative {
           geom.y = this.bound.tcy;
           geom.width = this.bound.width;
           geom.height = this.bound.height;
-          console.log("geom", geom);
           graph.getModel().setGeometry(this.boundcell, geom);
           graph.orderCells(true, [this.boundcell]);
         }finally{
@@ -255,7 +301,6 @@ class Narrative {
           graph.refresh();             
         }
       }
-      console.log("boundcell", this.boundcell);
   };
 
 

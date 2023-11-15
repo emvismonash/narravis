@@ -11,11 +11,14 @@ class NarrativeLayout {
         this.narrativesbounds = [];        
     }
 
+
+    /**
+     * Calculate the bound and order of each narrative
+     */
     updateNarrativeCellsLayout(){
         this.narrativecellslayout = [];
         let narrativeListViews = this.app.narrativeaviewscontainer.narrativealistviews;
         let sum = 0;
-        console.log("narrativeListViews", narrativeListViews);
         for(let i = 0; i < narrativeListViews.length; i++){
             let bound, posY, height;
             let na = narrativeListViews[i].narrative;
@@ -23,13 +26,11 @@ class NarrativeLayout {
             bound  = na.bound;
             //if the height is zero because the narrative has not items, use the height of the narrative cell
             if(!bound){
-                height = na.rootCell.getGeometry().height;
+                height = na.rootcell.getGeometry().height;
             }else{
                 height = bound.height;
             }
 
-            console.log("bound", bound);
-            console.log("height", height);
             if(i == 0 ){         
                 posY = 0;               
             }else{                    
@@ -38,7 +39,7 @@ class NarrativeLayout {
 
             sum += height + this.verticalspace;
             this.narrativecellslayout.push({
-                nacell: na.rootCell,
+                nacell: na.rootcell,
                 order: i,
                 positionY: posY 
             });
@@ -71,10 +72,8 @@ class NarrativeLayout {
                 narrative.cells.forEach(cell => {
                     let geom = cell.geometry;
                     geom.x = geom.x;
-                    let naCellPos = t.getNarrativeCellLayout(narrative.rootCell);
+                    let naCellPos = t.getNarrativeCellLayout(narrative.rootcell);
                     if(naCellPos){
-                        console.log("geom Y", geom.y);     
-                        console.log("Layout pos", naCellPos);    
                         let dy = naCellPos.positionY;
                         geom.y = dy;
                         model.setGeometry(cell, geom);
@@ -200,9 +199,6 @@ class NarrativeLayout {
           }
         });
         graph.clearSelection();
-
-        console.log("Excluded nodes", excludeNodes);
-
         return excludeNodes;
     }
 
@@ -253,18 +249,26 @@ class NarrativeLayout {
         }
     }
 
+    static isNarrativeEvidenceOnly(narrative){
+        let res = true;
+        narrative.cells.forEach(cell => {
+            if(!NarrativeAbductionApp.isCellDocumentItemType(cell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
+                res = false;
+            }
+        });
+
+        return res;
+    }
+
     /***
      * Apply mxHierarchicalLayout layout to a narrative group
      */
-    applyLayout(narrative, callback, change, post){
-        //do not apply layout if narrative is hidden
-        if(!narrative.isvisible) return;
+    static applyLayout(narrative, graph, dx, dy, callback, change, post){
 
         //update excluded cells position
-        let graph = this.graph;
-        let model = this.graph.getModel();
+        let model = graph.getModel();
         let targetCells = narrative.cells; // Array of parent node cells
-        let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
+        let layout = (NarrativeLayout.isNarrativeEvidenceOnly(narrative))? new mxHierarchicalLayout(graph, mxConstants.DIRECTION_NORTH): new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
         let excludeNodes = NarrativeLayout.getExcludedCells(graph, targetCells);
 
@@ -276,18 +280,15 @@ class NarrativeLayout {
                 change();
             }
             
-            layout.execute(graph.getDefaultParent(), targetCells);
-            let t = this;
-            let order = this.getNarrativeCellLayout(narrative.rootCell);
-            
-            let dy = (order)? order.positionY: 0;
+            layout.execute(graph.getDefaultParent(), targetCells);           
+
             targetCells.forEach(cell => {
-                let currentgeometry = model.getGeometry(cell);
-                currentgeometry.y = currentgeometry.y + dy;
-                currentgeometry.x = currentgeometry.x + t.horizontalspacebetweennarrativeandlayout;
+                let currentgeometry = cell.getGeometry(cell);
+                currentgeometry.x += dx;
+                currentgeometry.y += dy;
                 model.setGeometry(cell, currentgeometry);
             });
-
+            
             excludeNodes.forEach((cell) => {
                 let currentgeometry = model.getGeometry(cell.excell);
                 currentgeometry.x = cell.x;
@@ -301,7 +302,6 @@ class NarrativeLayout {
         }
         finally
         {
-            // New API for animating graph layout results asynchronously
             let morph = new mxMorphing(graph);
             morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
             {

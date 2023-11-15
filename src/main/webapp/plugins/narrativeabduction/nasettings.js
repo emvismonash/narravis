@@ -27,7 +27,9 @@ const NASettings = {
       DOCTITLE: "doctitle",
       DOCDESCRIPTION: "docdescription",
       NARRATIVECELLS: "cells",
-      NARRATIVECELLSBOUND: "narrativecellsbound"
+      NARRATIVECELLSBOUND: "narrativecellsbound",
+      SWIMLANELABEL: "swimlanelabel",
+      SWIMLANEINDICATOR: "swimlaneindicator"
     },
     UI: {
       NAHTMLCONTENT: "HTMLDocContent",
@@ -38,7 +40,8 @@ const NASettings = {
       DELETENARRATIVE: "deletenarrative",
       NEWDOCUMENTITEM: "newdocumentitem",
       INSERTJSON2DIAGRAM: "insertjson2diagram", 
-      JSON2ITEM: "json2item"
+      JSON2ITEM: "json2item",
+      LANELAYOUTUPDATED: "lanelayoutupdated"
     },
   },
   Language: {
@@ -64,7 +67,7 @@ const NASettings = {
     ],
   },
   Styles: {
-    NarrativeBound: "connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#408080;dashed=1;fillColor=none;strokeWidth=3;perimeterSpacing=3;"
+    NarrativeBound: "connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;"
   },
   CSSClasses: {
     NarrativeListView: {

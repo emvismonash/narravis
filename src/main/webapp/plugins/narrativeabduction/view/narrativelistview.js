@@ -162,7 +162,7 @@ class NarrativeListView {
       let highlight = new mxCellHighlight(graph, "#000", 2);
       this.uinarrativetitle.onmouseenter = function () {
         //t.highlightCells(t.narrative.cells);
-        highlight.highlight(graph.view.getState(t.narrative.rootCell));
+        highlight.highlight(graph.view.getState(t.narrative.rootcell));
       };
       this.uinarrativetitle.onmouseleave = function () {
         //t.unhighlightCells(t.narrative.cells);
@@ -222,7 +222,7 @@ class NarrativeListView {
       graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
         let cell = evt.getProperty("cell"); // Get the cell whose label changed
         let newValue = evt.getProperty("value"); // Get the new label value  
-        if (Narrative.isCellNarrative(cell) && t.narrative.rootCell == cell) {
+        if (Narrative.isCellNarrative(cell) && t.narrative.rootcell == cell) {
           t.uinarrativetitle.innerHTML = newValue;
         }
       });
@@ -342,7 +342,6 @@ class NarrativeListView {
           t.headContainer.bottompart.buttonvisibility.innerHTML = "👁";
           t.narrative.isvisible = true;
           t.narrative.updateCellsBound();
-          t.app.narrativelayout.applyLayout(t.narrative);
         }        
       }
     }
@@ -361,7 +360,9 @@ class NarrativeListView {
 
     applyLayout = function(t){
         if(t.narrative){
-            t.app.narrativelayout.applyLayout(t.narrative);
+            let dx = t.narrative.rootcell.geometry.x + t.narrative.rootcell.geometry.width + 50;
+            let dy = t.narrative.rootcell.geometry.y;
+            NarrativeLayout.applyLayout(t.narrative, t.editorui.editor.graph, dx, dy);
         }
     }
   
@@ -523,7 +524,7 @@ class NarrativeListView {
       this.createLayoutButton();
       //this.createToggleHighlightButton();
       this.createToggleVisibilityButton();
-      this.createUpDownButtons();
+      //this.createUpDownButtons();
     };
   
     updateView() {
@@ -539,9 +540,9 @@ class NarrativeListView {
      */
     updateRootCellColor() {
       let style =
-        this.narrative.rootCell.getStyle() + ";fontColor=" + this.color + ";";
+        this.narrative.rootcell.getStyle() + ";fontColor=" + this.color + ";";
         this.editorui.editor.graph
         .getModel()
-        .setStyle(this.narrative.rootCell, style);
+        .setStyle(this.narrative.rootcell, style);
     };
   }

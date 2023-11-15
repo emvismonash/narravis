@@ -1,9 +1,30 @@
 class NAUtil {
+    static Log(d){
+      console.log(d);
+    }
+
+    static DispatchEvent(name, detail){
+       let event = new CustomEvent(name, {
+        detail: detail
+      });
+      document.dispatchEvent(event);
+    }
+
     static RemoveElementArray(idx, arr){      
       const myObject = arr[idx];
       const newArray1 = arr.filter(item => item !== myObject);
       return newArray1;
     }
+
+    static GetNarrativeFromCell(cell, arr){
+      let na = null;
+      arr.forEach(narrative => {
+          if(narrative != null && narrative.rootcell == cell){
+            na = narrative;        
+          }
+      });
+      return na;
+  }
 
     static loadJSONFile(filetype, callback) {
       // Create an input element for file selection
@@ -65,14 +86,10 @@ class NAUtil {
     };
   
     static GetCellByNodeName (graph, name) {
-      console.log("Graph", graph);
       var cells = graph.model.getCells();
-      console.log("Celss", graph.model.getCells());
       for (var i = 0; i < cells.length; i++) {
-        console.log("Cell", cells[i]);
         if (!cells[i].value) continue;
         if (cells[i].value.nodeName == name) {
-          console.log(cells[i].style);
           return cells[i];
         }
       }
