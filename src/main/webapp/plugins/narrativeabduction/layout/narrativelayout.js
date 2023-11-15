@@ -249,6 +249,17 @@ class NarrativeLayout {
         }
     }
 
+    static isNarrativeEvidenceOnly(narrative){
+        let res = true;
+        narrative.cells.forEach(cell => {
+            if(!NarrativeAbductionApp.isCellDocumentItemType(cell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
+                res = false;
+            }
+        });
+
+        return res;
+    }
+
     /***
      * Apply mxHierarchicalLayout layout to a narrative group
      */
@@ -257,7 +268,7 @@ class NarrativeLayout {
         //update excluded cells position
         let model = graph.getModel();
         let targetCells = narrative.cells; // Array of parent node cells
-        let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
+        let layout = (NarrativeLayout.isNarrativeEvidenceOnly(narrative))? new mxHierarchicalLayout(graph, mxConstants.DIRECTION_NORTH): new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
         let excludeNodes = NarrativeLayout.getExcludedCells(graph, targetCells);
 

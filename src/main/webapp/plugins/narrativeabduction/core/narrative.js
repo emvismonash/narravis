@@ -152,8 +152,7 @@ class Narrative {
      * @param {*} c
      */
     removeCell(c) {
-      const idx = this.cells.indexOf(c);
-      this.cells.splice(idx, 1);
+
       this.unsaveCell(c);
     };
   
