@@ -1,6 +1,7 @@
 class NarrativeGPTJSONValidator extends NarrativeGPT{
-    constructor(){
+    constructor(app){
         super();
+        this.app = app;
         this.createWindow();
         this.window;        
         this.loadingurl = "plugins/narrativeabduction/assets/loading.gif";
@@ -102,6 +103,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
       }
 
       async chatGPTStream(text){
+        this.app.generatingsession = true;
         this.streamparser = new NarrativeGPTJSONStreamParser();
         await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
       }
@@ -135,6 +137,7 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         console.log(t.streamparser.links);
         console.log(t.streamparser.nodes);
         t.enableChat();
+        t.app.generatingsession = false;
       }
 }
 

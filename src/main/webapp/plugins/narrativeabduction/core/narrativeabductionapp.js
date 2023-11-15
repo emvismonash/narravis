@@ -346,7 +346,10 @@ class NarrativeAbductionApp {
           graph.getModel().endUpdate();       
           NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
           graph.setSelectionCells(cells);
-          this.newNarrative();
+          let n = this.newNarrative();
+          n.narrativecell.geometry.x = 0;
+          n.narrativecell.geometry.y = -100;
+          n.narrative.updateCellsPositions();
           this.generatingsession = false;  
 
         }
