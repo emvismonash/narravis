@@ -20,6 +20,10 @@ class Narrative {
       this.initListenerRootCellMoved();
     }
 
+    setName(n){
+      this.name = n;
+      this.rootcell.value.setAttribute('label',n);
+    }
     hideBound(){
       this.toggleBoundVisible(false);
     }

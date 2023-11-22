@@ -25,26 +25,53 @@ class NarrativeLane {
         this.createLaneContainer();
         this.createLaneCell();
         this.createLabelCell();
-        this.initListenerNewDocument();
         this.initListenerNarrativeMoved();
-        this.initListenerNarrativeRemoved();
     }
 
     assignNarrative(narrative){        
         this.narratives.push(narrative); 
     }
 
-    updateLayout(){
-        this.narratives.forEach(narrative => {
-            let dx = narrative.rootcell.geometry.x + narrative.rootcell.geometry.width;
-            let dy = narrative.rootcell.geometry.y;
 
-            console.log(dx, dy);
-            NarrativeLayout.applyLayout(narrative, this.graph, dx, dy);
-            
-      });  
-      this.updateLaneLayout();
+
+    createLabelCell(){
+        let boundcell = this.boundcell;
+        let yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;
+        let graph = this.graph;
+        graph.getModel().beginUpdate();
+            try{
+                let labelVertex = graph.insertVertex(graph.getDefaultParent(), null, '', -200, yPos, 100, this.minheight);
+                labelVertex.setStyle(this.lanelabelstyle);  
+                labelVertex.setValue(this.name);   
+                labelVertex.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, NASettings.Dictionary.ATTRIBUTES.SWIMLANELABEL);
+                this.rootcell = labelVertex;
+            }finally{
+              graph.getModel().endUpdate(); 
+              graph.refresh();             
+        }
     }
+
+    createLaneCell(){
+        let graph = this.graph;
+        let maxWidth = 10;
+        let height = this.getLaneHeight();
+        let yPos = 0;    
+        graph.getModel().beginUpdate();
+        try{
+            let vertex = graph.insertVertex(graph.getDefaultParent(), null, '', 0, yPos, maxWidth, height);
+            vertex.setStyle(this.laneboundstyle);
+            vertex.geometry.width = maxWidth;
+            vertex.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, NASettings.Dictionary.ATTRIBUTES.SWIMLANEINDICATOR);
+            this.boundcell = vertex;
+            graph.orderCells(true, [vertex]);
+            graph.setCellStyles(mxConstants.STYLE_EDITABLE, '0', [vertex]);
+        }finally{
+          graph.getModel().endUpdate(); 
+          graph.refresh();             
+        }
+    }
+
+
 
     createLaneContainer(){
         this.container = document.createElement("div");
@@ -55,29 +82,39 @@ class NarrativeLane {
         this.container.title = title;
     }
 
-    /**
-     * Move towards x and y direction
-     * @param {*} x 
-     * @param {*} y 
-     */
-    move(x, y){
-        let graph = this.graph;
-        graph.getModel().beginUpdate();
-        try{
-            //move label
-            this.rootcell.geometry.x += x;
-            this.rootcell.geometry.y += y;
-
-            this.boundcell.geometry.x += x
-            this.boundcell.geometry.y += y;
-
-            //move narratives
-            this.narratives.forEach(narrative => {
-                narrative.moveTo(x, y);
-            });
-        }finally{
-            graph.getModel().endUpdate();                    
+    checkNarrativeInLane(narrative){
+        if(narrative){
+            if(this.isCellInLane(narrative.cells[0])){                
+                if(!this.narratives.includes(narrative)){
+                    console.log("In lane of ", this.name);
+                    this.assignNarrative(narrative);
+                    NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+                    });
+                } 
+            }
         }
+    }
+ 
+    /**
+     * The lane height is calculated based on the narrative bound's height and vertical spacing. 
+     * @param {*} lane 
+     * @returns 
+     */
+    getLaneHeight(){
+        let height = 0;
+        this.narratives.forEach(narrative => {
+            if(narrative){
+                narrative.updateCellsBound();
+                if(narrative.bound){
+                    let h = Math.max(narrative.rootcell.geometry.height, narrative.bound.height);
+                    height += h + this.margin;
+                }
+            }
+            
+        });
+        //set minimun height
+        height = Math.max(this.minheight, height);
+        return height;
     }
 
     initListenerNarrativeRemoved(){
@@ -123,54 +160,16 @@ class NarrativeLane {
         })
     }
 
-    reorder(){
-        let n = [];
-        this.narratives.forEach(narrative => {
-            n.push({
-                na: narrative, 
-                posY: narrative.rootcell.geometry.y
-            })
-        });
-        n.sort((a, b) => a.posY - b.posY);
-        this.narratives = [];
-        n.forEach(elm => {
-            this.narratives.push(elm.na)
-        });
-    }
-
-
     initListenerNewDocument() {
         let t = this;
         document.addEventListener(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, function(evt){
             let data = evt.detail;
             let narrative = data.narrative;
             t.checkNarrativeInLane(narrative);
+            t.updateLayout();
         })  
     }
-
-    checkNarrativeInLane(narrative){
-        if(narrative){
-            if(this.isCellInLane(narrative.cells[0])){                
-                if(!this.narratives.includes(narrative)){
-                    console.log("In lane of ", this.name);
-                    this.assignNarrative(narrative);
-                    NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
-                    });
-                } 
-            }
-            this.updateLayout();
-        }
-    }
-
-    unAssignNarrative(narrative){
-        console.log("UnAssigning");
-        console.log(this.narratives);
-        this.narratives = NAUtil.RemoveElementArray(this.narratives.indexOf(narrative), this.narratives);
-        console.log(this.narratives);
-        NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
-        });
-    }
-
+    
     isCellInLane(cell){
         let top = this.boundcell.geometry.y;
         let bot = top + this.getLaneHeight();
@@ -178,61 +177,27 @@ class NarrativeLane {
     }
 
     /**
-     * The lane height is calculated based on the narrative bound's height and vertical spacing. 
-     * @param {*} lane 
-     * @returns 
+     * Move towards x and y direction
+     * @param {*} x 
+     * @param {*} y 
      */
-    getLaneHeight(){
-        let height = 0;
-        this.narratives.forEach(narrative => {
-            if(narrative){
-                narrative.updateCellsBound();
-                if(narrative.bound){
-                    let h = Math.max(narrative.rootcell.geometry.height, narrative.bound.height);
-                    height += h + this.margin;
-                }
-            }
-            
-        });
-        //set minimun height
-        height = Math.max(this.minheight, height);
-        return height;
-    }
-
-    createLabelCell(){
-        let boundcell = this.boundcell;
-        let yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;
+    move(x, y){
         let graph = this.graph;
-        graph.getModel().beginUpdate();
-            try{
-                let labelVertex = graph.insertVertex(graph.getDefaultParent(), null, '', -200, yPos, 100, this.minheight);
-                labelVertex.setStyle(this.lanelabelstyle);  
-                labelVertex.setValue(this.name);    
-                labelVertex.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, NASettings.Dictionary.ATTRIBUTES.SWIMLANELABEL);
-                this.rootcell = labelVertex;
-            }finally{
-              graph.getModel().endUpdate(); 
-              graph.refresh();             
-        }
-    }
-
-    createLaneCell(){
-        let graph = this.graph;
-        let maxWidth = 10;
-        let height = this.getLaneHeight();
-        let yPos = 0;    
         graph.getModel().beginUpdate();
         try{
-            let vertex = graph.insertVertex(graph.getDefaultParent(), null, '', 0, yPos, maxWidth, height);
-            vertex.setStyle(this.laneboundstyle);
-            vertex.geometry.width = maxWidth;
-            vertex.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, NASettings.Dictionary.ATTRIBUTES.SWIMLANEINDICATOR);
-            this.boundcell = vertex;
-            graph.orderCells(true, [vertex]);
-            graph.setCellStyles(mxConstants.STYLE_EDITABLE, '0', [vertex]);
+            //move label
+            this.rootcell.geometry.x += x;
+            this.rootcell.geometry.y += y;
+
+            this.boundcell.geometry.x += x
+            this.boundcell.geometry.y += y;
+
+            //move narratives
+            this.narratives.forEach(narrative => {
+                narrative.moveTo(x, y);
+            });
         }finally{
-          graph.getModel().endUpdate(); 
-          graph.refresh();             
+            graph.getModel().endUpdate();                    
         }
     }
 
@@ -241,13 +206,22 @@ class NarrativeLane {
         for(let i = 0; i < this.narratives.length; i++){
             let narrative = this.narratives[i];
             narrative.rootcell.geometry.y = prevY;
-            narrative.rootcell.geometry.x = 0;
+            narrative.rootcell.geometry.x = 80;
             this.graph.refresh();
             narrative.updateCellsPositions();
             this.graph.refresh();
             prevY = Math.max(narrative.rootcell.geometry.y + narrative.rootcell.geometry.height, narrative.rootcell.geometry.y + narrative.bound.height);
             prevY += this.margin;
         };
+    }
+
+    updateLayout(){
+        this.narratives.forEach(narrative => {
+            let dx = narrative.rootcell.geometry.x + narrative.rootcell.geometry.width + 50;
+            let dy = narrative.rootcell.geometry.y;
+            NarrativeLayout.applyLayout(narrative, this.graph, dx, dy);                  
+      });  
+      this.updateLaneLayout();
     }
 
     updateLaneLayout(){
@@ -278,4 +252,29 @@ class NarrativeLane {
         NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
         });
     }
+
+    unAssignNarrative(narrative){
+        console.log("UnAssigning");
+        console.log(this.narratives);
+        this.narratives = NAUtil.RemoveElementArray(this.narratives.indexOf(narrative), this.narratives);
+        console.log(this.narratives);
+        NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+        });
+    }
+
+    reorder(){
+        let n = [];
+        this.narratives.forEach(narrative => {
+            n.push({
+                na: narrative, 
+                posY: narrative.rootcell.geometry.y
+            })
+        });
+        n.sort((a, b) => a.posY - b.posY);
+        this.narratives = [];
+        n.forEach(elm => {
+            this.narratives.push(elm.na)
+        });
+    }
+
 }

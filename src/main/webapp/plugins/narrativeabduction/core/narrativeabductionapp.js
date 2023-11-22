@@ -1,3 +1,6 @@
+/**
+ * This is the main script that handles and integrate all events. 
+ */
 class NarrativeAbductionApp {
     constructor(ui) {
       this.editorui = ui;
@@ -12,7 +15,7 @@ class NarrativeAbductionApp {
       ];
       this.documentitemminwidth = NASettings.DocumentCellSetting.minwidth;
       this.documentitemminheight = NASettings.DocumentCellSetting.minheight;     
-      this.narrativelayout;
+      this.narrativelanescontroller;
       this.narrativeaviewscontainer;
       this.narrativelayoutwindow;
       this.narrativegptauthor;
@@ -20,6 +23,10 @@ class NarrativeAbductionApp {
     }
   
     initiate(){
+      this.narrativelanescontroller = new NarrativeLanesController(this.editorui.editor.graph, this);
+      this.narrativelanescontroller.initiate();
+
+      this.narrativegptauthor = new NarrativeGPTAuthoring(this);
       this.createNAPanel();
       this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives, this);  
       this.createPalette();
@@ -29,10 +36,8 @@ class NarrativeAbductionApp {
       this.initOverrideConnectionConstraints();
       this.initListenerRemoveNarrativeCellHandler();
       this.initListenerEdgeDoubleClickEditHandler();
-      this.initListenerShowAddCellAfterEdit();
       this.updateMoreShapesButton();
-      this.narrativelayout = new NarrativeLanesController(this.editorui.editor.graph, this);
-      this.narrativegptauthor = new NarrativeGPTAuthoring(this);
+
     }
 
     /**
@@ -364,33 +369,7 @@ class NarrativeAbductionApp {
         container.append(labelcontainer);
         container.append(menucontainer);
         this.panelwindow.commonmenu.append(container);
-    }
-  
-    createSelectLayoutModeMenu(){
-      let container = document.createElement("div");
-      let t = this;
-      let btnFlex = NAUIHelper.AddButton("Flexible Mode", container, function(){
-        t.narrativelayout.remove();
-        t.narrativelayout = new NarrativeLayout(t);
-      })
-      btnFlex.style.backgroundColor = "#dadce0";
-  
-      let btnSwim = NAUIHelper.AddButton("Swimlane Mode", container, function(){
-        t.narrativelayout = new NarrativeLayoutSwimlanes(t);
-      })
-  
-      btnFlex.addEventListener("click", ()=>{
-          btnFlex.style.backgroundColor = "#dadce0";
-          btnSwim.style.backgroundColor = "#f1f3f4";
-      });
-  
-      btnSwim.addEventListener("click", ()=>{
-        btnSwim.style.backgroundColor = "#dadce0";
-        btnFlex.style.backgroundColor = "#f1f3f4";
-     });
-  
-      this.createCommonMenu("Layout modes", container);
-    }
+    }    
   
     createLoadNarrativeMenu(){
       let container = document.createElement("div");
@@ -709,6 +688,28 @@ class NarrativeAbductionApp {
         return cell.getAttribute("natype");
       }
     }
+
+    /**
+     * Get narrative group of the source cell from a cell, if no source cell or no narrative, it gives null
+     * @param {*} cell 
+     * @returns 
+     */
+    getSourceCellNarrative(cell){
+      let graph = this.editorui.editor.graph;
+      //get connected edges
+      let edges = graph.getEdges(cell, graph.getDefaultParent());
+      let narrative = null;
+      //if has edge, get the first one
+      if(edges){
+        edges.forEach(edge => {
+          let s = edge.source;
+          let sourceNarrative = t.getDocumentItemNarrative(s);
+          if(sourceNarrative != null) narrative = sourceNarrative;
+        });
+      }
+
+      return narrative;
+    }
   
 
     /**
@@ -746,8 +747,21 @@ class NarrativeAbductionApp {
   
     /**
      * Trigger custom functions everytime a new cell is added
-     * 1. Assign the cell to a new narrative if it is not connected to any cell
-     * 2. Assign the cell to an existing narrative the cell is connected to another cell
+     * New Cell
+     *  Condition: is generating multile narrative cells in progress
+     *  Yes: ignore
+     *  No: 
+     *    Condition: is cell Evidence?
+     *      Yes:
+     *        Condition: does evidence group exist?
+     *          Yes: assign
+     *          No: create one, assign
+     *      No:
+     *        Condition: is cell connected to narrative cell?
+     *            Yes: Assign the cell to the narrative 
+     *            No: Create new narrative group
+     *                Condition: is narrative in the lane?
+     *                  Yes: assign narrative to the lane 
      */
     initListenerNewCellHandler() {
       let graph = this.editorui.editor.graph;
@@ -757,98 +771,123 @@ class NarrativeAbductionApp {
         let cells = evt.getProperty("cells");
         let newCell = cells[0];
 
-        //if the target cell is narrative item and is not part of narrative, create a new narrative. However, to remove conflict with the condition after this, we set a timer of 1 seconds. 
-        if(!t.generatingsession){
-          (async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            if(!t.isCellPartOfExistingNarrative(newCell) && NarrativeAbductionApp.isCellDocumentItem(newCell)){
-              //check the position, if it is within a narrative lane, assign to that narrative, otherwise create a new narrative group. 
-              //then move the group to the lane 
-              //if evidence, move to evidence group
-              console.log("newCell", newCell);
+        //if generating in progress, return;
+        if(t.generatingsession) return;
 
-              if(NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
-                if(t.narrativelayout.eveidencegroup){
-                  t.assignNodes(t.narrativeaviewscontainer.getListViewByNarrative(t.narrativelayout.eveidencegroup), [newCell]);                 
-                }else{
-                  let res = t.newNarrative();
-                  t.narrativelayout.eveidencegroup = res.narrative;
-                  t.assignNodes(res.narrativeview, [newCell]);   
-                  t.narrativelayout.evidencelane.assignNarrative(res.narrative);               
-                }
-                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-                  cell: newCell, 
-                  narrative: t.narrativelayout.eveidencegroup
-                });
-              }else{
+        //if cell is in the lane, create new group
+        if(NarrativeAbductionApp.isCellDocumentItem(newCell)){
+          if(t.narrativelanescontroller.isCellInAnyLane(newCell)){
+            //if cell is evidence cell, create new narrative in evidence lane
+            //#region 
+            if(NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
+              //evidence group exist, assign the evidence item to this group
+              if(t.narrativelanescontroller.evidencenarrative != null){
+                t.assignNodes(t.narrativeaviewscontainer.getListViewByNarrative(t.narrativelanescontroller.evidencenarrative), [newCell]);                 
+              }else{ //otherwise, create a new narrative group
+                let res = t.newNarrative("Evidence");
+                t.narrativelanescontroller.evidencenarrative = res.narrative;
+                t.assignNodes(res.narrativeview, [newCell]);   
+                t.narrativelanescontroller.evidencelane.assignNarrative(res.narrative);   
+              }
+              NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+                cell: newCell, 
+                narrative: t.narrativelanescontroller.evidencenarrative
+              });  
+              NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+              });
+            }
+            //#endregion
+            //if the cell is not evidence, either create a new group (if not connected to any narrative) or assign to existing group if connected 
+            //#region 
+            if(!t.isCellPartOfExistingNarrative(newCell)){
+              //get closest lane
+              let closestlane = t.narrativelanescontroller.getClosestLane(newCell);
+              //get source narrative
+              let sourcenarrative = t.getSourceCellNarrative(newCell); this one does not Worker, needs fixing
+              //if null, create a new narrative group
+              if(sourcenarrative == null){
                 let res = t.newNarrative();
                 t.assignNodes(res.narrativeview, [newCell]);
+                closestlane.assignNarrative(res.narrative);
                 NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-                  cell: newCell, 
-                  narrative: res.narrative
+                    cell: newCell, 
+                    narrative: res.narrative
                 });
-              }                 
-            }
-          })();
-        }
-       
-
-        //if edge, show Contextual Edge Option Menu
-        //if is edge
-        //#region 
-        if (newCell.isEdge()) {
-          //edge type based on target node
-          console.log("New link");
-          let edge = newCell;
-          let targetType = edge.target.value.getAttribute(
-            NASettings.Dictionary.ATTRIBUTES.NATYPE
-          );
-          switch (targetType) {
-            case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
-              t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
-              break;
-            default:
-              t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
-              break;
-          }
-
-          let source = edge.source;
-          let target = edge.target;
-          let sourceNarrative = t.getDocumentItemNarrative(source);
-
-          //if the target cell is narrative item and source cell is part of a narrative, make the cell part of the same narrative
-          //if the target cell in evidence, assign to evidence group
-          //#region 
-          if(sourceNarrative){
-              if(NarrativeAbductionApp.isCellDocumentItemType(target, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE))
-              {
-
-              }else{
+              }else{             
                 let naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);  
                 if(naListVIew){
                   t.assignNodes(naListVIew, [target]);
                 }
-              }
+              }  
+              //update lanes
+              NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+              });  
+            }          
+            //#endregion
+          }        
+          if(newCell && newCell.isVertex()){
+             t.updateResponsiveCellSize(newCell);
           }
+        }
+
+        
+
+        
+
+        //if document item and not evidence
+        // if (newCell.isEdge()) {
+        //   //edge type based on target node
+        //   console.log("New link");
+        //   let edge = newCell;
+        //   let targetType = edge.target.value.getAttribute(
+        //     NASettings.Dictionary.ATTRIBUTES.NATYPE
+        //   );
+        //   switch (targetType) {
+        //     case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
+        //       t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
+        //       break;
+        //     default:
+        //       t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
+        //       break;
+        //   }
+
+        //   let source = edge.source;
+        //   let target = edge.target;
+        //   let sourceNarrative = t.getDocumentItemNarrative(source);
+
+        //   //if the target cell is narrative item and source cell is part of a narrative, make the cell part of the same narrative
+        //   //if the target cell in evidence, assign to evidence group
+        //   //#region 
+        //   if(sourceNarrative){
+        //       if(NarrativeAbductionApp.isCellDocumentItemType(target, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE))
+        //       {
+
+        //       }else{
+        //         let naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);  
+        //         if(naListVIew){
+        //           t.assignNodes(naListVIew, [target]);
+        //         }
+        //       }
+        //   }
     
-          NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-            cell: newCell, 
-            narrative: sourceNarrative
-          });
+        //   NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+        //     cell: newCell, 
+        //     narrative: sourceNarrative
+        //   });
     
-          if(target && target.isVertex()){
-              graph.refresh();
-              requestAnimationFrame(() => {
-                graph.startEditingAtCell(target);
-              });
-            }       
-        } 
+        //   if(target && target.isVertex()){
+        //       graph.refresh();
+        //       requestAnimationFrame(() => {
+        //         graph.startEditingAtCell(target);
+        //       });
+        //     }       
+        // } 
         //#endregion
 
-        //update responsive size
-        if(newCell && newCell.isVertex()){
-          t.updateResponsiveCellSize(newCell);
-        }
+        // //update responsive size
+        // if(newCell && newCell.isVertex()){
+        //   t.updateResponsiveCellSize(newCell);
+        // }
       });
     };
   
@@ -912,6 +951,7 @@ class NarrativeAbductionApp {
             NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.DELETENARRATIVE, {
               narrative: narrative
             })
+            t.narrativelanescontroller.evidencenarrative = null;
             t.deleteNarrative(narrative);
           }
         });
@@ -1392,8 +1432,9 @@ class NarrativeAbductionApp {
     /**
      * Create a new narrative, trigger create narrative view and narrative cell
      */
-    newNarrative() {
+    newNarrative(name) {
 
+      let groupname = (name)? name : NASettings.Language.English.newnarrative;
       let narrativeentry = this.getNarrativeEntry(); //get narrative entry from the entries list
       let graph = this.editorui.editor.graph;
       let parent = graph.getDefaultParent();
@@ -1407,7 +1448,7 @@ class NarrativeAbductionApp {
       //add the narrative cell
       try {
         narrativecell = graph.insertVertex(parent, null, objna, 0, 0, 50, 40);
-        narrativecell.value.setAttribute('label', NASettings.Language.English.newnarrative);
+        narrativecell.value.setAttribute('label', groupname);
         graph.setCellStyle(narrativeentry.style, [narrativecell]);
       } finally {
         graph.getModel().endUpdate();
@@ -1415,7 +1456,7 @@ class NarrativeAbductionApp {
         na = new Narrative(
           narrativecell,
           graph,
-          NASettings.Language.English.newnarrative,
+          groupname,
           narrativecell.id
         );
         this.narratives.push(na);
@@ -1434,7 +1475,7 @@ class NarrativeAbductionApp {
   
         //if objects are selected, add them automatically to the narrative
         let selectedCells = graph.getSelectionCells();
-        if (selectedCells && narrview) {
+        if (selectedCells[0] && narrview) {
           this.assignNodes(narrview, selectedCells);
           //move narrative root to the first item
           na.rootcell.geometry.y = selectedCells[0].geometry.y;
@@ -1444,7 +1485,7 @@ class NarrativeAbductionApp {
   
   
       //update layout
-      //this.narrativelayout.updateLayout();
+      //this.narrativelanescontroller.updateLayout();
   
       return {
         narrative: na,
