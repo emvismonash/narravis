@@ -770,15 +770,16 @@ class NarrativeAbductionApp {
       graph.addListener(mxEvent.CELLS_ADDED, function (sender, evt) {
         let cells = evt.getProperty("cells");
         let newCell = cells[0];
+        console.log("evt", evt);
 
         //if generating in progress, return;
         if(t.generatingsession) return;
 
         //if cell is in the lane, create new group
-        if(NarrativeAbductionApp.isCellDocumentItem(newCell)){
-          if(t.narrativelanescontroller.isCellInAnyLane(newCell)){
+        //#region 
+        if(NarrativeAbductionApp.isCellDocumentItem(newCell) && 
+        t.narrativelanescontroller.isCellInAnyLane(newCell)){
             //if cell is evidence cell, create new narrative in evidence lane
-            //#region 
             if(NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
               //evidence group exist, assign the evidence item to this group
               if(t.narrativelanescontroller.evidencenarrative != null){
@@ -796,39 +797,67 @@ class NarrativeAbductionApp {
               NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
               });
             }
-            //#endregion
-            //if the cell is not evidence, either create a new group (if not connected to any narrative) or assign to existing group if connected 
-            //#region 
-            if(!t.isCellPartOfExistingNarrative(newCell)){
-              //get closest lane
-              let closestlane = t.narrativelanescontroller.getClosestLane(newCell);
-              //get source narrative
-              let sourcenarrative = t.getSourceCellNarrative(newCell); this one does not Worker, needs fixing
-              //if null, create a new narrative group
-              if(sourcenarrative == null){
-                let res = t.newNarrative();
-                t.assignNodes(res.narrativeview, [newCell]);
-                closestlane.assignNarrative(res.narrative);
-                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-                    cell: newCell, 
-                    narrative: res.narrative
-                });
-              }else{             
-                let naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);  
-                if(naListVIew){
-                  t.assignNodes(naListVIew, [target]);
-                }
-              }  
-              //update lanes
+        }
+        //#endregion
+        
+        //if the cell is not evidence, either create a new group (if not connected to any narrative) or assign to existing group if connected 
+        //the issue is that the node is created first before the link, there is no way to know the source. Thus, we use the edge here
+        //#region
+        if(newCell.isEdge()){
+          let edge = newCell;
+          let targetType = edge.target.value.getAttribute(
+            NASettings.Dictionary.ATTRIBUTES.NATYPE
+          );
+          switch (targetType) {
+            case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
+              t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
+              break;
+            default:
+              t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
+              break;
+          }
+
+          let source = edge.source;
+          let target = edge.target;
+          let sourcenarrative = t.getDocumentItemNarrative(source);
+          if(sourcenarrative){
+            let nalistview = t.narrativeaviewscontainer.getListViewByNarrative(sourcenarrative);  
+            if(nalistview){
+              t.assignNodes(nalistview, [target]);
+            }
+          }
+        } 
+
+        //if the cell is rogue cell, create a new group, however, this needs to wait as the link is created after the cell
+        (async()=>{
+          await new Promise((resolve) => setTimeout(resolve, 500));    
+          let edges = graph.getModel().getEdges(newCell);
+          console.log("edges", edges);
+          console.log(t.narrativelanescontroller.isCellInAnyLane(newCell));
+          if(NarrativeAbductionApp.isCellDocumentItem(newCell) &&  
+          edges.length == 0 && 
+          t.narrativelanescontroller.isCellInAnyLane(newCell) &&
+          !NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)
+          ){
+             //get closest lane
+             let closestlane = t.narrativelanescontroller.getClosestLane(newCell);
+             console.log("New group");
+              let res = t.newNarrative("Narrative");
+              t.assignNodes(res.narrativeview, [newCell]);
+              closestlane.assignNarrative(res.narrative);
+              NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+                  cell: newCell, 
+                  narrative: res.narrative
+              });
               NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
               });  
             }          
-            //#endregion
-          }        
-          if(newCell && newCell.isVertex()){
-             t.updateResponsiveCellSize(newCell);
-          }
-        }
+        })(); 
+
+                
+      if(newCell && newCell.isVertex()){
+          t.updateResponsiveCellSize(newCell);
+      }
 
         
 
