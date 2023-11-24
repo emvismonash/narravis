@@ -299,7 +299,7 @@ class NarrativeLayout {
     }
 
     static applyLayoutEvidenceGroup(narrative, graph, dx, dy, callback, change, post){
-       
+        
         let model = graph.getModel();
         let targetCells = narrative.cells; // Array of parent node cells
         let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_NORTH);
@@ -456,6 +456,10 @@ class NarrativeLayout {
      * Apply mxHierarchicalLayout layout to a narrative group
      */
     static applyLayout(narrative, graph, dx, dy, callback, change, post){
+        if(!dx || !dy){
+            dx = narrative.rootcell.geometry.x + narrative.rootcell.geometry.width + 50;
+            dy = narrative.rootcell.geometry.y;
+        }
         if(NarrativeLayout.isNarrativeEvidenceOnly(narrative)){
             NarrativeLayout.applyLayoutEvidenceGroup(narrative, graph, dx, dy, callback, change, post);
         }else{

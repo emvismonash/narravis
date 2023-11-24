@@ -19,34 +19,6 @@ class NarrativeLanesController {
     }
 
 
-    // loadExistingCells(){
-    //     let graph = this.graph;
-    //     let cells = graph.getModel().getCells();
-    //     console.log(cells);
-    //     let lanerootcells = [];
-    //     let laneboundcells = [];
-    //     cells.forEach(cell => {
-    //         let c = cell.getChildAt(0);
-    //         if(c){
-    //             console.log(c);
-    //             console.log(graph.getModel().getChildCount(c));
-    //             console.log(c.getChildCount());
-    //             console.log(graph.getModel().getCells(c));
-
-
-    //         }
-    //         if(cell.isVertex() && cell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE) == NASettings.Dictionary.ATTRIBUTES.SWIMLANEINDICATOR){
-    //             lanerootcells.push(cell);
-    //         }
-    //         if(cell.isVertex() && cell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE) == NASettings.Dictionary.ATTRIBUTES.SWIMLANEINDICATOR){
-    //             laneboundcells.push(cell);
-    //         }
-    //     });
-    //     console.log("lanerootcells", lanerootcells);
-    //     console.log("laneboundcells", laneboundcells);
-    // }
-
-
     initListenerLayouUpdated(){
         let t = this;
         document.addEventListener(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, function(evt){
@@ -63,10 +35,6 @@ class NarrativeLanesController {
      * @returns 
      */
     isCellInAnyLane(cell){
-        console.log("top", this.toplane.isCellInLane(cell));
-        console.log("mid", this.evidencelane.isCellInLane(cell));
-        console.log("bot", this.botlane.isCellInLane(cell));
-
         return (this.toplane.isCellInLane(cell) || this.evidencelane.isCellInLane(cell) || this.botlane.isCellInLane(cell));
     }
 

@@ -86,7 +86,6 @@ class NarrativeLane {
         if(narrative){
             if(this.isCellInLane(narrative.cells[0])){                
                 if(!this.narratives.includes(narrative)){
-                    console.log("In lane of ", this.name);
                     this.assignNarrative(narrative);
                     NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
                     });
@@ -201,18 +200,30 @@ class NarrativeLane {
         }
     }
 
+    /**
+     * update the stacked position of the narrative
+     */
     updateNarrativesPositions(){
-        let prevY =  this.boundcell.geometry.y;
-        for(let i = 0; i < this.narratives.length; i++){
-            let narrative = this.narratives[i];
-            narrative.rootcell.geometry.y = prevY;
-            narrative.rootcell.geometry.x = 80;
-            this.graph.refresh();
-            narrative.updateCellsPositions();
-            this.graph.refresh();
-            prevY = Math.max(narrative.rootcell.geometry.y + narrative.rootcell.geometry.height, narrative.rootcell.geometry.y + narrative.bound.height);
-            prevY += this.margin;
-        };
+        this.graph.getModel().beginUpdate();
+        try{
+            let prevY =  this.boundcell.geometry.y;
+            for(let i = 0; i < this.narratives.length; i++){
+                let narrative = this.narratives[i];
+                narrative.rootcell.geometry.y = prevY;
+                narrative.rootcell.geometry.x = 10;
+                narrative.updateCellsPositions();
+                prevY = Math.max(narrative.rootcell.geometry.y + narrative.rootcell.geometry.height, narrative.rootcell.geometry.y + narrative.bound.height);
+                prevY += this.margin;
+            };
+        }finally{
+            let morph = new mxMorphing(this.graph);
+            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
+            {
+                this.graph.getModel().endUpdate();      
+            }));
+            morph.startAnimation();
+        }
+       
     }
 
     updateLayout(){
@@ -224,44 +235,57 @@ class NarrativeLane {
       this.updateLaneLayout();
     }
 
+    /**
+     * Update the size of the lane indicator, and the position of the narrative
+     */
     updateLaneLayout(){
         let currentheight = this.boundcell.geometry.height;
         //get the height
         let height = this.getLaneHeight();
         let diff = currentheight - height;
 
-        //update height
-        this.boundcell.geometry.height = height;
-        //move the root and indicator according to grow direction, 
-        switch(this.growdirection){
-            case NarrativeLane.GROWDIRECTION.UPWARD:
-                //move up of the height
-                this.boundcell.geometry.y += diff;
-                this.rootcell.geometry.y += diff;
-                break;
-            case NarrativeLane.GROWDIRECTION.EQUAL:
-                //move up half of the height
-                this.boundcell.geometry.y += diff * 0.5;
-                this.rootcell.geometry.y += diff * 0.5;
-                break;
-            case NarrativeLane.GROWDIRECTION.DOWNWARD:
-                //this is a default behaviour, do nothing .. 
-                break;
+        this.graph.getModel().beginUpdate();
+        try{
+            //update height
+            this.boundcell.geometry.height = height;
+            //move the root and indicator according to grow direction, 
+            switch(this.growdirection){
+                case NarrativeLane.GROWDIRECTION.UPWARD:
+                    //move up of the height
+                    this.boundcell.geometry.y += diff;
+                    this.rootcell.geometry.y += diff;
+                    break;
+                case NarrativeLane.GROWDIRECTION.EQUAL:
+                    //move up half of the height
+                    this.boundcell.geometry.y += diff * 0.5;
+                    this.rootcell.geometry.y += diff * 0.5;
+                    break;
+                case NarrativeLane.GROWDIRECTION.DOWNWARD:
+                    //this is a default behaviour, do nothing .. 
+                    break;
+            }
+        }finally{
+            let morph = new mxMorphing(this.graph);
+            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
+            {
+                this.graph.getModel().endUpdate();      
+                this.updateNarrativesPositions();  
+                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+                });                      
+            }));
+            morph.startAnimation();
         }
-        this.updateNarrativesPositions();
-        NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
-        });
     }
 
     unAssignNarrative(narrative){
-        console.log("UnAssigning");
-        console.log(this.narratives);
         this.narratives = NAUtil.RemoveElementArray(this.narratives.indexOf(narrative), this.narratives);
-        console.log(this.narratives);
         NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
         });
     }
 
+    /**
+     * reorder the y position of the narrative
+     */
     reorder(){
         let n = [];
         this.narratives.forEach(narrative => {

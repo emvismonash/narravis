@@ -73,7 +73,6 @@ class NarrativeAbductionApp {
       }
       if(invalidTargets.length > 0){
         let msg = "Some of selected cells are ignored because they are part of existing narrative";
-        console.warn(msg);
       }
   
     }
@@ -347,7 +346,6 @@ class NarrativeAbductionApp {
         }catch(e){
           console.log("error",e);
         }finally{
-          console.log("cells", cells);
           graph.getModel().endUpdate();       
           NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
           graph.setSelectionCells(cells);
@@ -770,7 +768,6 @@ class NarrativeAbductionApp {
       graph.addListener(mxEvent.CELLS_ADDED, function (sender, evt) {
         let cells = evt.getProperty("cells");
         let newCell = cells[0];
-        console.log("evt", evt);
 
         //if generating in progress, return;
         if(t.generatingsession) return;
@@ -796,6 +793,10 @@ class NarrativeAbductionApp {
               });  
               NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
               });
+              NarrativeLayout.applyLayout(t.narrativelanescontroller.evidencenarrative, graph, null, null, ()=>{
+                t.narrativelanescontroller.updateLanesGrowth();
+                t.narrativelanescontroller.updateLanesPosition();                
+              });
             }
         }
         //#endregion
@@ -816,7 +817,6 @@ class NarrativeAbductionApp {
               t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
               break;
           }
-
           let source = edge.source;
           let target = edge.target;
           let sourcenarrative = t.getDocumentItemNarrative(source);
@@ -824,99 +824,50 @@ class NarrativeAbductionApp {
             let nalistview = t.narrativeaviewscontainer.getListViewByNarrative(sourcenarrative);  
             if(nalistview){
               t.assignNodes(nalistview, [target]);
+              (async()=>{
+                await new Promise((resolve) => setTimeout(resolve, 500))
+                .then(()=>{
+                  NarrativeLayout.applyLayout(sourcenarrative, graph, null, null, ()=>{
+                    t.narrativelanescontroller.updateLanesGrowth();
+                    t.narrativelanescontroller.updateLanesPosition();    
+                  });  
+                });
+              })(); 
             }
           }
         } 
 
         //if the cell is rogue cell, create a new group, however, this needs to wait as the link is created after the cell
         (async()=>{
-          await new Promise((resolve) => setTimeout(resolve, 500));    
-          let edges = graph.getModel().getEdges(newCell);
-          console.log("edges", edges);
-          console.log(t.narrativelanescontroller.isCellInAnyLane(newCell));
-          if(NarrativeAbductionApp.isCellDocumentItem(newCell) &&  
-          edges.length == 0 && 
-          t.narrativelanescontroller.isCellInAnyLane(newCell) &&
-          !NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)
-          ){
-             //get closest lane
-             let closestlane = t.narrativelanescontroller.getClosestLane(newCell);
-             console.log("New group");
-              let res = t.newNarrative("Narrative");
-              t.assignNodes(res.narrativeview, [newCell]);
-              closestlane.assignNarrative(res.narrative);
-              NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-                  cell: newCell, 
-                  narrative: res.narrative
-              });
-              NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
-              });  
-            }          
+          await new Promise((resolve) => setTimeout(resolve, 500))
+          .then(()=>{
+            let edges = graph.getModel().getEdges(newCell);
+            if(NarrativeAbductionApp.isCellDocumentItem(newCell) &&  
+            edges.length == 0 && 
+            t.narrativelanescontroller.isCellInAnyLane(newCell) &&
+            !NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)
+            ){
+               //get closest lane
+               let closestlane = t.narrativelanescontroller.getClosestLane(newCell);
+                let res = t.newNarrative("Narrative");
+                t.assignNodes(res.narrativeview, [newCell]);
+                closestlane.assignNarrative(res.narrative);
+                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+                    cell: newCell, 
+                    narrative: res.narrative
+                });
+                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+                });  
+                t.narrativelanescontroller.updateLanesGrowth();
+                t.narrativelanescontroller.updateLanesPosition();    
+              }    
+          });                   
         })(); 
 
                 
       if(newCell && newCell.isVertex()){
           t.updateResponsiveCellSize(newCell);
       }
-
-        
-
-        
-
-        //if document item and not evidence
-        // if (newCell.isEdge()) {
-        //   //edge type based on target node
-        //   console.log("New link");
-        //   let edge = newCell;
-        //   let targetType = edge.target.value.getAttribute(
-        //     NASettings.Dictionary.ATTRIBUTES.NATYPE
-        //   );
-        //   switch (targetType) {
-        //     case NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE:
-        //       t.setEdgeType(edge, NASettings.Dictionary.CELLS.EXPLAINLINK);
-        //       break;
-        //     default:
-        //       t.setEdgeType(edge, NASettings.Dictionary.CELLS.CAUSELINK);
-        //       break;
-        //   }
-
-        //   let source = edge.source;
-        //   let target = edge.target;
-        //   let sourceNarrative = t.getDocumentItemNarrative(source);
-
-        //   //if the target cell is narrative item and source cell is part of a narrative, make the cell part of the same narrative
-        //   //if the target cell in evidence, assign to evidence group
-        //   //#region 
-        //   if(sourceNarrative){
-        //       if(NarrativeAbductionApp.isCellDocumentItemType(target, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE))
-        //       {
-
-        //       }else{
-        //         let naListVIew = t.narrativeaviewscontainer.getListViewByNarrative(sourceNarrative);  
-        //         if(naListVIew){
-        //           t.assignNodes(naListVIew, [target]);
-        //         }
-        //       }
-        //   }
-    
-        //   NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-        //     cell: newCell, 
-        //     narrative: sourceNarrative
-        //   });
-    
-        //   if(target && target.isVertex()){
-        //       graph.refresh();
-        //       requestAnimationFrame(() => {
-        //         graph.startEditingAtCell(target);
-        //       });
-        //     }       
-        // } 
-        //#endregion
-
-        // //update responsive size
-        // if(newCell && newCell.isVertex()){
-        //   t.updateResponsiveCellSize(newCell);
-        // }
       });
     };
   
@@ -996,7 +947,6 @@ class NarrativeAbductionApp {
       let t = this;
       graph.addListener(mxEvent.LABEL_CHANGED, function(sender, evt)
       {
-        console.log("evt", evt);
         let cell = evt.getProperty("cell");
         if(cell && NarrativeAbductionApp.isCellDocumentItem(cell)){
           var view = graph.view;
