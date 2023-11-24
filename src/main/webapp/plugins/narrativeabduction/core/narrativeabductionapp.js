@@ -784,33 +784,40 @@ class NarrativeAbductionApp {
         //if generating in progress, return;
         if(t.generatingsession) return;
 
-        //if cell is in the lane, create new group
+        //if cell is in the lane, create new group, 
+        //if cell is evidence cell, create new narrative in evidence lane
         //#region 
         if(NarrativeAbductionApp.isCellDocumentItem(newCell) && 
-        t.narrativelanescontroller.isCellInAnyLane(newCell)){
-            //if cell is evidence cell, create new narrative in evidence lane
-            if(NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
-              //evidence group exist, assign the evidence item to this group
-              if(t.narrativelanescontroller.evidencenarrative != null){
-                t.assignNodes(t.narrativeaviewscontainer.getListViewByNarrative(t.narrativelanescontroller.evidencenarrative), [newCell]);                 
-              }else{ //otherwise, create a new narrative group
-                let res = t.newNarrative("Evidence");
-                t.narrativelanescontroller.evidencenarrative = res.narrative;
-                t.assignNodes(res.narrativeview, [newCell]);   
-                t.narrativelanescontroller.evidencelane.assignNarrative(res.narrative);   
-              }
-              NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-                cell: newCell, 
-                narrative: t.narrativelanescontroller.evidencenarrative
-              });  
-              NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
-              });
-              NarrativeLayout.applyLayout(t.narrativelanescontroller.evidencenarrative, graph, null, null, ()=>{
-                t.narrativelanescontroller.updateLanesGrowth();
-                t.narrativelanescontroller.updateLanesPosition();                
-              });
+        t.narrativelanescontroller.isCellInAnyLane(newCell) &&
+        NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)
+        ){
+            //evidence group exist, assign the evidence item to this group
+            if(t.narrativelanescontroller.evidencenarrative != null){
+              t.assignNodes(t.narrativeaviewscontainer.getListViewByNarrative(t.narrativelanescontroller.evidencenarrative), [newCell]);                 
+            }else{ //otherwise, create a new narrative group
+              let res = t.newNarrative("Evidence");
+              t.narrativelanescontroller.evidencenarrative = res.narrative;
+              t.assignNodes(res.narrativeview, [newCell]);   
+              t.narrativelanescontroller.evidencelane.assignNarrative(res.narrative);   
             }
-        }
+            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+              cell: newCell, 
+              narrative: t.narrativelanescontroller.evidencenarrative
+            });  
+            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+            });
+
+            (async()=>{
+              await new Promise((resolve) => setTimeout(resolve, 600))
+              .then(()=>{
+                NarrativeLayout.applyLayout(t.narrativelanescontroller.evidencenarrative, graph, null, null, ()=>{
+                  t.narrativelanescontroller.updateLanesGrowth();
+                  t.narrativelanescontroller.updateLanesPosition();    
+                  if(t.narrativelanescontroller.evidencenarrative)  NarrativeLayout.applyLayout(t.narrativelanescontroller.evidencenarrative, graph);
+                });
+              });                
+            })();
+        } 
         //#endregion
         
         //if the cell is not evidence, either create a new group (if not connected to any narrative) or assign to existing group if connected 
@@ -832,50 +839,54 @@ class NarrativeAbductionApp {
           let source = edge.source;
           let target = edge.target;
           let sourcenarrative = t.getDocumentItemNarrative(source);
-          if(sourcenarrative){
+          if(sourcenarrative && 
+            NarrativeAbductionApp.isCellDocumentItem(target) &&
+            !NarrativeAbductionApp.isCellDocumentItemType(target, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)){
             let nalistview = t.narrativeaviewscontainer.getListViewByNarrative(sourcenarrative);  
             if(nalistview){
               t.assignNodes(nalistview, [target]);
-              (async()=>{
-                await new Promise((resolve) => setTimeout(resolve, 500))
-                .then(()=>{
-                  NarrativeLayout.applyLayout(sourcenarrative, graph, null, null, ()=>{
-                    t.narrativelanescontroller.updateLanesGrowth();
-                    t.narrativelanescontroller.updateLanesPosition();    
-                  });  
-                });
-              })(); 
+              NarrativeLayout.applyLayout(sourcenarrative, graph, null, null, ()=>{
+                t.narrativelanescontroller.updateLanesGrowth();
+                t.narrativelanescontroller.updateLanesPosition(); 
+                if(t.narrativelanescontroller.evidencenarrative)  NarrativeLayout.applyLayout(t.narrativelanescontroller.evidencenarrative, graph);
+              });
+                
             }
           }
-        } 
+        } else{
+            //if the cell is rogue cell, create a new group, however, this needs to wait as the link is created after the cell
+            (async()=>{
+              await new Promise((resolve) => setTimeout(resolve, 500))
+              .then(()=>{
+                //#region 
+                let edges = graph.getModel().getEdges(newCell);
+                if(!t.isCellPartOfExistingNarrative(newCell) &&
+                    NarrativeAbductionApp.isCellDocumentItem(newCell) &&  
+                    edges.length == 0 && 
+                    t.narrativelanescontroller.isCellInAnyLane(newCell) &&
+                    !NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)
+                ){
+                  //get closest lane
+                  let closestlane = t.narrativelanescontroller.getClosestLane(newCell);
+                    let res = t.newNarrative("Narrative");
+                    t.assignNodes(res.narrativeview, [newCell]);
+                    closestlane.assignNarrative(res.narrative);
+                    NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
+                        cell: newCell, 
+                        narrative: res.narrative
+                    });
+                    NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+                    });  
+                    t.narrativelanescontroller.updateLanesGrowth();
+                    t.narrativelanescontroller.updateLanesPosition();    
+                  }    
+                //#endregion          
+              });         
+            })(); 
 
-        //if the cell is rogue cell, create a new group, however, this needs to wait as the link is created after the cell
-        (async()=>{
-          await new Promise((resolve) => setTimeout(resolve, 500))
-          .then(()=>{
-            let edges = graph.getModel().getEdges(newCell);
-            if(NarrativeAbductionApp.isCellDocumentItem(newCell) &&  
-            edges.length == 0 && 
-            t.narrativelanescontroller.isCellInAnyLane(newCell) &&
-            !NarrativeAbductionApp.isCellDocumentItemType(newCell, NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE)
-            ){
-               //get closest lane
-               let closestlane = t.narrativelanescontroller.getClosestLane(newCell);
-                let res = t.newNarrative("Narrative");
-                t.assignNodes(res.narrativeview, [newCell]);
-                closestlane.assignNarrative(res.narrative);
-                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.NEWDOCUMENTITEM, {
-                    cell: newCell, 
-                    narrative: res.narrative
-                });
-                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
-                });  
-                t.narrativelanescontroller.updateLanesGrowth();
-                t.narrativelanescontroller.updateLanesPosition();    
-              }    
-          });                   
-        })(); 
+        }
 
+       
                 
       if(newCell && newCell.isVertex()){
           t.updateResponsiveCellSize(newCell);

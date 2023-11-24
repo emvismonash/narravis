@@ -361,8 +361,8 @@ class NarrativeListView {
     applyLayout = function(t){
         if(t.narrative){
             NarrativeLayout.applyLayout(t.narrative, t.editorui.editor.graph, null, null, ()=>{
-              t.app.narrativelanescontroller.updateLanesGrowth();
-              t.app.narrativelanescontroller.updateLanesPosition(); 
+             // t.app.narrativelanescontroller.updateLanesGrowth();
+             // t.app.narrativelanescontroller.updateLanesPosition(); 
             });
 
         }

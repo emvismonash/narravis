@@ -209,17 +209,17 @@ class NarrativeLane {
                 let narrative = this.narratives[i];
                 narrative.rootcell.geometry.y = prevY;
                 narrative.rootcell.geometry.x = 10;
-                narrative.updateCellsPositions();
+                if(NarrativeLayout.isNarrativeEvidenceOnly(narrative)) {
+                    narrative.updateCellsPositions(false, true);
+                }else{
+                    narrative.updateCellsPositions();
+                }
+
                 prevY = Math.max(narrative.rootcell.geometry.y + narrative.rootcell.geometry.height, narrative.rootcell.geometry.y + narrative.bound.height);
                 prevY += this.margin;
             };
         }finally{
-            let morph = new mxMorphing(this.graph);
-            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
-            {
-                this.graph.getModel().endUpdate();      
-            }));
-            morph.startAnimation();
+            this.graph.getModel().endUpdate();      
         }
        
     }

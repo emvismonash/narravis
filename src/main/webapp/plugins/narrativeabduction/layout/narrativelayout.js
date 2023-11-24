@@ -218,7 +218,6 @@ class NarrativeLayout {
             }
             
             layout.execute(graph.getDefaultParent(), targetCells);
-            let t = this;
             excludeNodes.forEach((cell) => {
                 let currentgeometry = model.getGeometry(cell.excell);
                 currentgeometry.x = cell.x;
@@ -271,8 +270,6 @@ class NarrativeLayout {
         });
         
         cola.removeOverlaps(rs);
-        console.log(rects);
-        console.log(rs);
         return rs;
     }
 
@@ -304,7 +301,6 @@ class NarrativeLayout {
         let targetCells = narrative.cells; // Array of parent node cells
         let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_NORTH);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
-        layout.disableEdgeStyle = false;
         let excludeNodes = NarrativeLayout.getExcludedCells(graph, targetCells);
 
         graph.getModel().beginUpdate();
@@ -318,19 +314,19 @@ class NarrativeLayout {
             layout.execute(graph.getDefaultParent(), targetCells);           
 
             targetCells.forEach(cell => {
-                let currentgeometry = model.getGeometry(cell);
+                let currentgeometry = cell.geometry;
                 currentgeometry.y += dy;
-                //get edte
-                let edges = graph.getEdges(cell);
-                //get the middle position
-                let sum = 0;
-                edges.forEach(edge => {
-                    //get connected x
-                    sum += edge.source.geometry.x;
-                });    
-                let resx = (edges.length > 0)? sum/edges.length : currentgeometry.x;
-                currentgeometry.x = resx;   
-                model.setGeometry(cell, currentgeometry);
+                currentgeometry.x += dx;
+                  //get edte
+                  let edges = graph.getEdges(cell);
+                  //get the middle position
+                  let sum = 0;
+                  edges.forEach(edge => {
+                      //get connected x
+                      sum += edge.source.geometry.x;
+                  });    
+                  let resx = (edges.length == 0)? currentgeometry.x: sum/edges.length;
+                  currentgeometry.x = resx;
             });
 
             //remove overlaps using cola
@@ -345,9 +341,7 @@ class NarrativeLayout {
             });
             //update excluded cells position            
             let results = NarrativeLayout.removeOverlapsHorizontal(rects);
-            console.log(rects);
 
-            console.log(results);
             results.forEach((res,  i) => {
                 console.log(i);
                 console.log(res);
@@ -367,10 +361,6 @@ class NarrativeLayout {
                 model.setGeometry(cell.excell, currentgeometry);
             });
         }
-        catch (e)
-        {
-            throw e;
-        }
         finally
         {
             let morph = new mxMorphing(graph);
@@ -383,11 +373,11 @@ class NarrativeLayout {
                     post();
                 }
                 narrative.updateCellsBound();
-
                 if(callback) callback();
             }));
             
             morph.startAnimation();
+           
         }      
     }
 
