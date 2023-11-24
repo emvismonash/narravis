@@ -32,8 +32,6 @@ class NarrativeLane {
         this.narratives.push(narrative); 
     }
 
-
-
     createLabelCell(){
         let boundcell = this.boundcell;
         let yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;

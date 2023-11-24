@@ -38,6 +38,13 @@ class NarrativeLanesController {
         return (this.toplane.isCellInLane(cell) || this.evidencelane.isCellInLane(cell) || this.botlane.isCellInLane(cell));
     }
 
+    removeNarrative(narrative){
+        if(this.toplane.narratives.includes(narrative)) this.toplane.unAssignNarrative(narrative);
+        if(this.evidencelane.narratives.includes(narrative)) this.evidencelane.unAssignNarrative(narrative);
+        if(this.botlane.narratives.includes(narrative)) this.botlane.unAssignNarrative(narrative);
+      }
+  
+
     /**
      * Get either top or bot lane that is closes to cell, mid lane is dedicated for evidence
      * @param {*} cell 

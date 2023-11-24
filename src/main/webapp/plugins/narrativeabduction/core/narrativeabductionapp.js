@@ -59,6 +59,7 @@ class NarrativeAbductionApp {
       }
     };
   
+
       
     /** Assign cell to a narrative */
     assignNodes(nalistview, targets){
@@ -485,9 +486,20 @@ class NarrativeAbductionApp {
   
     /**
      * Remove narrative from the list
-     * @param {*} narrative
+     * @param {*} cell
      */
-    deleteNarrative(narrative) {
+    deleteNarrative(cell) {
+      let narrative = this.getNarrativeFromRootCell(cell);
+      //remove view
+      this.narrativeaviewscontainer.removeListView(cell);
+      //if it is in the lane, remove
+      this.narrativelanescontroller.removeNarrative(narrative);
+      this.narrativelanescontroller.updateLanesGrowth();
+      this.narrativelanescontroller.updateLanesPosition();
+
+      NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.DELETENARRATIVE, {
+        narrative: narrative
+      })
       this.narratives.splice(this.narratives.indexOf(narrative), 1);
     };
   
@@ -926,13 +938,7 @@ class NarrativeAbductionApp {
         cells.forEach((cell) => {
           //if the cell is narrative, remove the view as well
           if (Narrative.isCellNarrative(cell)) {
-            let narrative = t.getNarrativeFromRootCell(cell);
-            t.narrativeaviewscontainer.removeListView(cell);
-            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.DELETENARRATIVE, {
-              narrative: narrative
-            })
-            t.narrativelanescontroller.evidencenarrative = null;
-            t.deleteNarrative(narrative);
+            t.deleteNarrative(cell);
           }
         });
       });
