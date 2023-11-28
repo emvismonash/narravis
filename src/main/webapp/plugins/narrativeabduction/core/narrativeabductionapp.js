@@ -253,22 +253,7 @@ class NarrativeAbductionApp {
       this.createCommonMenu("Load JSON", container);
     }  
   
-    insertDocumentItemFromJSONObject(jsonObject){
-        let graph = this.editorui.editor.graph;
-        let parent = graph.getDefaultParent();
-        let t = this;
-        let cells = [];
-  
-        graph.getModel().beginUpdate();
-        try{
-          t.createDocumentItemFromJSONObject(jsonObject, cells);          
-          graph.addCells(cells, parent);
-        }catch(e){
-        }finally{
-          graph.getModel().endUpdate();
-          this.updateLayoutOfNonNarrativeCells();
-        }
-    }
+   
 
     updateLayoutOfNonNarrativeCells(){
       let graph = this.editorui.editor.graph;
@@ -281,22 +266,7 @@ class NarrativeAbductionApp {
       NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
     }
 
-    insertDocumentLinkFromJSONObject(jsonObject, nodes){
-      let graph = this.editorui.editor.graph;
-      let parent = graph.getDefaultParent();
-      let t = this;
-      let cells = [];
 
-      graph.getModel().beginUpdate();
-      try{
-        t.createDocumentLinkFromJSONObject(jsonObject, nodes, graph);
-        graph.addCells(cells, parent);
-      }catch(e){
-      }finally{
-        graph.getModel().endUpdate();
-        this.updateLayoutOfNonNarrativeCells();
-      }
-  }
 
     createDocumentItemFromJSONObject(node, cells){
       let documentitem = this.nodeToDocumentItem(node);
@@ -950,6 +920,9 @@ class NarrativeAbductionApp {
           //if the cell is narrative, remove the view as well
           if (Narrative.isCellNarrative(cell)) {
             t.deleteNarrative(cell);
+            if(cell == t.narrativelanescontroller.evidencenarrative.rootcell){
+                t.narrativelanescontroller.evidencenarrative = null;
+            }
           }
         });
       });
@@ -984,6 +957,40 @@ class NarrativeAbductionApp {
       })
     }
   
+    insertDocumentItemFromJSONObject(jsonObject){
+      let graph = this.editorui.editor.graph;
+      let parent = graph.getDefaultParent();
+      let t = this;
+      let cells = [];
+
+      graph.getModel().beginUpdate();
+      try{
+        t.createDocumentItemFromJSONObject(jsonObject, cells);          
+        graph.addCells(cells, parent);
+      }catch(e){
+      }finally{
+        graph.getModel().endUpdate();
+        this.updateLayoutOfNonNarrativeCells();
+      }
+  }
+
+  insertDocumentLinkFromJSONObject(jsonObject, nodes){
+    let graph = this.editorui.editor.graph;
+    let parent = graph.getDefaultParent();
+    let t = this;
+    let cells = [];
+
+    graph.getModel().beginUpdate();
+    try{
+      t.createDocumentLinkFromJSONObject(jsonObject, nodes, graph);
+      graph.addCells(cells, parent);
+    }catch(e){
+    }finally{
+      graph.getModel().endUpdate();
+      this.updateLayoutOfNonNarrativeCells();
+    }
+}
+
       /**
      * This is the listener to the new HTML document item, lots of duplicates with insertListenerDocumentItemDoubleClick
      * TODO: remove duplicates
