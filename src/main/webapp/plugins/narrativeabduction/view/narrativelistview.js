@@ -33,7 +33,7 @@ class NarrativeListView {
      * @returns Get the style to hightlight
      */
     getHighlightStyle() {
-      return "strokeColor=" + this.color + ";strokeWidth=6";
+      return "strokeColor=" + this.color + ";strokeWidth=2";
     };
   
     /**
@@ -361,8 +361,6 @@ class NarrativeListView {
     applyLayout = function(t){
         if(t.narrative){
             NarrativeLayout.applyLayout(t.narrative, t.editorui.editor.graph, null, null, ()=>{
-             // t.app.narrativelanescontroller.updateLanesGrowth();
-             // t.app.narrativelanescontroller.updateLanesPosition(); 
             });
 
         }

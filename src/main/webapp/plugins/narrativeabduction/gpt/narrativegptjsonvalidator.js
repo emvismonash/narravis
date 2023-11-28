@@ -6,6 +6,9 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         this.window;        
         this.loadingurl = "plugins/narrativeabduction/assets/loading.gif";
         this.streamparser;
+        this.currentnarrativeresult;
+        this.initListenerJSON2Diagram();
+        this.initListenerJSON2DocumentItem();
     }
 
     formatPrompt(text){
@@ -14,6 +17,47 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
 
     setText(text){
         this.container.textareamessage.value = text;
+    }
+
+    initListenerJSON2Diagram(){
+      let t = this;
+      document.addEventListener(NASettings.Dictionary.EVENTS.INSERTJSON2DIAGRAM, function(evt){
+        let data = evt.detail;
+        let json = data.jsontext;
+        t.app.createDocumentItemsFromJSON(JSON.parse(json));
+      });   
+    }
+
+    initListenerJSON2DocumentItem(){
+      let t = this;
+      document.addEventListener(NASettings.Dictionary.EVENTS.JSON2ITEMSTART, function(evt){       
+        t.app.generatingsession = true;
+        t.currentnarrativeresult = t.app.newNarrative();
+        t.currentnarrativeresult.narrative.rootcell.geometry.x = 30;
+        t.currentnarrativeresult.narrative.rootcell.geometry.y = 480;
+        t.currentnarrativeresult.narrative.rootcell.geometry.width = 260;
+        t.currentnarrativeresult.narrative.rootcell.geometry.height = 40;
+
+        t.app.editorui.editor.graph.refresh();
+      });   
+      document.addEventListener(NASettings.Dictionary.EVENTS.JSON2ITEM, function(evt){
+        let data = evt.detail;
+        let itemobject = data.itemobject;
+        let isnode = data.isnode;
+        let nodes = data.nodes;
+        
+        if(isnode){
+          let cells = t.app.insertDocumentItemFromJSONObject(itemobject);
+          t.app.assignNodes(t.currentnarrativeresult.narrativeview, cells)
+          NarrativeLayout.applyLayout(t.currentnarrativeresult.narrative, t.app.editorui.editor.graph, null, null);
+        }else{
+          t.app.insertDocumentLinkFromJSONObject(itemobject, nodes);
+        }
+      });
+      
+      document.addEventListener(NASettings.Dictionary.EVENTS.JSON2ITEMDONE, function(evt){       
+        t.app.generatingsession = false;       
+      });   
     }
 
     createWindow(){
@@ -81,6 +125,8 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
             t.container.textareajson.value = "";
             t.chatGPTStream(prompt);           
             t.disableChat();            
+            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.JSON2ITEMSTART, {
+            });
           })
 
        let btnStopGenerate = NAUIHelper.AddButton("Stop", container, function(){
@@ -103,7 +149,6 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
       }
 
       async chatGPTStream(text){
-        this.app.generatingsession = true;
         this.streamparser = new NarrativeGPTJSONStreamParser();
         await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
       }
@@ -133,11 +178,10 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
       }
 
       completeStreamResponse(t){
-        console.log("Complete"); 
-        console.log(t.streamparser.links);
-        console.log(t.streamparser.nodes);
+        NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.JSON2ITEMDONE, {
+        
+        });
         t.enableChat();
-        t.app.generatingsession = false;
       }
 }
 

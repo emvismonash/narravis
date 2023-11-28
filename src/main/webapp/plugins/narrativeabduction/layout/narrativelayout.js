@@ -202,12 +202,15 @@ class NarrativeLayout {
         return excludeNodes;
     }
 
-    static applyCellsLayout(graph, model, cells, callback, change, post){
+    static applyCellsLayout(graph, model, cells, dx, dy, callback, change, post){
         //update excluded cells position
         let targetCells = cells; // Array of parent node cells
         let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
         let excludeNodes = NarrativeLayout.getExcludedCells(graph, targetCells);
+
+        dx = (dx == undefined)? 0: dx;
+        dy = (dy == undefined)? 0: dy;
 
         graph.getModel().beginUpdate();
         try
@@ -218,6 +221,14 @@ class NarrativeLayout {
             }
             
             layout.execute(graph.getDefaultParent(), targetCells);
+
+            targetCells.forEach(cell => {
+                let currentgeometry = model.getGeometry(cell);
+                currentgeometry.x += dx;
+                currentgeometry.y += dy;
+                model.setGeometry(cell, currentgeometry);
+            });
+
             excludeNodes.forEach((cell) => {
                 let currentgeometry = model.getGeometry(cell.excell);
                 currentgeometry.x = cell.x;

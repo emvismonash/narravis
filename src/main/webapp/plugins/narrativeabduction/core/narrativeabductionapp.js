@@ -61,7 +61,7 @@ class NarrativeAbductionApp {
   
 
       
-    /** Assign cell to a narrative */
+    /** Assign cells to a narrative */
     assignNodes(nalistview, targets){
       let validated = this.getValidatedAssignedCells(targets);
       let validTargets = validated.validcells;
@@ -255,26 +255,29 @@ class NarrativeAbductionApp {
   
    
 
-    updateLayoutOfNonNarrativeCells(){
+    /**
+     * Update the layout of all document cells that are not part of any narrative
+     */
+    updateLayoutOfNonNarrativeCells(dx, dy){
       let graph = this.editorui.editor.graph;
       graph.selectAll();
       let allcells = graph.getSelectionCells();
       let cells = [];
       allcells.forEach(cell => {
-          if(!this.isCellPartOfExistingNarrative(cell)) cells.push(cell);
+          if(!this.isCellPartOfExistingNarrative(cell) && NarrativeAbductionApp.isCellDocumentItem(cell)) cells.push(cell);
       });
-      NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
+      NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells, 0, -200);
     }
 
 
 
-    createDocumentItemFromJSONObject(node, cells){
+    createDocumentItemFromJSONObject(node){
       let documentitem = this.nodeToDocumentItem(node);
       let cell = documentitem.cell;
       cell.setAttribute("label", this.getContentFromNode(node));
-      if(cell) cells.push(cell);
       node.cell = cell;
       this.updateResponsiveCellSize(cell);
+      return cell;
     }
 
     createDocumentLinkFromJSONObject(link, nodes, graph){
@@ -306,7 +309,8 @@ class NarrativeAbductionApp {
         graph.getModel().beginUpdate();
         try{
           nodes.forEach(node => {
-            this.createDocumentItemFromJSONObject(node, cells);
+            let cell =  this.createDocumentItemFromJSONObject(node);
+            cells.push(cell);
           });
 
           graph.addCells(cells, parent);
@@ -965,13 +969,15 @@ class NarrativeAbductionApp {
 
       graph.getModel().beginUpdate();
       try{
-        t.createDocumentItemFromJSONObject(jsonObject, cells);          
+        let cell = t.createDocumentItemFromJSONObject(jsonObject);  
+        cells.push(cell);        
         graph.addCells(cells, parent);
       }catch(e){
       }finally{
         graph.getModel().endUpdate();
         this.updateLayoutOfNonNarrativeCells();
       }
+      return cells;
   }
 
   insertDocumentLinkFromJSONObject(jsonObject, nodes){
