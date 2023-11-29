@@ -8,6 +8,7 @@ class NarrativeLanesController {
         this.botlane = new NarrativeLane(graph, "Bottom Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
         this.evidencenarrative = null;
         this.initListenerLayoutUpdated();
+        this.initListenerNarrativeCellMoved();
     }
 
     initiate(){
@@ -18,6 +19,47 @@ class NarrativeLanesController {
         this.graph.refresh();
     }
 
+     /**
+     * Hide cross links if the narrative is not in the lane
+     */
+     initListenerNarrativeCellMoved(){
+        let t = this;
+        let graph = this.graph;
+        graph.addListener(mxEvent.CELLS_MOVED, function(sender, evt){
+            let cells = evt.getProperty("cells");
+            let narrativecell;
+            cells.forEach(cell => {
+                if(NarrativeAbductionApp.isCellNarrativeCell(cell)){
+                  narrativecell = cell;
+                }
+            });
+
+            if(narrativecell){
+                let narrative = t.app.getNarrativeFromRootCell(narrativecell);
+                if(narrative){
+                    let crosslinks = narrative.getCrossLinks();
+                    crosslinks.forEach(link => {
+                        let style = NAUtil.ParseStyleString(graph.getModel().getStyle(link));
+
+                        if(!t.isCellInAnyLane(narrativecell)){
+                            style.opacity = 0;
+                            style.textOpacity= 0;
+                            let stringstyle = NAUtil.StringifyStyleObject(style);
+                            graph.getModel().setStyle(link, stringstyle); 
+                            graph.refresh();
+                        }else{
+                            style.opacity = 100;
+                            style.textOpacity= 100;
+                            let stringstyle = NAUtil.StringifyStyleObject(style);
+                            graph.getModel().setStyle(link, stringstyle);
+                            graph.refresh(); 
+                        }
+                    });
+                }
+            }
+        });
+      }
+  
 
     initListenerLayoutUpdated(){
         let t = this;

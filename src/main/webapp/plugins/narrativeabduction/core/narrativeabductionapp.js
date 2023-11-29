@@ -997,7 +997,7 @@ class NarrativeAbductionApp {
           //if the cell is narrative, remove the view as well
           if (Narrative.isCellNarrative(cell)) {
             t.deleteNarrative(cell);
-            if(cell == t.narrativelanescontroller.evidencenarrative.rootcell){
+            if(t.narrativelanescontroller.evidencenarrative != null && cell == t.narrativelanescontroller.evidencenarrative.rootcell){
                 t.narrativelanescontroller.evidencenarrative = null;
             }
           }

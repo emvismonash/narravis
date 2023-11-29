@@ -2,20 +2,17 @@ class NAUtil {
     static Log(d){
       console.log(d);
     }
-
     static DispatchEvent(name, detail){
        let event = new CustomEvent(name, {
         detail: detail
       });
       document.dispatchEvent(event);
     }
-
     static RemoveElementArray(idx, arr){      
       const myObject = arr[idx];
       const newArray1 = arr.filter(item => item !== myObject);
       return newArray1;
     }
-
     static GetNarrativeFromCell(cell, arr){
       let na = null;
       arr.forEach(narrative => {
@@ -25,8 +22,7 @@ class NAUtil {
       });
       return na;
   }
-
-    static loadJSONFile(filetype, callback) {
+  static loadJSONFile(filetype, callback) {
       // Create an input element for file selection
       const fileInput = document.createElement('input');
       fileInput.type = 'file';
@@ -57,8 +53,7 @@ class NAUtil {
       // Trigger the file picker dialog
       fileInput.click();
   }
-
-    static ArraysContainSameItems(arr1, arr2) {
+  static ArraysContainSameItems(arr1, arr2) {
         if (arr1.length !== arr2.length) {
           return false; // If the arrays have different lengths, they can't contain the same items
         }
@@ -137,5 +132,50 @@ class NAUtil {
       sidebar.setCurrentSearchEntryLibrary();
     };
   
-   
+    static ParseStyleString(styleString) {
+      // Split the style string into individual key-value pairs
+      var stylePairs = styleString.split(';');
+  
+      // Create an empty object to store the parsed style
+      var styleObject = {};
+  
+      // Iterate over each key-value pair
+      stylePairs.forEach(function(pair) {
+          
+        // Split the pair into key and value
+          var keyValue = pair.split('=');
+  
+          if(keyValue[0] && keyValue[1]){
+            // Trim any leading or trailing whitespaces
+            var key = keyValue[0].trim();
+            var value = keyValue[1].trim();
+
+            // Add the key-value pair to the style object
+            styleObject[key] = value;
+          }  
+         
+      });
+  
+      return styleObject;
+  }
+
+  static StringifyStyleObject(styleObject) {
+    // Create an empty array to store key-value pairs
+    var stylePairs = [];
+
+    // Iterate over each property in the style object
+    for (var key in styleObject) {
+        if (styleObject.hasOwnProperty(key)) {
+            // Convert boolean values to strings
+            var value = styleObject[key];           
+            // Add the key-value pair to the array
+            stylePairs.push(key + '=' + value);
+        }
+    }
+    // Join the array into a string using semicolons
+    var styleString = stylePairs.join(';');
+
+    return styleString;
+}
+  
   }
