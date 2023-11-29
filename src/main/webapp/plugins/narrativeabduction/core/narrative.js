@@ -20,6 +20,10 @@ class Narrative {
       this.initListenerRootCellMoved();
     }
 
+    setName(n){
+      this.name = n;
+      this.rootcell.value.setAttribute('label',n);
+    }
     hideBound(){
       this.toggleBoundVisible(false);
     }
@@ -62,7 +66,15 @@ class Narrative {
       return{dx: dx, dy: dy}
     }
 
-    updateCellsPositions(){
+    /**
+     * Move the cells to follow the narrative root cell
+     * @param {*} allowX 
+     * @param {*} allowY 
+     */
+    updateCellsPositions(allowX, allowY){
+      let x = (allowX == undefined)? true: allowX; //constraint x
+      let y = (allowY == undefined)? true: allowY; //constraint y
+
       let dxdy = this.getDxDy();
       let dx = dxdy.dx;
       let dy = dxdy.dy;
@@ -70,8 +82,8 @@ class Narrative {
       this.graph.getModel().beginUpdate();
       try{
         this.cells.forEach(cell => {
-            cell.geometry.x += dx;
-            cell.geometry.y += dy;
+            if(x) cell.geometry.x += dx;
+            if(y) cell.geometry.y += dy;
         });
       }finally{
         this.graph.getModel().endUpdate();
@@ -81,7 +93,9 @@ class Narrative {
       }
     }
 
-
+    /**
+     * Listener for when a cell is removed. Check if the cell is part of current narrative. 
+     */
     initListenerRemoveCell(){
       let t = this;
       let graph = this.graph;
@@ -95,7 +109,9 @@ class Narrative {
       })
     }
 
-
+    /**
+     * Listerner for when the root cell is moved. If so, ask cells to follow
+     */
     initListenerRootCellMoved(){
       let t = this;
       let graph = this.graph;

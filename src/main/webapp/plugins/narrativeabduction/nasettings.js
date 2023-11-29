@@ -41,6 +41,8 @@ const NASettings = {
       NEWDOCUMENTITEM: "newdocumentitem",
       INSERTJSON2DIAGRAM: "insertjson2diagram", 
       JSON2ITEM: "json2item",
+      JSON2ITEMDONE: "json2itemdone",
+      JSON2ITEMSTART: "json2itemstart",
       LANELAYOUTUPDATED: "lanelayoutupdated"
     },
   },

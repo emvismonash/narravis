@@ -33,7 +33,7 @@ class NarrativeListView {
      * @returns Get the style to hightlight
      */
     getHighlightStyle() {
-      return "strokeColor=" + this.color + ";strokeWidth=6";
+      return "strokeColor=" + this.color + ";strokeWidth=2";
     };
   
     /**
@@ -360,9 +360,9 @@ class NarrativeListView {
 
     applyLayout = function(t){
         if(t.narrative){
-            let dx = t.narrative.rootcell.geometry.x + t.narrative.rootcell.geometry.width + 50;
-            let dy = t.narrative.rootcell.geometry.y;
-            NarrativeLayout.applyLayout(t.narrative, t.editorui.editor.graph, dx, dy);
+            NarrativeLayout.applyLayout(t.narrative, t.editorui.editor.graph, null, null, ()=>{
+            });
+
         }
     }
   

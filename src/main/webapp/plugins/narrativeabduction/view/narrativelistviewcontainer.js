@@ -56,7 +56,6 @@ class NarrativeListViewContainer {
         this.narrativealistviews.indexOf(listView),
         1
       ); //update the list
-      this.app.deleteNarrative(narrativecell); //delete the narrative object
     };
   
     

@@ -51,40 +51,9 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
         ];
         this.createChatWindow();
         this.jsonvalidator = new NarrativeGPTJSONValidator(app);
-        this.initListenerJSON2Diagram();
-        this.initListenerJSON2DocumentItem();
         this.currentmessage;        
         this.loadingurl = "plugins/narrativeabduction/assets/loading.gif";
-
-
-    }
-
-    initListenerJSON2Diagram(){
-      let t = this;
-      document.addEventListener(NASettings.Dictionary.EVENTS.INSERTJSON2DIAGRAM, function(evt){
-        let data = evt.detail;
-        let json = data.jsontext;
-        t.app.createDocumentItemsFromJSON(JSON.parse(json));
-      });   
-    }
-
-    initListenerJSON2DocumentItem(){
-      let t = this;
-      document.addEventListener(NASettings.Dictionary.EVENTS.JSON2ITEM, function(evt){
-        let data = evt.detail;
-        console.log(data);
-        let itemobject = data.itemobject;
-        let isnode = data.isnode;
-        let nodes = data.nodes;
-        
-        if(isnode){
-          console.log(itemobject);
-          t.app.insertDocumentItemFromJSONObject(itemobject);
-        }else{
-          t.app.insertDocumentLinkFromJSONObject(itemobject, nodes);
-        }
-      });   
-    }
+    }    
 
     toggleJSONGenerationWindow(){
       this.jsonvalidator.window.setVisible(!this.jsonvalidator.window.isVisible());

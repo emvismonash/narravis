@@ -18,14 +18,18 @@ Draw.loadPlugin(function (ui) {
         mxscript("plugins/narrativeabduction/gpt/narrativegpt.js", function(){   
         mxscript("plugins/narrativeabduction/gpt/narrativegptauthoring.js", function(){
         mxscript("plugins/narrativeabduction/gpt/narrativegptjsonvalidator.js", function(){
-        mxscript("plugins/narrativeabduction/core/narrativeabductionapp.js", function(){
+        mxscript("plugins/narrativeabduction/core/narrativeabductionapp.js", function(){       
+          let app = new NarrativeAbductionApp(ui);
+          
           ui.editor.addListener("fileLoaded", function(sender, evt) {
             console.log("EditorUi", ui);
             console.log("Sidebar", ui.sidebar.graph);
-            console.log("Editor", ui.editor);                      
+            console.log("Editor", ui.editor);
+            app.initiate();                      
           });
-          let app = new NarrativeAbductionApp(ui);
-          app.initiate();
+
+
+   
         });
         });
         });

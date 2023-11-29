@@ -202,12 +202,15 @@ class NarrativeLayout {
         return excludeNodes;
     }
 
-    static applyCellsLayout(graph, model, cells, callback, change, post){
+    static applyCellsLayout(graph, model, cells, dx, dy, callback, change, post){
         //update excluded cells position
         let targetCells = cells; // Array of parent node cells
         let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
         let excludeNodes = NarrativeLayout.getExcludedCells(graph, targetCells);
+
+        dx = (dx == undefined)? 0: dx;
+        dy = (dy == undefined)? 0: dy;
 
         graph.getModel().beginUpdate();
         try
@@ -218,7 +221,14 @@ class NarrativeLayout {
             }
             
             layout.execute(graph.getDefaultParent(), targetCells);
-            let t = this;
+
+            targetCells.forEach(cell => {
+                let currentgeometry = model.getGeometry(cell);
+                currentgeometry.x += dx;
+                currentgeometry.y += dy;
+                model.setGeometry(cell, currentgeometry);
+            });
+
             excludeNodes.forEach((cell) => {
                 let currentgeometry = model.getGeometry(cell.excell);
                 currentgeometry.x = cell.x;
@@ -260,15 +270,47 @@ class NarrativeLayout {
         return res;
     }
 
-    /***
-     * Apply mxHierarchicalLayout layout to a narrative group
-     */
-    static applyLayout(narrative, graph, dx, dy, callback, change, post){
+    static removeOverlaps(rects) {
+        var rs = [];
+        rects.forEach(function (r) {
+            let x = r.x; 
+            let y = r.y;
+            let w = r.width;
+            let h = r.height;
+            rs.push(new cola.Rectangle(x, x + w, y, y + h));
+        });
+        
+        cola.removeOverlaps(rs);
+        return rs;
+    }
 
-        //update excluded cells position
+    static removeOverlapsHorizontal(rectangles) {
+        let hasOverlaps = true;
+    
+        while (hasOverlaps) {
+            hasOverlaps = false;
+    
+            // Sort rectangles by their x-coordinate
+            rectangles.sort((a, b) => a.x - b.x);
+    
+            for (let i = 1; i < rectangles.length; i++) {
+                // Check for overlap with the previous rectangle
+                if (rectangles[i].x < rectangles[i - 1].x + rectangles[i - 1].width) {
+                    // If overlap, adjust the x-coordinate of the current rectangle
+                    rectangles[i].x = rectangles[i - 1].x + rectangles[i - 1].width;
+                    hasOverlaps = true; // Set flag to true for another iteration
+                }
+            }
+        }
+    
+        return rectangles;
+    }
+
+    static applyLayoutEvidenceGroup(narrative, graph, dx, dy, callback, change, post){
+        
         let model = graph.getModel();
         let targetCells = narrative.cells; // Array of parent node cells
-        let layout = (NarrativeLayout.isNarrativeEvidenceOnly(narrative))? new mxHierarchicalLayout(graph, mxConstants.DIRECTION_NORTH): new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
+        let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_NORTH);
         layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
         let excludeNodes = NarrativeLayout.getExcludedCells(graph, targetCells);
 
@@ -283,7 +325,99 @@ class NarrativeLayout {
             layout.execute(graph.getDefaultParent(), targetCells);           
 
             targetCells.forEach(cell => {
-                let currentgeometry = cell.getGeometry(cell);
+                let currentgeometry = cell.geometry;
+                currentgeometry.y += dy;
+                currentgeometry.x += dx;
+                  //get edte
+                  let edges = graph.getEdges(cell);
+                  //get the middle position
+                  let sum = 0;
+                  edges.forEach(edge => {
+                      //get connected x
+                      sum += edge.source.geometry.x;
+                  });    
+                  let resx = (edges.length == 0)? currentgeometry.x: sum/edges.length;
+                  currentgeometry.x = resx;
+            });
+
+            //remove overlaps using cola
+            let rects = [];
+            targetCells.forEach(cell => {
+                rects.push({
+                    x: cell.geometry.x,
+                    y: cell.geometry.y,
+                    width: cell.geometry.width,
+                    height: cell.geometry.height
+                })
+            });
+            //update excluded cells position            
+            let results = NarrativeLayout.removeOverlapsHorizontal(rects);
+
+            results.forEach((res,  i) => {
+                console.log(i);
+                console.log(res);
+
+                let cell = targetCells[i];
+                let currentgeometry = model.getGeometry(cell);
+                currentgeometry.x = res.x;
+                currentgeometry.y = res.y;  
+                console.log(currentgeometry);
+                model.setGeometry(cell, currentgeometry);
+            });
+            
+            excludeNodes.forEach((cell) => {
+                let currentgeometry = model.getGeometry(cell.excell);
+                currentgeometry.x = cell.x;
+                currentgeometry.y = cell.y;
+                model.setGeometry(cell.excell, currentgeometry);
+            });
+        }
+        finally
+        {
+            let morph = new mxMorphing(graph);
+            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
+            {
+                graph.getModel().endUpdate();
+                
+                if (post != null)
+                {
+                    post();
+                }
+                narrative.updateCellsBound();
+                if(callback) callback();
+            }));
+            
+            morph.startAnimation();
+           
+        }      
+    }
+
+    
+    /***
+     * Apply mxHierarchicalLayout layout to a narrative group
+     */
+    static applyLayoutHierarchical(narrative, graph, dx, dy, callback, change, post){
+
+        //update excluded cells position
+        let model = graph.getModel();
+        let targetCells = narrative.cells; // Array of parent node cells
+        let layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
+        layout.disableEdgeStyle = false;
+        layout.edgeStyle = mxHierarchicalLayout.prototype.ORTHOGONAL_EDGE_STYLE;
+        let excludeNodes = NarrativeLayout.getExcludedCells(graph, targetCells);
+
+        graph.getModel().beginUpdate();
+        try
+        {
+            if (change != null)
+            {
+                change();
+            }
+            
+            layout.execute(graph.getDefaultParent(), targetCells);           
+
+            targetCells.forEach(cell => {
+                let currentgeometry = model.getGeometry(cell);
                 currentgeometry.x += dx;
                 currentgeometry.y += dy;
                 model.setGeometry(cell, currentgeometry);
@@ -317,5 +451,21 @@ class NarrativeLayout {
             
             morph.startAnimation();
         }
+    }
+
+    /***
+     * Apply mxHierarchicalLayout layout to a narrative group
+     */
+    static applyLayout(narrative, graph, dx, dy, callback, change, post){
+        if(!dx || !dy){
+            dx = narrative.rootcell.geometry.x + narrative.rootcell.geometry.width + 50;
+            dy = narrative.rootcell.geometry.y;
+        }
+        if(NarrativeLayout.isNarrativeEvidenceOnly(narrative)){
+            NarrativeLayout.applyLayoutEvidenceGroup(narrative, graph, dx, dy, callback, change, post);
+        }else{
+            NarrativeLayout.applyLayoutHierarchical(narrative, graph, dx, dy, callback, change, post);
+        }
+        
     }
 }
