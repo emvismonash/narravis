@@ -230,6 +230,27 @@ class Narrative {
       return cell;
     }
 
+    /**
+     * Get links that are connected to cell outside this narrative
+     * @returns 
+     */
+    getCrossLinks(){
+      let crossLinks = [];
+      let graph = this.graph;
+      this.cells.forEach(cell => {
+          let edges = graph.getEdges(cell);
+          //check cross link
+          edges.forEach(edge => {
+              let target = edge.target;
+              let source = edge.source;
+              if(!(this.cells.includes(target) && this.cells.includes(source))){
+                  crossLinks.push(edge);
+              }
+          });
+      });
+      return crossLinks;
+    }
+
     getBoundCellID(){
       return NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLSBOUND + "-" + this.rootcell.id;
     }
