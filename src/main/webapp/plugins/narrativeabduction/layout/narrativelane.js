@@ -22,7 +22,6 @@ class NarrativeLane {
     }
 
     initiate(){
-        this.createLaneContainer();
         this.createLaneCell();
         this.createLabelCell();
         this.initListenerNarrativeMoved();
@@ -71,14 +70,14 @@ class NarrativeLane {
 
 
 
-    createLaneContainer(){
-        this.container = document.createElement("div");
-        this.container.style.padding = "2px";
-        let title = document.createElement("div");
-        title.innerHTML = this.name;
-        this.container.append(title);
-        this.container.title = title;
-    }
+    // createLaneContainer(){
+    //     this.container = document.createElement("div");
+    //     this.container.style.padding = "2px";
+    //     let title = document.createElement("div");
+    //     title.innerHTML = this.name;
+    //     this.container.append(title);
+    //     this.container.title = title;
+    // }
 
     checkNarrativeInLane(narrative){
         if(narrative){

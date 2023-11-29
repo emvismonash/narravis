@@ -7,7 +7,7 @@ class NarrativeLanesController {
         this.evidencelane = new NarrativeLane(graph, "Evidence Lane", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
         this.botlane = new NarrativeLane(graph, "Bottom Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
         this.evidencenarrative = null;
-        this.initListenerLayouUpdated();
+        this.initListenerLayoutUpdated();
     }
 
     initiate(){
@@ -19,7 +19,7 @@ class NarrativeLanesController {
     }
 
 
-    initListenerLayouUpdated(){
+    initListenerLayoutUpdated(){
         let t = this;
         document.addEventListener(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, function(evt){
             (async()=>{

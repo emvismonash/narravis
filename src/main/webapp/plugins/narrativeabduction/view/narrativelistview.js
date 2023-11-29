@@ -55,7 +55,7 @@ class NarrativeListView {
       graph.refresh();
     };
 
-    selectCells = function(){
+    selectCells(){
         let graph = this.editorui.editor.graph;
         graph.getModel().beginUpdate();
         try {
@@ -66,7 +66,7 @@ class NarrativeListView {
         graph.refresh();
     }
   
-    isAllCellsSelected = function(){
+    isAllCellsSelected(){
         let graph = this.editorui.editor.graph;
         let selectedCells = graph.getSelectionCells();
         let docitems = [];
@@ -106,7 +106,7 @@ class NarrativeListView {
      * Hide provided cells
      * @param {*} cellsToHide 
      */
-    toggleCellsVisibility = function(cellsToHide, status){
+    toggleCellsVisibility (cellsToHide, status){
       let graph = this.editorui.editor.graph;  
       graph.getModel().beginUpdate();
       try {
@@ -228,7 +228,7 @@ class NarrativeListView {
       });
     };
 
-    initListenerClickRemoveHighlight = function(){
+    initListenerClickRemoveHighlight(){
         let graph = this.editorui.editor.graph;
         let t = this;
         graph.addListener(mxEvent.CLICK, function (sender, evt) {
@@ -271,7 +271,7 @@ class NarrativeListView {
       this.headContainer.bottompart.append(buttonAssignNode);
     };
 
-    createLayoutButton = function(){
+    createLayoutButton(){
         let buttonLayout = document.createElement("button");
         buttonLayout.innerHTML = "⟲";
         buttonLayout.title = "Reset layout"; //todo
@@ -279,7 +279,7 @@ class NarrativeListView {
         this.headContainer.bottompart.append(buttonLayout);       
     }
 
-    createToggleHighlightButton = function(){
+    createToggleHighlightButton(){
         let buttonToggle = document.createElement("button");
         buttonToggle.innerHTML = "H";
         buttonToggle.title = "Toggle highlight"; //todo
@@ -287,7 +287,7 @@ class NarrativeListView {
         this.headContainer.bottompart.append(buttonToggle);       
     }
 
-    createToggleVisibilityButton = function(){
+    createToggleVisibilityButton(){
       let buttonToggle = document.createElement("button");
       buttonToggle.title = "Toggle visibility"; //todo
       buttonToggle.onclick = this.toggleVisibility.bind(null, this);
@@ -301,7 +301,7 @@ class NarrativeListView {
     }
 
 
-    createUpDownButtons = function(){
+    createUpDownButtons(){
       let upButton = document.createElement("button");
       upButton.title = "Move up";
       upButton.innerHTML = "↑";
@@ -315,18 +315,18 @@ class NarrativeListView {
       this.headContainer.bottompart.append(downButton);
     }
 
-    moveUp = function(t){
+    moveUp(t){
         t.app.narrativeaviewscontainer.moveUp(t.narrative);
     }
 
-    moveDown = function(t){
+    moveDown(t){
       t.app.narrativeaviewscontainer.moveDown(t.narrative);
     }
 
     /**
      * Toggle the visibility of the narrative in the view. This also changes the visibility of the cells. 
      */
-    toggleVisibility = function(t){
+    toggleVisibility(t){
       if(t.narrative){
         if(t.narrative.isvisible){
           t.toggleCellsVisibility(t.narrative.cells, false);
@@ -346,7 +346,7 @@ class NarrativeListView {
       }
     }
 
-    toggleHighlight = function(t){
+    toggleHighlight(t){
         if(t.narrative){
             if(t.narrative.ishighlight){
                 t.unhighlightCells(t.narrative.cells);
@@ -358,11 +358,10 @@ class NarrativeListView {
         }
     }
 
-    applyLayout = function(t){
+    applyLayout(t){
         if(t.narrative){
             NarrativeLayout.applyLayout(t.narrative, t.editorui.editor.graph, null, null, ()=>{
             });
-
         }
     }
   

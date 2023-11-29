@@ -5,7 +5,6 @@ class NarrativeAbductionApp {
     constructor(ui) {
       this.editorui = ui;
       this.narratives = [];
-      this.narrativelistcell = {};
       this.narrativeaviewscontainer = {};
       this.panelwindow = {};
       this.naentries = NAEntries;
@@ -36,28 +35,29 @@ class NarrativeAbductionApp {
       this.initOverrideConnectionConstraints();
       this.initListenerRemoveNarrativeCellHandler();
       this.initListenerEdgeDoubleClickEditHandler();
+      this.initListenerNarrativeCellMoved();
       this.updateMoreShapesButton();
 
     }
 
-    /**
-     * Assign the narrative cell into the narrative list
-     * @param {*} cell
-     */
-    addNarrativeCellToList(cell) {
-      if (this.narrativelistcell) {
-        const graph = this.editorui.editor.graph;
-        graph.getModel().beginUpdate();
-        try {
-          graph.getModel().add(this.narrativelistcell, cell);
-          let layout = new mxStackLayout(graph, true);
-          layout.execute(this.narrativelistcell);
-          // cell.setParent();
-        } finally {
-          graph.getModel().endUpdate();
-        }
-      }
-    };
+    // /**
+    //  * Assign the narrative cell into the narrative list
+    //  * @param {*} cell
+    //  */
+    // addNarrativeCellToList(cell) {
+    //   if (this.narrativelistcell) {
+    //     const graph = this.editorui.editor.graph;
+    //     graph.getModel().beginUpdate();
+    //     try {
+    //       graph.getModel().add(this.narrativelistcell, cell);
+    //       let layout = new mxStackLayout(graph, true);
+    //       layout.execute(this.narrativelistcell);
+    //       // cell.setParent();
+    //     } finally {
+    //       graph.getModel().endUpdate();
+    //     }
+    //   }
+    // };
   
 
       
@@ -429,32 +429,32 @@ class NarrativeAbductionApp {
       NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);
     };
   
-    /**
-     * Create the container cell that will contain the narrative cells
-     */
-    createNarrativeListCell() {
-      let entry = this.getEntryByName(NASettings.Dictionary.CELLS.NARRATIVELIST);
-      let graph = this.editorui.editor.graph;
-      let doc = mxUtils.createXmlDocument();
-      let obj = doc.createElement(entry.name);
+    // /**
+    //  * Create the container cell that will contain the narrative cells
+    //  */
+    // createNarrativeListCell() {
+    //   let entry = this.getEntryByName(NASettings.Dictionary.CELLS.NARRATIVELIST);
+    //   let graph = this.editorui.editor.graph;
+    //   let doc = mxUtils.createXmlDocument();
+    //   let obj = doc.createElement(entry.name);
   
-      graph.getModel().beginUpdate();
-      try {
-        let cell = graph.insertVertex(
-          graph.getDefaultParent(),
-          null,
-          obj,
-          0,
-          0,
-          100,
-          100
-        );
-        cell.setStyle(entry.style);
-        this.narrativelistcell = cell;
-      } finally {
-        graph.getModel().endUpdate();
-      }
-    };
+    //   graph.getModel().beginUpdate();
+    //   try {
+    //     let cell = graph.insertVertex(
+    //       graph.getDefaultParent(),
+    //       null,
+    //       obj,
+    //       0,
+    //       0,
+    //       100,
+    //       100
+    //     );
+    //     cell.setStyle(entry.style);
+    //     this.narrativelistcell = cell;
+    //   } finally {
+    //     graph.getModel().endUpdate();
+    //   }
+    // };
   
 
   
@@ -708,8 +708,46 @@ class NarrativeAbductionApp {
       });
     };
   
+    insertDocumentItemFromJSONObject(jsonObject){
+      let graph = this.editorui.editor.graph;
+      let parent = graph.getDefaultParent();
+      let t = this;
+      let cells = [];
+
+      graph.getModel().beginUpdate();
+      try{
+        let cell = t.createDocumentItemFromJSONObject(jsonObject);  
+        cells.push(cell);        
+        graph.addCells(cells, parent);
+      }catch(e){
+      }finally{
+        graph.getModel().endUpdate();
+        this.updateLayoutOfNonNarrativeCells();
+      }
+      return cells;
+  }
+
+  insertDocumentLinkFromJSONObject(jsonObject, nodes){
+    let graph = this.editorui.editor.graph;
+    let parent = graph.getDefaultParent();
+    let t = this;
+    let cells = [];
+
+    graph.getModel().beginUpdate();
+    try{
+      t.createDocumentLinkFromJSONObject(jsonObject, nodes, graph);
+      graph.addCells(cells, parent);
+    }catch(e){
+    }finally{
+      graph.getModel().endUpdate();
+      this.updateLayoutOfNonNarrativeCells();
+    }
+}
+
     //#region listeners
   
+    
+
     /**
      * Handler for when the vanila document item size is updated.
      * The requirement is that the height can't be manually adjusted. The height is adjusted based on the content of the description.
@@ -727,6 +765,41 @@ class NarrativeAbductionApp {
       });
     };
 
+
+    /**
+     * Reorder the list view when the narrative is moved
+     */
+    initListenerNarrativeCellMoved(){
+      let t = this;
+      let graph = this.editorui.editor.graph;
+      graph.addListener(mxEvent.CELLS_MOVED, function(sender, evt){
+          let cells = evt.getProperty("cells");
+          let narrativecell;
+          cells.forEach(cell => {
+              if(NarrativeAbductionApp.isCellNarrativeCell(cell)){
+                narrativecell = cell;
+              }
+          });
+
+          //reorder
+          if(narrativecell){
+            let n = [];
+            t.narratives.forEach(narrative => {
+                n.push({
+                    na: narrative, 
+                    posY: narrative.rootcell.geometry.y
+                })
+            });
+            n.sort((a, b) => a.posY - b.posY);
+            let narratives =  [];
+            n.forEach(e => {
+              narratives.push(e.na);
+            });
+            t.narrativeaviewscontainer.reorder(narratives);
+          }
+
+      });
+    }
 
   
     /**
@@ -960,42 +1033,6 @@ class NarrativeAbductionApp {
         }
       })
     }
-  
-    insertDocumentItemFromJSONObject(jsonObject){
-      let graph = this.editorui.editor.graph;
-      let parent = graph.getDefaultParent();
-      let t = this;
-      let cells = [];
-
-      graph.getModel().beginUpdate();
-      try{
-        let cell = t.createDocumentItemFromJSONObject(jsonObject);  
-        cells.push(cell);        
-        graph.addCells(cells, parent);
-      }catch(e){
-      }finally{
-        graph.getModel().endUpdate();
-        this.updateLayoutOfNonNarrativeCells();
-      }
-      return cells;
-  }
-
-  insertDocumentLinkFromJSONObject(jsonObject, nodes){
-    let graph = this.editorui.editor.graph;
-    let parent = graph.getDefaultParent();
-    let t = this;
-    let cells = [];
-
-    graph.getModel().beginUpdate();
-    try{
-      t.createDocumentLinkFromJSONObject(jsonObject, nodes, graph);
-      graph.addCells(cells, parent);
-    }catch(e){
-    }finally{
-      graph.getModel().endUpdate();
-      this.updateLayoutOfNonNarrativeCells();
-    }
-}
 
       /**
      * This is the listener to the new HTML document item, lots of duplicates with insertListenerDocumentItemDoubleClick
@@ -1339,7 +1376,7 @@ class NarrativeAbductionApp {
       return(cell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE) == type)
     }
   
-    isCellNarrativeCell(cell){
+    static isCellNarrativeCell(cell){
       if(cell.value && cell.value.nodeName == NASettings.Dictionary.CELLS.NARRATIVE){
           return true;
       }else{

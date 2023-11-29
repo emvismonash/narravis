@@ -49,14 +49,15 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         if(isnode){
           let cells = t.app.insertDocumentItemFromJSONObject(itemobject);
           t.app.assignNodes(t.currentnarrativeresult.narrativeview, cells)
-          NarrativeLayout.applyLayout(t.currentnarrativeresult.narrative, t.app.editorui.editor.graph, null, null);
+          t.currentnarrativeresult.narrativeview.applyLayout(t.currentnarrativeresult.narrativeview);      
         }else{
           t.app.insertDocumentLinkFromJSONObject(itemobject, nodes);
         }
       });
       
       document.addEventListener(NASettings.Dictionary.EVENTS.JSON2ITEMDONE, function(evt){       
-        t.app.generatingsession = false;       
+        t.app.generatingsession = false; 
+        t.currentnarrativeresult.narrativeview.applyLayout(t.currentnarrativeresult.narrativeview);      
       });   
     }
 
