@@ -247,13 +247,121 @@ class NarrativeAbductionApp {
           fileReader.readAsText(selectedFile);
         }
       });
+
+      let  exportButton = document.createElement('button');
+      exportButton.innerHTML = "Export";
+      exportButton.addEventListener('click', ()=>{
+          t.exportWorkspace();
+      })
+
   
       // Append the input element to the desired location in the DOM
       container.appendChild(inputElement); // Example: append it to the body
+      container.appendChild(exportButton);
       this.createCommonMenu("Load JSON", container);
     }  
+
   
-   
+    /**
+     * JSON Structure
+     * graph:{
+     *    nodes: [
+     *        {
+     *          id, title, descrption, type
+     *        }
+     * ], 
+     *    links: [
+     *        {
+     *            source, target, type
+     *        }
+     * ]
+     * },
+     * toplane: [
+     *  {
+     *    narrative: {
+     *      name: xxx
+     *      cells:[]
+     *    }
+     *  }
+     * ], 
+     * evidencelane[
+     *    {
+     *      //narrative
+     *    }
+     * ],
+     * bottomlane: [
+     *  // narrative
+     * ]
+     * 
+     */
+   exportWorkspace(){
+      let graphjson = this.graphToJson();
+      console.log(graphjson);
+      NAUtil.downloadJSONFile(graphjson, "graph");
+   }
+
+   graphToJson(){
+        let graph = this.editorui.editor.graph;
+        let model = graph.getModel();
+        let nodes = model.getCells();
+        let links = [];
+
+        let documentitems = [];
+        //get all document item cells
+        nodes.forEach(node => {
+          if(NarrativeAbductionApp.isCellDocumentItem(node)) documentitems.push(node);
+        });
+
+        // create JSON object for cells
+        let jsonNodes = [];
+        let visitedNodes = [];
+        documentitems.forEach(item => {
+          let id = item.id;
+          let content = this.getDocumentItemTitleDescription(item);
+          let description = content.description;
+          let title = content.title;
+          let nodetype = this.getDocumentType(item);
+          jsonNodes.push({
+              id: id,
+              title: title, 
+              description: description,
+              type: nodetype
+          })
+
+          //get edges 
+          let edges = model.getEdges(item);
+          edges.forEach(edge => {
+              if(!(visitedNodes.includes(edge.source.id) && visitedNodes.includes(edge.target.id))){
+                visitedNodes.push(edge.source.id);
+                visitedNodes.push(edge.target.id)
+                links.push(edge);
+              }
+          });
+        });
+        console.log(links);
+
+
+        // create JSON object for edges
+        let jsonEdges = [];
+        links.forEach(link => {
+           let source = link.source.id;
+           let target = link.target.id;
+           let linktype = (NarrativeAbductionApp.isCellDocumentItemType(link.target, NASettings.Dictionary.CELLS.EVIDENCEITEM))? NASettings.Dictionary.CELLS.EXPLAINLINK : NASettings.Dictionary.CELLS.CAUSELINK;
+           jsonEdges.push({
+              source: source, 
+              target: target, 
+              type: linktype            
+           });
+        });
+
+        console.log(jsonNodes);
+        console.log(jsonEdges);
+
+        return {
+            nodes: jsonNodes,
+            links: jsonEdges
+        }
+   }
 
     /**
      * Update the layout of all document cells that are not part of any narrative
@@ -323,12 +431,35 @@ class NarrativeAbductionApp {
         }finally{
           graph.getModel().endUpdate();       
           NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
-          graph.setSelectionCells(cells);
+          
+          let nonevidenceitems = [];
+          let evidenceitems = [];
+          cells.forEach(cell => {
+            if(this.getDocumentType(cell) != NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE){
+              nonevidenceitems.push(cell);
+              console.log(this.getDocumentType(cell), NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE);
+            }else{
+              evidenceitems.push(cell);
+            }
+          });
+          //create narrative
+          graph.setSelectionCells(nonevidenceitems);
           let n = this.newNarrative();
           n.narrativecell.geometry.x = 0;
           n.narrativecell.geometry.y = -100;
           n.narrative.updateCellsPositions();
           this.generatingsession = false;  
+
+          graph.clearSelection();
+           //evidence group exist, assign the evidence item to this group
+          if(this.narrativelanescontroller.evidencenarrative != null){
+            this.assignNodes(this.narrativeaviewscontainer.getListViewByNarrative(this.narrativelanescontroller.evidencenarrative), evidenceitems);                 
+          }else{ //otherwise, create a new narrative group
+            let res = this.newNarrative("Evidence");
+            this.narrativelanescontroller.evidencenarrative = res.narrative;
+            this.assignNodes(res.narrativeview, evidenceitems);   
+            this.narrativelanescontroller.evidencelane.assignNarrative(res.narrative);   
+          }
 
         }
 
@@ -576,7 +707,7 @@ class NarrativeAbductionApp {
     };
   
     /**
-     * Get the title cell from a cell
+     * Get the title cell from a cell [NOT USED]
      * @param {*} parentcell
      * @returns
      */
@@ -657,6 +788,9 @@ class NarrativeAbductionApp {
       }
   
   
+    getDocumentType(cell){
+      return cell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE);
+    }
         
     getDocumentItemTitle(cell){
       let value = this.getDocumentItemCellValue(cell);
@@ -670,6 +804,23 @@ class NarrativeAbductionApp {
         }
       }else{
         return cell.getAttribute("natype");
+      }
+    }
+
+    getDocumentItemTitleDescription(cell){
+      let title = this.getDocumentItemTitle(cell);
+      let value = this.getDocumentItemCellValue(cell);
+      if (value == null || value == undefined){
+        value = "";
+      } else{
+        value = value.replace("<b>"+title+"</b>", "");
+      }
+
+      if(title == value) title = this.getDocumentType(cell);
+
+      return {
+        title: title,
+        description: value
       }
     }
 

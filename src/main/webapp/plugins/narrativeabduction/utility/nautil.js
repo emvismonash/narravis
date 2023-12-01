@@ -22,6 +22,22 @@ class NAUtil {
       });
       return na;
   }
+  static downloadJSONFile(jsonObject, filename){
+      // Get the text you want to save
+      let textToSave = JSON.stringify(jsonObject, null, 2);
+          
+      // Create a Blob with the text content
+      let blob = new Blob([textToSave], { type: "text/plain" });
+
+      // Create a temporary link element for triggering the download
+      let a = document.createElement("a");
+      a.href = window.URL.createObjectURL(blob);
+
+      a.download = filename + ".json";
+      // Trigger a click event on the link to initiate the download
+      a.click();
+      a.remove();
+  }
   static loadJSONFile(filetype, callback) {
       // Create an input element for file selection
       const fileInput = document.createElement('input');
