@@ -1,7 +1,6 @@
 class NarrativeLane {
     constructor(graph, name, growdirection, app){
         this.app = app;
-        this.name = name;
         this.narratives = [];
         this.container; // this is the container on the side menu
         this.boundcell; // this is the indicator

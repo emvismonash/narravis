@@ -22,14 +22,9 @@ Draw.loadPlugin(function (ui) {
           let app = new NarrativeAbductionApp(ui);
           
           ui.editor.addListener("fileLoaded", function(sender, evt) {
-            console.log("EditorUi", ui);
-            console.log("Sidebar", ui.sidebar.graph);
-            console.log("Editor", ui.editor);
             app.initiate();                      
           });
 
-
-   
         });
         });
         });
