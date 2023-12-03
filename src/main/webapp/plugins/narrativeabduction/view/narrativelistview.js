@@ -328,15 +328,17 @@ class NarrativeListView {
      */
     toggleVisibility(t){
       if(t.narrative){
+        let cells = t.narrative.cells;
+        cells.push(t.narrative.rootcell);
         if(t.narrative.isvisible){
-          t.toggleCellsVisibility(t.narrative.cells, false);
+          t.toggleCellsVisibility(cells, false);
           t.narrative.hideBound();
           t.narrative.isvisible = false;
           //t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.hiddenImage);
           t.headContainer.bottompart.buttonvisibility.innerHTML = "⎯";
 
         }else{
-          t.toggleCellsVisibility(t.narrative.cells, true);
+          t.toggleCellsVisibility(cells, true);
           t.narrative.showBound();
           //t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.visibleImage);
           t.headContainer.bottompart.buttonvisibility.innerHTML = "👁";

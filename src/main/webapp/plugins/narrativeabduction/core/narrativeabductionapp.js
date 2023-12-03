@@ -210,7 +210,7 @@ class NarrativeAbductionApp {
   
     createCommonMenus(){
         let title = document.createElement("h3");
-        title.innerHTML = "Common Menus";
+        title.innerHTML = "";
         this.panelwindow.commonmenu.append(title);
         this.createUpdateLinksMenu();
         this.createLoadJSONMenu();
