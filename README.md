@@ -8,15 +8,27 @@ This repository contains a slightly customized version of draw.io and mainly a n
 
 The following is from the original repository.
 
-Current demo: https://kadeksatriadi.github.io/drawio-na/
+Original repositoty: https://github.com/jgraph/drawio
+
+**HOW TO USE**
+
+Go the current live version: https://kadeksatriadi.github.io/drawio-na/
+
+Currently, it only works with local file. Please choose "Device" as the storage. 
+![step1](https://github.com/KadekSatriadi/drawio-na/assets/19480468/df7d0d61-306e-48ac-950f-2a1d6d8cb078)
+
+Then, go to Extra -> Plugins -> Add
+Select narrativeabduction plugin. 
+
+Refresh the page. 
 
 Activate "narrativeabduction" plugin to start. 
 
-Original repositoty: https://github.com/jgraph/drawio
+**MAIN FEATURES**
 
-**Main components**
+**Basics**
 
-**Narrative List Wiew**
+**Narrative List View**
 
 **Three Lanes Approach**
 
