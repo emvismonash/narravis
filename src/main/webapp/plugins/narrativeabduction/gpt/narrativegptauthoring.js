@@ -297,7 +297,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
 
   addButtonsToMessage(msg){
     let container = msg.container;
-    let buttonStyle = "font-size:12px;margin-right:5px;background:lightblue;width:65px;";
+    let buttonStyle = "font-size:11px;margin-right:5px;background:lightblue;width:65px;";
     
     const selectButton = document.createElement('button');
     const generateDiagramButton = document.createElement('button');
@@ -465,8 +465,8 @@ class NarrativeGPTAuthoringMessage {
   
     container.append(messageContainer);
 
-    let systemstyle = "margin-bottom: 5px;border: 1px solid white; background:lightblue; border-radius: 5px;padding: 5px;";
-    let userstyle =  "margin-bottom: 5px;border: 1px solid lightgray; font-style:italic; border-radius: 5px;padding: 5px;"
+    let systemstyle = "font-size:12px;margin-bottom: 5px;border: 1px solid white; background:lightblue; border-radius: 5px;padding: 5px;";
+    let userstyle =  "font-size:12px;margin-bottom: 5px;border: 1px solid lightgray; font-style:italic; border-radius: 5px;padding: 5px;"
     if(!system) {
       messageContainer.style = userstyle;
     } else{
