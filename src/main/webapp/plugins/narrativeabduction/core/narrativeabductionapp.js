@@ -37,7 +37,7 @@ class NarrativeAbductionApp {
       this.initListenerEdgeDoubleClickEditHandler();
       this.initListenerNarrativeCellMoved();
       this.updateMoreShapesButton();
-
+      this.loadExistingNarratives();
     }
 
     // /**
@@ -210,10 +210,11 @@ class NarrativeAbductionApp {
   
     createCommonMenus(){
         let title = document.createElement("h3");
-        title.innerHTML = "Common Menus";
+        title.innerHTML = "";
         this.panelwindow.commonmenu.append(title);
         this.createUpdateLinksMenu();
         this.createLoadJSONMenu();
+        this.createLoadNarrativeMenu();
     }
 
     createLoadJSONMenu(){
@@ -247,11 +248,21 @@ class NarrativeAbductionApp {
           fileReader.readAsText(selectedFile);
         }
       });
+
+      let  exportButton = document.createElement('button');
+      exportButton.innerHTML = "Export";
+      exportButton.addEventListener('click', ()=>{
+          t.exportWorkspace();
+      })
+
   
       // Append the input element to the desired location in the DOM
       container.appendChild(inputElement); // Example: append it to the body
+      container.appendChild(exportButton);
       this.createCommonMenu("Load JSON", container);
     }  
+
+  
   
    
 
@@ -274,6 +285,7 @@ class NarrativeAbductionApp {
     createDocumentItemFromJSONObject(node){
       let documentitem = this.nodeToDocumentItem(node);
       let cell = documentitem.cell;
+      if(node.id) cell.id = node.id;
       cell.setAttribute("label", this.getContentFromNode(node));
       node.cell = cell;
       this.updateResponsiveCellSize(cell);
@@ -299,10 +311,22 @@ class NarrativeAbductionApp {
     createDocumentItemsFromJSON(parsedObject){
         //create nodes
         let graph = this.editorui.editor.graph;
+        let model = graph.getModel();
         let parent = graph.getDefaultParent();
-        let nodes = parsedObject.nodes;
-        let links = parsedObject.links;
+        //check structure
+        let nonarrative = (parsedObject.narratives == undefined && parsedObject.nodes && parsedObject.links);
+
+        let nodes, links;
+        if(nonarrative){
+          nodes = parsedObject.nodes;
+          links = parsedObject.links;
+        }else{
+          nodes = parsedObject.graph.nodes;
+          links = parsedObject.graph.links;
+        }
+ 
         let cells = [];
+        //disable filters in new cell listener
         this.generatingsession = true;
         
 
@@ -321,14 +345,99 @@ class NarrativeAbductionApp {
         }catch(e){
           console.log("error",e);
         }finally{
-          graph.getModel().endUpdate();       
-          NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
-          graph.setSelectionCells(cells);
-          let n = this.newNarrative();
-          n.narrativecell.geometry.x = 0;
-          n.narrativecell.geometry.y = -100;
-          n.narrative.updateCellsPositions();
-          this.generatingsession = false;  
+          graph.getModel().endUpdate(); 
+          if(nonarrative){
+            NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells);
+          
+            let nonevidenceitems = [];
+            let evidenceitems = [];
+            cells.forEach(cell => {
+              if(this.getDocumentType(cell) != NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE){
+                nonevidenceitems.push(cell);
+                console.log(this.getDocumentType(cell), NASettings.Dictionary.CELLS.NARRATIVEEVIDENCECORE);
+              }else{
+                evidenceitems.push(cell);
+              }
+            });
+            //create narrative
+            graph.setSelectionCells(nonevidenceitems);
+            let n = this.newNarrative();
+            n.narrativecell.geometry.x = 0;
+            n.narrativecell.geometry.y = -100;
+            n.narrative.updateCellsPositions();
+            this.generatingsession = false;  
+
+            graph.clearSelection();
+            //evidence group exist, assign the evidence item to this group
+            if(this.narrativelanescontroller.evidencenarrative != null){
+              this.assignNodes(this.narrativeaviewscontainer.getListViewByNarrative(this.narrativelanescontroller.evidencenarrative), evidenceitems);                 
+            }else{ //otherwise, create a new narrative group
+              let res = this.newNarrative("Evidence");
+              this.narrativelanescontroller.evidencenarrative = res.narrative;
+              this.assignNodes(res.narrativeview, evidenceitems);   
+              this.narrativelanescontroller.evidencelane.assignNarrative(res.narrative);   
+            }
+          }else{
+            let narratives = parsedObject.narratives;
+            narratives.forEach(narrative => {
+              let cellids = narrative.cells;
+              let nacells = [];
+              cellids.forEach(id => {
+                  cells.forEach(cell => {
+                      if(cell.id == id) nacells.push(cell);
+                  });
+              });
+              //create narrative
+              graph.setSelectionCells(nacells);
+              let n = this.newNarrative(narrative.name);
+              n.narrativecell.id = narrative.id;
+              n.narrativecell.geometry.x = narrative.geometry.x;
+              n.narrativecell.geometry.y = narrative.geometry.y;
+              n.narrativecell.geometry.width = 200;
+
+              n.narrative.updateCellsPositions();
+              graph.clearSelection();
+              graph.refresh();
+            });
+            this.generatingsession = false;  
+            //check lanes
+            if(parsedObject.lanes){
+              let toplanejson = parsedObject.lanes.toplane;
+              let evidencejson = parsedObject.lanes.evidencelane;
+              let botlanejson = parsedObject.lanes.botlane;
+
+              toplanejson.narratives.forEach(narrativeid => {
+                  this.narratives.forEach(narrative => {
+                      if(narrative.rootcell.id == narrativeid) {
+                        this.narrativelanescontroller.toplane.assignNarrative(narrative);
+                      }
+                  });
+              });
+
+              evidencejson.narratives.forEach(narrativeid => {
+                this.narratives.forEach(narrative => {
+                    if(narrative.rootcell.id == narrativeid) {
+                      this.narrativelanescontroller.evidencelane.assignNarrative(narrative);
+                    }
+                });
+              });
+
+              botlanejson.narratives.forEach(narrativeid => {
+                this.narratives.forEach(narrative => {
+                    if(narrative.rootcell.id == narrativeid) {
+                      this.narrativelanescontroller.botlane.assignNarrative(narrative);
+                    }
+                });
+              });
+
+              this.narrativelanescontroller.toplane.updateLayout();
+              this.narrativelanescontroller.botlane.updateLayout();
+              this.narrativelanescontroller.evidencelane.updateLayout();
+
+
+            }
+          }      
+          
 
         }
 
@@ -477,6 +586,106 @@ class NarrativeAbductionApp {
       this.narratives.splice(this.narratives.indexOf(narrative), 1);
     };
   
+      /**
+     * JSON Structure
+     * graph:{
+     *    nodes: [
+     *        {
+     *          id, title, descrption, type
+     *        }
+     * ], 
+     *    links: [
+     *        {
+     *            source, target, type
+     *        }
+     * ]
+     * },
+     * toplane: [
+     *  {
+     *    narrative: {
+     *      name: xxx
+     *      cells:[]
+     *    }
+     *  }
+     * ], 
+     * evidencelane[
+     *    {
+     *      //narrative
+     *    }
+     * ],
+     * bottomlane: [
+     *  // narrative
+     * ]
+     * 
+     */
+   exportWorkspace(){
+    //export graph to json
+    let graphjson = this.graphToJSON();
+    console.log(graphjson);
+    //export narratives
+    let narrativesjson = this.narrativesToJSON();
+    //export lanes
+    let lanesjson = this.lanesToJSON();
+    let output = {
+      graph: graphjson,
+      narratives: narrativesjson,
+      lanes: lanesjson
+    }
+    NAUtil.downloadJSONFile(output, "narrativegraph");
+ }
+
+ lanesToJSON(){
+  let toplanejson = {
+    name: this.narrativelanescontroller.toplane.name,
+    narratives: []
+  } 
+  this.narrativelanescontroller.toplane.narratives.forEach(narrative => {
+    toplanejson.narratives.push(narrative.rootcell.id)
+  });
+
+  let evidencelanejson = {
+    name: this.narrativelanescontroller.evidencelane.name,
+    narratives: []
+  } 
+  this.narrativelanescontroller.evidencelane.narratives.forEach(narrative => {
+    evidencelanejson.narratives.push(narrative.rootcell.id)
+  });
+
+  let botlanejson = {
+    name: this.narrativelanescontroller.botlane.name,
+    narratives: []
+  } 
+  this.narrativelanescontroller.botlane.narratives.forEach(narrative => {
+    botlanejson.narratives.push(narrative.rootcell.id)
+  });
+
+  return {
+    toplane: toplanejson,
+    evidencelane: evidencelanejson,
+    botlane: botlanejson
+  }
+
+ }
+
+ narrativesToJSON(){
+    let narrativesjson = [];
+    this.narratives.forEach(narrative => {
+        let name = narrative.getName();
+        let resna = {
+          name: name,
+          id: narrative.rootcell.id,
+          geometry: narrative.rootcell.geometry
+        }
+        let ids = [];
+        narrative.cells.forEach(cell => {
+          ids.push(cell.id);
+        });
+        resna.cells = ids;
+        narrativesjson.push(resna);
+    });
+    return narrativesjson;
+ }
+
     /**
      * Return the narrative entry
      */
@@ -576,7 +785,7 @@ class NarrativeAbductionApp {
     };
   
     /**
-     * Get the title cell from a cell
+     * Get the title cell from a cell [NOT USED]
      * @param {*} parentcell
      * @returns
      */
@@ -657,6 +866,9 @@ class NarrativeAbductionApp {
       }
   
   
+    getDocumentType(cell){
+      return cell.getAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE);
+    }
         
     getDocumentItemTitle(cell){
       let value = this.getDocumentItemCellValue(cell);
@@ -670,6 +882,23 @@ class NarrativeAbductionApp {
         }
       }else{
         return cell.getAttribute("natype");
+      }
+    }
+
+    getDocumentItemTitleDescription(cell){
+      let title = this.getDocumentItemTitle(cell);
+      let value = this.getDocumentItemCellValue(cell);
+      if (value == null || value == undefined){
+        value = "";
+      } else{
+        value = value.replace("<b>"+title+"</b>", "");
+      }
+
+      if(title == value) title = this.getDocumentType(cell);
+
+      return {
+        title: title,
+        description: value
       }
     }
 
@@ -695,6 +924,69 @@ class NarrativeAbductionApp {
       return narrative;
     }
   
+    graphToJSON(){
+      let graph = this.editorui.editor.graph;
+      let model = graph.getModel();
+      let nodes = model.getCells();
+      let links = [];
+
+      let documentitems = [];
+      //get all document item cells
+      nodes.forEach(node => {
+        if(NarrativeAbductionApp.isCellDocumentItem(node)) documentitems.push(node);
+      });
+
+      // create JSON object for cells
+      let jsonNodes = [];
+      let visitedNodes = [];
+      documentitems.forEach(item => {
+        let id = item.id;
+        let content = this.getDocumentItemTitleDescription(item);
+        let description = content.description;
+        let title = content.title;
+        let nodetype = this.getDocumentType(item);
+        jsonNodes.push({
+            id: id,
+            title: title, 
+            description: description,
+            type: nodetype
+        })
+
+        //get edges 
+        let edges = model.getEdges(item);
+        edges.forEach(edge => {
+            if(!(visitedNodes.includes(edge.source.id) && visitedNodes.includes(edge.target.id))){
+              visitedNodes.push(edge.source.id);
+              visitedNodes.push(edge.target.id)
+              links.push(edge);
+            }
+        });
+      });
+      console.log(links);
+
+
+      // create JSON object for edges
+      let jsonEdges = [];
+      links.forEach(link => {
+         let source = link.source.id;
+         let target = link.target.id;
+         let linktype = (NarrativeAbductionApp.isCellDocumentItemType(link.target, NASettings.Dictionary.CELLS.EVIDENCEITEM))? NASettings.Dictionary.CELLS.EXPLAINLINK : NASettings.Dictionary.CELLS.CAUSELINK;
+         jsonEdges.push({
+            source: source, 
+            target: target, 
+            type: linktype            
+         });
+      });
+
+      console.log(jsonNodes);
+      console.log(jsonEdges);
+
+      return {
+          nodes: jsonNodes,
+          links: jsonEdges
+      }
+ }
+
 
     /**
      * Hide Mode Shapes button on the Side bar
@@ -1465,6 +1757,10 @@ class NarrativeAbductionApp {
             if (cell) cellsarray.push(cell);
           });
           t.assignNodes(nalistview, cellsarray);
+          //if narrative is evidence assign
+          if(NarrativeLayout.isNarrativeEvidenceOnly(na)){
+            t.narrativelanescontroller.evidencenarrative = na;
+          }
         }
       });
       t.editorui.editor.graph.removeSelectionCells(cells);

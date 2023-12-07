@@ -270,11 +270,11 @@ class NarrativeLayout {
         return res;
     }
 
-    static removeOverlaps(rects) {
+    static removeOverlapsCola(rects) {
         var rs = [];
         rects.forEach(function (r) {
-            let x = r.x; 
-            let y = r.y;
+            let x = r.x + Math.random(); 
+            let y = r.y + Math.random();
             let w = r.width;
             let h = r.height;
             rs.push(new cola.Rectangle(x, x + w, y, y + h));
@@ -282,28 +282,6 @@ class NarrativeLayout {
         
         cola.removeOverlaps(rs);
         return rs;
-    }
-
-    static removeOverlapsHorizontal(rectangles) {
-        let hasOverlaps = true;
-    
-        while (hasOverlaps) {
-            hasOverlaps = false;
-    
-            // Sort rectangles by their x-coordinate
-            rectangles.sort((a, b) => a.x - b.x);
-    
-            for (let i = 1; i < rectangles.length; i++) {
-                // Check for overlap with the previous rectangle
-                if (rectangles[i].x < rectangles[i - 1].x + rectangles[i - 1].width) {
-                    // If overlap, adjust the x-coordinate of the current rectangle
-                    rectangles[i].x = rectangles[i - 1].x + rectangles[i - 1].width;
-                    hasOverlaps = true; // Set flag to true for another iteration
-                }
-            }
-        }
-    
-        return rectangles;
     }
 
     static applyLayoutEvidenceGroup(narrative, graph, dx, dy, callback, change, post){
@@ -340,18 +318,21 @@ class NarrativeLayout {
                   currentgeometry.x = resx;
             });
 
-            //remove overlaps using cola
+            //remove overlaps 
             let rects = [];
             targetCells.forEach(cell => {
+                let edges = model.getEdges(cell);
                 rects.push({
                     x: cell.geometry.x,
                     y: cell.geometry.y,
                     width: cell.geometry.width,
-                    height: cell.geometry.height
+                    height: cell.geometry.height,
+                    edges: edges
                 })
             });
             //update excluded cells position            
-            let results = NarrativeLayout.removeOverlapsHorizontal(rects);
+            //let results = NarrativeLayout.removeOverlapsHorizontal(rects);
+            let results = NarrativeLayout.removeOverlapsCola(rects);
 
             results.forEach((res,  i) => {
                 console.log(i);

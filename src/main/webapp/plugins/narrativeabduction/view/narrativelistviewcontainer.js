@@ -16,7 +16,7 @@ class NarrativeListViewContainer {
        *  - List container
        */
       let title = document.createElement("h3");
-      title.innerHTML = "NA View";
+      title.innerHTML = "Narrative List View";
       let menucontainer = document.createElement("div");
       let listcontainer = document.createElement("div");
       let container = document.createElement("div");    

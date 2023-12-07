@@ -20,6 +20,10 @@ class Narrative {
       this.initListenerRootCellMoved();
     }
 
+    getName(){
+      return this.name;
+    }
+
     setName(n){
       this.name = n;
       this.rootcell.value.setAttribute('label',n);
