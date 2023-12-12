@@ -1,3 +1,6 @@
+/**
+ * This class contains the data of a narrative, which is a group of cells. 
+ */
 class Narrative {
     #event;
     constructor(rootcell, graph, name, id) {
@@ -20,35 +23,31 @@ class Narrative {
       this.initListenerRootCellMoved();
     }
 
-    getName(){
-      return this.name;
-    }
-
-    setName(n){
-      this.name = n;
-      this.rootcell.value.setAttribute('label',n);
-    }
-    hideBound(){
-      this.toggleBoundVisible(false);
-    }
-
-    showBound(){
-      this.toggleBoundVisible(true);
-    }
-
-    toggleBoundVisible(status){
-      if(!this.boundcell) return;
-
-      const graph = this.graph;  
-      graph.getModel().beginUpdate();
-      try {
-         graph.cellsToggled([this.boundcell], status);
-      } finally {
-         graph.getModel().endUpdate();
+    /**
+   * Add cells into the narrative cell, also add the cells as children of rootcells
+   * @param {*} cells
+   */
+    addCells(cells) {
+      const t = this;
+      cells.forEach((element) => {
+        if (Narrative.isCellValid(element)) {
+          t.addCell(element);
+        }
+      });
+    };
+       
+    addCell(c) {
+      if (!this.cells.includes(c)) {
+        this.cells.push(c);
+        this.saveCell(c);
+        this.updateCellsBound();
       }
-      graph.refresh();
-    }
-  
+    };
+
+    static arrayCellsToString = function (cellsarr) {
+      return JSON.stringify(cellsarr);
+    };
+
     deleteBound(){
       this.graph.getModel().beginUpdate();
       try{
@@ -56,6 +55,40 @@ class Narrative {
       }finally{
         this.graph.getModel().endUpdate();
       }
+    }
+
+    getName(){
+      return this.name;
+    }
+
+    getBoundCell(){
+      const cell = this.graph.getModel().getCell(this.getBoundCellID());
+      return cell;
+    }
+
+    /**
+     * Get links that are connected to cell outside this narrative
+     * @returns 
+     */
+    getCrossLinks(){
+      let crossLinks = [];
+      let graph = this.graph;
+      this.cells.forEach(cell => {
+          let edges = graph.getEdges(cell);
+          //check cross link
+          edges.forEach(edge => {
+              let target = edge.target;
+              let source = edge.source;
+              if(!(this.cells.includes(target) && this.cells.includes(source))){
+                  crossLinks.push(edge);
+              }
+          });
+      });
+      return crossLinks;
+    }
+
+    getBoundCellID(){
+      return NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLSBOUND + "-" + this.rootcell.id;
     }
 
     getDxDy(){
@@ -70,31 +103,8 @@ class Narrative {
       return{dx: dx, dy: dy}
     }
 
-    /**
-     * Move the cells to follow the narrative root cell
-     * @param {*} allowX 
-     * @param {*} allowY 
-     */
-    updateCellsPositions(allowX, allowY){
-      let x = (allowX == undefined)? true: allowX; //constraint x
-      let y = (allowY == undefined)? true: allowY; //constraint y
-
-      let dxdy = this.getDxDy();
-      let dx = dxdy.dx;
-      let dy = dxdy.dy;
-
-      this.graph.getModel().beginUpdate();
-      try{
-        this.cells.forEach(cell => {
-            if(x) cell.geometry.x += dx;
-            if(y) cell.geometry.y += dy;
-        });
-      }finally{
-        this.graph.getModel().endUpdate();
-        this.graph.refresh();
-        this.updateCellsBound();
-
-      }
+    hideBound(){
+      this.toggleBoundVisible(false);
     }
 
     /**
@@ -168,6 +178,31 @@ class Narrative {
     }
 
     /**
+     * In some cases, the selected cells are part of narrative element, e.g. content cell. This function validates what cell can be added.
+     */
+    static isCellValid(cell) {
+      return (
+        cell.value &&
+        cell.value.tagName &&
+        cell.value.tagName != NASettings.Dictionary.CELLS.NARRATIVE &&
+        cell.value.tagName != NASettings.Dictionary.CELLS.NARRATIVELIST
+      );
+    };
+  
+    static isCellNarrative(cell) {
+      if(cell){
+        return (
+          cell.value &&
+          cell.value.tagName &&
+          cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVE
+        )
+      }
+      else{
+        return null;
+      }
+    };
+
+    /**
      * Remove cell from cells list as well as rootcell children. Note that these two arrays are currently redundant.
      * @param {*} c
      */
@@ -176,14 +211,16 @@ class Narrative {
       this.unsaveCell(c);
     };
   
-    addCell(c) {
-      if (!this.cells.includes(c)) {
-        this.cells.push(c);
-        this.saveCell(c);
-        this.updateCellsBound();
-      }
+    showBound(){
+      this.toggleBoundVisible(true);
+    }
+
+    static stringCellsToArray = function (cellstring) {
+      if (cellstring == null) cellstring = "[]";
+      const cellsarr = JSON.parse(cellstring);
+      return cellsarr;
     };
-  
+
     /**
      * Push cell id to the cells attribute of the rootcell.
      */
@@ -201,16 +238,51 @@ class Narrative {
       );
     };
   
-    static stringCellsToArray = function (cellstring) {
-      if (cellstring == null) cellstring = "[]";
-      const cellsarr = JSON.parse(cellstring);
-      return cellsarr;
-    };
-  
-    static arrayCellsToString = function (cellsarr) {
-      return JSON.stringify(cellsarr);
-    };
-  
+    setName(n){
+      this.name = n;
+      this.rootcell.value.setAttribute('label',n);
+    }    
+
+    toggleBoundVisible(status){
+      if(!this.boundcell) return;
+
+      const graph = this.graph;  
+      graph.getModel().beginUpdate();
+      try {
+         graph.cellsToggled([this.boundcell], status);
+      } finally {
+         graph.getModel().endUpdate();
+      }
+      graph.refresh();
+    }
+ 
+    /**
+     * Move the cells to follow the narrative root cell
+     * @param {*} allowX 
+     * @param {*} allowY 
+     */
+    updateCellsPositions(allowX, allowY){
+      let x = (allowX == undefined)? true: allowX; //constraint x
+      let y = (allowY == undefined)? true: allowY; //constraint y
+
+      let dxdy = this.getDxDy();
+      let dx = dxdy.dx;
+      let dy = dxdy.dy;
+
+      this.graph.getModel().beginUpdate();
+      try{
+        this.cells.forEach(cell => {
+            if(x) cell.geometry.x += dx;
+            if(y) cell.geometry.y += dy;
+        });
+      }finally{
+        this.graph.getModel().endUpdate();
+        this.graph.refresh();
+        this.updateCellsBound();
+
+      }
+    }
+
     /**
      * Remove cell from the root cell cells attribute
      * @param {*} c
@@ -229,36 +301,7 @@ class Narrative {
       );
     };
   
-    getBoundCell(){
-      const cell = this.graph.getModel().getCell(this.getBoundCellID());
-      return cell;
-    }
-
-    /**
-     * Get links that are connected to cell outside this narrative
-     * @returns 
-     */
-    getCrossLinks(){
-      let crossLinks = [];
-      let graph = this.graph;
-      this.cells.forEach(cell => {
-          let edges = graph.getEdges(cell);
-          //check cross link
-          edges.forEach(edge => {
-              let target = edge.target;
-              let source = edge.source;
-              if(!(this.cells.includes(target) && this.cells.includes(source))){
-                  crossLinks.push(edge);
-              }
-          });
-      });
-      return crossLinks;
-    }
-
-    getBoundCellID(){
-      return NASettings.Dictionary.ATTRIBUTES.NARRATIVECELLSBOUND + "-" + this.rootcell.id;
-    }
-
+ 
     /**
      * 
      * @param {*} callback 
@@ -345,41 +388,6 @@ class Narrative {
   };
 
 
-    /**
-     * Add cells into the narrative cell, also add the cells as children of rootcells
-     * @param {*} cells
-     */
-    addCells(cells) {
-      const t = this;
-      cells.forEach((element) => {
-        if (Narrative.isCellValid(element)) {
-          t.addCell(element);
-        }
-      });
-    };
-   
-    /**
-     * In some cases, the selected cells are part of narrative element, e.g. content cell. This function validates what cell can be added.
-     */
-    static isCellValid(cell) {
-      return (
-        cell.value &&
-        cell.value.tagName &&
-        cell.value.tagName != NASettings.Dictionary.CELLS.NARRATIVE &&
-        cell.value.tagName != NASettings.Dictionary.CELLS.NARRATIVELIST
-      );
-    };
-  
-    static isCellNarrative(cell) {
-      if(cell){
-        return (
-          cell.value &&
-          cell.value.tagName &&
-          cell.value.tagName == NASettings.Dictionary.CELLS.NARRATIVE
-        )
-      }
-      else{
-        return null;
-      }
-    };
+
+
   }

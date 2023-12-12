@@ -55,32 +55,127 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
         this.loadingurl = "plugins/narrativeabduction/assets/loading.gif";
     }    
 
-    toggleJSONGenerationWindow(){
-      this.jsonvalidator.window.setVisible(!this.jsonvalidator.window.isVisible());
+    addButtonsToMessage(msg){
+      let container = msg.container;
+      let buttonStyle = "font-size:11px;margin-right:5px;background:lightblue;width:65px;";
+      
+      const selectButton = document.createElement('button');
+      const generateDiagramButton = document.createElement('button');
+      const downloadTextButton = document.createElement('button');
+      const stopGenerateButton = document.createElement('button')
+  
+      selectButton.style = buttonStyle;
+      selectButton.innerHTML = "Select";
+      selectButton.title = "Copy and paste this response to the GPT JSON Generation window.";
+      generateDiagramButton.title = "Generate diagram using this text"
+      generateDiagramButton.style = buttonStyle;
+      generateDiagramButton.innerHTML = "Generate";
+  
+      let t = this;
+      selectButton.onclick = function(){
+          t.jsonvalidator.setText(msg.unformattedtext);
+          t.jsonvalidator.window.setVisible(true);
+      }
+  
+      generateDiagramButton.onclick = function(){
+        t.jsonvalidator.setText(msg.unformattedtext);
+        t.jsonvalidator.container.uibuttongenerate.click();
+        stopGenerateButton.style.display = 'inline';
+        generatingIcon.style.display = 'inline';
+        generatingText.style.display = 'inline';
+        generateDiagramButton.style.display = 'none';
+        selectButton.style.display = 'none';
+        downloadTextButton.style.display = 'none';
+      }
+  
+      let generatingText = document.createElement('span');
+      generatingText.innerHTML = "Generating diagram ";
+      generatingText.title = "Generating diagram using GPT JSON Generation Window";    
+      
+      let generatingIcon = document.createElement('img');
+      generatingIcon.src = this.loadingurl;
+      generatingIcon.style.width = '30px';
+      generatingIcon.style.display = 'none';
+      generatingIcon.style.marginLeft = '20px';
+      generatingIcon.style.marginRight = '20px';
+      generatingText.style.display = 'none';
+  
+      stopGenerateButton.title = "Generate diagram using this text"
+      stopGenerateButton.style = buttonStyle;
+      stopGenerateButton.innerHTML = "Stop";
+      stopGenerateButton.onclick = function(){
+        t.jsonvalidator.container.uibuttonstopgenerate.click();
+        stopGenerateButton.style.display = 'none';
+        generatingIcon.style.display = 'none';
+        generatingText.style.display = 'none';
+        generateDiagramButton.style.display = 'inline';
+        selectButton.style.display = 'inline';
+        downloadTextButton.style.display = 'inline';
+      }
+      stopGenerateButton.style.display = 'none';
+      document.addEventListener(NASettings.Dictionary.EVENTS.JSON2ITEMDONE, ()=>{
+        stopGenerateButton.style.display = 'none';
+        generatingIcon.style.display = 'none';
+        generatingText.style.display = 'none';
+        generateDiagramButton.style.display = 'inline';
+        selectButton.style.display = 'inline';
+        downloadTextButton.style.display = 'inline';
+      });
+  
+      downloadTextButton.style = buttonStyle;
+      downloadTextButton.innerHTML = "Download";
+      downloadTextButton.title = "Save this response as a text file";
+      downloadTextButton.addEventListener('click', function(){
+        let blob = new Blob([msg.unformattedtext], { type: "text/plain" });
+        let a = document.createElement("a");
+        a.href = window.URL.createObjectURL(blob);
+  
+        let filename = "gpt-response-" + (new Date()).toISOString();;
+        a.download = filename + ".txt";
+        a.click();         
+      });
+  
+      container.append(downloadTextButton);
+      container.append(selectButton);
+      container.append(generateDiagramButton);
+      container.append(generatingText);
+      container.append(generatingIcon);
+      container.append(stopGenerateButton);
+  
+  
     }
 
     applySetting(jsonData){
-        console.log("GPT setting", jsonData);
-        this.apikey = jsonData.apiKey;
-        this.prompt = jsonData.prompt;   
-        this.apiURL = jsonData.apiURL;
-        this.model = jsonData.model;
-        this.jsonvalidator.applySetting(jsonData);
+      console.log("GPT setting", jsonData);
+      this.apikey = jsonData.apiKey;
+      this.prompt = jsonData.prompt;   
+      this.apiURL = jsonData.apiURL;
+      this.model = jsonData.model;
+      this.jsonvalidator.applySetting(jsonData);
     }
 
-    stopGenerate(){
-      super.stopStream();
-      this.enableChat();
+    async chatGPTStream(text){
+      console.log("Sending ..." + text);
+      this.createNewMessage("", true);
+      const messagePanel = this.container.messagepanel;
+      messagePanel.append(this.currentmessage.container);
+      this.scrollDown(this.container.messagepanel.scrollHeight + 5);
+      await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
     }
 
-
+    completeStreamResponse(t){
+      console.log("Stream completed");
+      t.enableChat();
+      t.container.uitext.focus();
+    }
+ 
   /**
    * this.container
    *    this.container.chatcontainer
    *        this.messagepanel
    *        this.chatpanel
    */
-   createChatWindow(){
+  createChatWindow(){
     const container = document.createElement("div");
     this.window =  NAUIHelper.CreateWindow("gpt-window", "GPT Narrative Authoring", container, 1000, 100, 400, 400);
     this.window.setVisible(true);
@@ -125,7 +220,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     donwnloadSampleButton.title = "Download sample GPT setting";
     donwnloadSampleButton.style = "font-size:smaller;display:inline";
     donwnloadSampleButton.onclick = function(){
-      NAUtil.downloadJSONFile(exampleSetting, "gptsettingtemplate");
+      NAUtil.DownloadJSONFile(exampleSetting, "gptsettingtemplate");
     }
 
     const settingContainer = document.createElement('div');
@@ -217,9 +312,42 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
 
   }
 
+  createNewMessage(text, system){
+    this.currentmessage = new NarrativeGPTAuthoringMessage(text, system);
+    if(system) this.addButtonsToMessage(this.currentmessage); //add buttons to message
+    return this.currentmessage;
+  }
+
+
+  downloadChat(){
+    let blob = new Blob([JSON.stringify(this.messages)], { type: "text/plain" });
+    let a = document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+
+    let filename = "chat-" + (new Date()).toISOString();;
+    a.download = filename + ".json";
+    a.click();   
+    a.remove();
+  }  
+  
+  disableChat(){
+    this.container.uitext.disabled = true;
+    this.container.uibuttongenerate.disabled = true;
+    this.container.uibuttongenerate.innerHTML = "GPT is responding <img src='"+this.loadingurl+"' width='20px'>";
+    this.container.uibuttonstopgenerate.style.display = "block";
+
+  } 
+
+  enableChat(){
+    this.container.uitext.disabled = false;
+    this.container.uibuttongenerate.disabled = false;
+    this.container.uibuttongenerate.innerHTML = "Send";
+    this.container.uibuttonstopgenerate.style.display = "none";
+  }
+
   loadChat(){
     let t = this;
-    NAUtil.loadJSONFile("json", async (messages)=>{
+    NAUtil.LoadJSONFile("json", async (messages)=>{
         console.log(messages);
         this.messages = messages;
         for (const message of messages) {
@@ -235,15 +363,11 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     this.messages = [];
   }
 
-  downloadChat(){
-    let blob = new Blob([JSON.stringify(this.messages)], { type: "text/plain" });
-    let a = document.createElement("a");
-    a.href = window.URL.createObjectURL(blob);
 
-    let filename = "chat-" + (new Date()).toISOString();;
-    a.download = filename + ".json";
-    a.click();   
-    a.remove();
+
+  stopGenerate(){
+      super.stopStream();
+      this.enableChat();
   }
 
   sendMessage(){
@@ -253,21 +377,6 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     this.container.uitext.value = "";
     this.disableChat();
     this.scrollDown(this.container.messagepanel.scrollHeight);
-  }
-
-  enableChat(){
-    this.container.uitext.disabled = false;
-    this.container.uibuttongenerate.disabled = false;
-    this.container.uibuttongenerate.innerHTML = "Send";
-    this.container.uibuttonstopgenerate.style.display = "none";
-  }
-
-  disableChat(){
-    this.container.uitext.disabled = true;
-    this.container.uibuttongenerate.disabled = true;
-    this.container.uibuttongenerate.innerHTML = "GPT is responding <img src='"+this.loadingurl+"' width='20px'>";
-    this.container.uibuttonstopgenerate.style.display = "block";
-
   }
 
   scrollDown(value){
@@ -280,110 +389,10 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     })
   }
   
-  async chatGPTStream(text){
-    console.log("Sending ..." + text);
-    this.createNewMessage("", true);
-    const messagePanel = this.container.messagepanel;
-    messagePanel.append(this.currentmessage.container);
-    this.scrollDown(this.container.messagepanel.scrollHeight + 5);
-    await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
+  toggleJSONGenerationWindow(){
+    this.jsonvalidator.window.setVisible(!this.jsonvalidator.window.isVisible());
   }
-
-  createNewMessage(text, system){
-    this.currentmessage = new NarrativeGPTAuthoringMessage(text, system);
-    if(system) this.addButtonsToMessage(this.currentmessage); //add buttons to message
-    return this.currentmessage;
-  }
-
-  addButtonsToMessage(msg){
-    let container = msg.container;
-    let buttonStyle = "font-size:11px;margin-right:5px;background:lightblue;width:65px;";
-    
-    const selectButton = document.createElement('button');
-    const generateDiagramButton = document.createElement('button');
-    const downloadTextButton = document.createElement('button');
-    const stopGenerateButton = document.createElement('button')
-
-    selectButton.style = buttonStyle;
-    selectButton.innerHTML = "Select";
-    selectButton.title = "Copy and paste this response to the GPT JSON Generation window.";
-    generateDiagramButton.title = "Generate diagram using this text"
-    generateDiagramButton.style = buttonStyle;
-    generateDiagramButton.innerHTML = "Generate";
-
-    let t = this;
-    selectButton.onclick = function(){
-        t.jsonvalidator.setText(msg.unformattedtext);
-        t.jsonvalidator.window.setVisible(true);
-    }
-
-    generateDiagramButton.onclick = function(){
-      t.jsonvalidator.setText(msg.unformattedtext);
-      t.jsonvalidator.container.uibuttongenerate.click();
-      stopGenerateButton.style.display = 'inline';
-      generatingIcon.style.display = 'inline';
-      generatingText.style.display = 'inline';
-      generateDiagramButton.style.display = 'none';
-      selectButton.style.display = 'none';
-      downloadTextButton.style.display = 'none';
-    }
-
-    let generatingText = document.createElement('span');
-    generatingText.innerHTML = "Generating diagram ";
-    generatingText.title = "Generating diagram using GPT JSON Generation Window";    
-    
-    let generatingIcon = document.createElement('img');
-    generatingIcon.src = this.loadingurl;
-    generatingIcon.style.width = '30px';
-    generatingIcon.style.display = 'none';
-    generatingIcon.style.marginLeft = '20px';
-    generatingIcon.style.marginRight = '20px';
-    generatingText.style.display = 'none';
-
-    stopGenerateButton.title = "Generate diagram using this text"
-    stopGenerateButton.style = buttonStyle;
-    stopGenerateButton.innerHTML = "Stop";
-    stopGenerateButton.onclick = function(){
-      t.jsonvalidator.container.uibuttonstopgenerate.click();
-      stopGenerateButton.style.display = 'none';
-      generatingIcon.style.display = 'none';
-      generatingText.style.display = 'none';
-      generateDiagramButton.style.display = 'inline';
-      selectButton.style.display = 'inline';
-      downloadTextButton.style.display = 'inline';
-    }
-    stopGenerateButton.style.display = 'none';
-    document.addEventListener(NASettings.Dictionary.EVENTS.JSON2ITEMDONE, ()=>{
-      stopGenerateButton.style.display = 'none';
-      generatingIcon.style.display = 'none';
-      generatingText.style.display = 'none';
-      generateDiagramButton.style.display = 'inline';
-      selectButton.style.display = 'inline';
-      downloadTextButton.style.display = 'inline';
-    });
-
-    downloadTextButton.style = buttonStyle;
-    downloadTextButton.innerHTML = "Download";
-    downloadTextButton.title = "Save this response as a text file";
-    downloadTextButton.addEventListener('click', function(){
-      let blob = new Blob([msg.unformattedtext], { type: "text/plain" });
-      let a = document.createElement("a");
-      a.href = window.URL.createObjectURL(blob);
-
-      let filename = "gpt-response-" + (new Date()).toISOString();;
-      a.download = filename + ".txt";
-      a.click();         
-    });
-
-    container.append(downloadTextButton);
-    container.append(selectButton);
-    container.append(generateDiagramButton);
-    container.append(generatingText);
-    container.append(generatingIcon);
-    container.append(stopGenerateButton);
-
-
-  }
+ 
 
   updateStreamResponse(content, t){
     t.currentmessage.appendMessage(content);
@@ -393,44 +402,12 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
     t.scrollDown(currentScrollHeight);
   }
 
-  completeStreamResponse(t){
-    console.log("Stream completed");
-    t.enableChat();
-    t.container.uitext.focus();
-  }
 
-// Only streaming is allowed
-//   async chatGPT(text){
-//         console.log("Sending ..." + text);
-//         let t = this;
-//         let currentScrollHeight = this.container.messagepanel.scrollHeight;
-//         this.chat(text)
-//         .then(result => {
-//           console.log(result);
-//           if(result.status == "success"){
-//             let jsonText = result.message;
-//             // Do something with the parsed JSON data
-//             const messagePanel = this.container.messagepanel;
-//             if(messagePanel) {              
-//               t.currentmessage =  t.createNewMessage(jsonText, true);
-//               messagePanel.append(t.currentmessage.container);
-//               t.scrollDown(currentScrollHeight + 5);
-//             }
-//             // enable uis
-//           }else{
-//             alert(result);
-//           }
-//           this.enableChat();
-//         })
-//         .catch(error => {
-//           console.error('Error:', error);
-//           alert(error);
-//           this.enableChat();
-//         });
-//   }
 }
 
-
+/**
+ * The chat message
+ */
 class NarrativeGPTAuthoringMessage {
   constructor(message, system){
       this.createUI(message, system);
@@ -473,8 +450,6 @@ class NarrativeGPTAuthoringMessage {
       messageContainer.style = systemstyle;
     }
     container.style = "margin-bottom:5px";
-
-
     return container;
   }
 }

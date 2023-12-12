@@ -1,4 +1,18 @@
 class NAUIHelper {
+    static AddButton (label, container, funct) {
+        let btn = document.createElement("button");
+        btn.innerHTML = label;
+        btn.classList.add(NASettings.CSSClasses.NAUtils.Button);
+
+        mxEvent.addListener(btn, "click", function (evt) {
+        funct();
+        mxEvent.consume(evt);
+        });
+
+        container.appendChild(btn);
+
+        return btn;
+    };
 
     static CreateWindow (id, title, content, x, y, width, height) {
         let wnd = new mxWindow(title, content, x, y, width, height, true, true);
@@ -70,20 +84,6 @@ class NAUIHelper {
         return menuscontainer;
     }
 
-    static AddButton (label, container, funct) {
-        let btn = document.createElement("button");
-        btn.innerHTML = label;
-        btn.classList.add(NASettings.CSSClasses.NAUtils.Button);
-
-        mxEvent.addListener(btn, "click", function (evt) {
-        funct();
-        mxEvent.consume(evt);
-        });
-
-        container.appendChild(btn);
-
-        return btn;
-    };
 
     static CreateHelpText(container, text, defaultstate){
         let helpcontainer = document.createElement("div");

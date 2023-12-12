@@ -19,6 +19,16 @@ class NarrativeLanesController {
         this.graph.refresh();
     }
 
+    /**
+     * TODO
+     * @param {*} cell 
+     * @returns 
+     */
+    getClosestLane(cell){
+        let intop = this.toplane.isCellInLane(cell);
+        return (intop)? this.toplane : this.botlane;
+    }
+
      /**
      * Hide cross links if the narrative is not in the lane
      */
@@ -87,15 +97,6 @@ class NarrativeLanesController {
       }
   
 
-    /**
-     * Get either top or bot lane that is closes to cell, mid lane is dedicated for evidence
-     * @param {*} cell 
-     * @returns 
-     */
-    getClosestLane(cell){
-        let intop = this.toplane.isCellInLane(cell);
-        return (intop)? this.toplane : this.botlane;
-    }
 
     updateLanesGrowth(){
         this.toplane.updateLaneLayout();
