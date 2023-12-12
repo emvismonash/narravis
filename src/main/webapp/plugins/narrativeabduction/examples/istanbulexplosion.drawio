@@ -1,0 +1,387 @@
+<mxfile host="127.0.0.1" modified="2023-12-03T04:26:50.129Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0" etag="fhajUzZ_Pa0AOM6cyOVT" version="21.6.2" type="device">
+  <diagram name="Page-1" id="_paR1wHjuNjH3y9sS47X">
+    <mxGraphModel dx="6765" dy="3705" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="narrativecellsbound-HEOWdoa2lwvxPriGydOY-51" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="320" y="633.984375" width="2780" height="290.67552775144577" as="geometry" />
+        </mxCell>
+        <mxCell id="narrativecellsbound-HEOWdoa2lwvxPriGydOY-19" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="320" y="393.984375" width="2420" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="narrativecellsbound-HEOWdoa2lwvxPriGydOY-41" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="680.874817464199" y="253.984375" width="1700.062181240215" height="60.00000100000011" as="geometry" />
+        </mxCell>
+        <mxCell id="narrativecellsbound-HEOWdoa2lwvxPriGydOY-7" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="320" width="2420" height="223.984375" as="geometry" />
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-5" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;resizable=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry y="393.984375" width="10" height="520.6755277514458" as="geometry" />
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-3" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;resizable=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry y="253.984375" width="10" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-1" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;resizable=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry width="10" height="233.984375" as="geometry" />
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-2" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+          <mxGeometry x="-200" width="100" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-4" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+          <mxGeometry x="-200" y="253.984375" width="100" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-6" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+          <mxGeometry x="-200" y="393.984375" width="100" height="120" as="geometry" />
+        </mxCell>
+        <Narrative label="Terror narrative" cells="[&quot;HEOWdoa2lwvxPriGydOY-8&quot;,&quot;2&quot;,&quot;3a&quot;,&quot;3b&quot;,&quot;4a&quot;,&quot;4b&quot;,&quot;5a&quot;,&quot;5b&quot;,&quot;6b&quot;,&quot;7b&quot;]" id="HEOWdoa2lwvxPriGydOY-7">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#cab2d6;" vertex="1" parent="1">
+            <mxGeometry x="10" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;A terrorist group starts planning an attack&lt;/b&gt;&lt;br/&gt;A terrorist group stationed somewhere in Istanbul starts planning a potential attack due to political motivations." id="HEOWdoa2lwvxPriGydOY-8">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="320" y="75" width="260" height="70" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-43" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="2" target="HEOWdoa2lwvxPriGydOY-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;The group infiltrates Istanbul&lt;/b&gt;&lt;br/&gt;The group successfully infiltrates Istanbul, going under the radar of intelligence agencies." id="2">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="75" width="260" height="70" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;The Turkish intelligence service starts investigating&lt;/b&gt;&lt;br/&gt;The Turkish intelligence service gets a tip about suspicious activities and starts investigating." id="3a">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="5" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;The group continues their operation unnoticed&lt;/b&gt;&lt;br/&gt;The group continues their operation unnoticed, gathering the necessary equipment for the attack." id="3b">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="125" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;The threat is identified and thwarted&lt;/b&gt;&lt;br/&gt;The intelligence service successfully identifies the threat, takes effective countermeasures, and thwarts the attack, arresting the group members." id="4a">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400" y="5" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-45" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="4b" target="HEOWdoa2lwvxPriGydOY-44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;The group executes the explosion&lt;/b&gt;&lt;br/&gt;The group successfully executes the explosion in a crowded area of Istanbul, causing a significant amount of destruction and life-loss." id="4b">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400" y="127.5" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;The arrested group members are brought to justice&lt;/b&gt;&lt;br/&gt;The arrested group members are brought to justice, safety in Istanbul is reinforced, and the public is informed about the threat they escaped." id="5a">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1760" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Emergency services respond to the explosion&lt;/b&gt;&lt;br/&gt;Emergency services rush to the scene. Hospitals activate emergency protocols. The city goes into immediate lockdown." id="5b">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1760" y="130" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-47" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="6b" target="HEOWdoa2lwvxPriGydOY-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;The government condemns the attack&lt;/b&gt;&lt;br/&gt;The government condemns the attack and declares a period of mourning for the victims. Security measures are increased and an investigation is launched to find the responsible party." id="6b">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2120" y="123.984375" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;The surviving members of the group are apprehended&lt;/b&gt;&lt;br/&gt;The surviving members of the group are apprehended, and the community mourns their losses while collectively rebuilding their city." id="7b">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2480" y="123.984375" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-10" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-8" target="2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-11" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="2" target="3a">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-12" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="2" target="3b">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-13" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="3a" target="4a">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-14" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="3b" target="4b">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-15" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="4a" target="5a">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-16" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="4b" target="5b">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-17" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="5b" target="6b">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-18" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="6b" target="7b">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <Narrative label="Incident narrative" cells="[&quot;HEOWdoa2lwvxPriGydOY-20&quot;,&quot;HEOWdoa2lwvxPriGydOY-22&quot;,&quot;HEOWdoa2lwvxPriGydOY-23&quot;,&quot;HEOWdoa2lwvxPriGydOY-24&quot;,&quot;HEOWdoa2lwvxPriGydOY-25&quot;,&quot;HEOWdoa2lwvxPriGydOY-26&quot;,&quot;HEOWdoa2lwvxPriGydOY-27&quot;,&quot;HEOWdoa2lwvxPriGydOY-28&quot;,&quot;HEOWdoa2lwvxPriGydOY-29&quot;,&quot;HEOWdoa2lwvxPriGydOY-30&quot;]" id="HEOWdoa2lwvxPriGydOY-19">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#ff7f00;" vertex="1" parent="1">
+            <mxGeometry x="10" y="393.984375" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Abandoned factory with chemical substances&lt;/b&gt;&lt;br/&gt;An old abandoned factory within Istanbul containing chemical substances stands decaying." id="HEOWdoa2lwvxPriGydOY-20">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="320" y="463.984375" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Scavengers enter the factory&lt;/b&gt;&lt;br/&gt;A group of scavengers enter the premises searching for valuable salvage, unaware of the hidden chemical substances." id="HEOWdoa2lwvxPriGydOY-22">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="473.984375" width="260" height="70" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Local authorities discover the unauthorized entry&lt;/b&gt;&lt;br/&gt;The local authorities discover the unauthorized entry into an unsafe zone and start their interventions." id="HEOWdoa2lwvxPriGydOY-23">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="403.984375" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Accidental triggering of a chemical reaction&lt;/b&gt;&lt;br/&gt;While scavenging, the group accidentally triggers a chemical reaction leading to a sudden explosion." id="HEOWdoa2lwvxPriGydOY-24">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="523.984375" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Safe removal of scavengers from the premises&lt;/b&gt;&lt;br/&gt;The authorities are able to safely remove the scavengers out of the premises avoiding any explosion and initiate sealing off the area for the public safety." id="HEOWdoa2lwvxPriGydOY-25">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400" y="396.484375" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Chemical explosion occurs&lt;/b&gt;&lt;br/&gt;The explosion occurs resulting in significant damage to nearby buildings and loss of life." id="HEOWdoa2lwvxPriGydOY-26">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400" y="541.484375" width="260" height="60" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-49" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-27" target="HEOWdoa2lwvxPriGydOY-48">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Dangerous substances are discovered and removed&lt;/b&gt;&lt;br/&gt;The dangerous chemical substances are discovered and safely removed. The factory is secured to prevent future accidents. The public is informed of the near-miss incident." id="HEOWdoa2lwvxPriGydOY-27">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1760" y="393.984375" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Emergency response after the explosion&lt;/b&gt;&lt;br/&gt;Emergency services are alerted and immediately dispatched to the site. Hospitals are on high alert, treating the injured and coping with the sudden influx of patients." id="HEOWdoa2lwvxPriGydOY-28">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1760" y="523.984375" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Government investigates the explosion&lt;/b&gt;&lt;br/&gt;The government investigates the explosion and finds the cause to be an inadvertent ignition of the chemical substances. A period of mourning is declared for the victims." id="HEOWdoa2lwvxPriGydOY-29">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2120" y="522.96875" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Clean-up operation and new policies&lt;/b&gt;&lt;br/&gt;A massive clean-up operation is organized to clear debris and repair damaged structures. Stringent policies are implemented for abandoned factories to prevent such incidents in the future." id="HEOWdoa2lwvxPriGydOY-30">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2480" y="522.96875" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-31" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-20" target="HEOWdoa2lwvxPriGydOY-22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-32" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-22" target="HEOWdoa2lwvxPriGydOY-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-33" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-22" target="HEOWdoa2lwvxPriGydOY-24">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-34" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-23" target="HEOWdoa2lwvxPriGydOY-25">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-35" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-24" target="HEOWdoa2lwvxPriGydOY-26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-36" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-25" target="HEOWdoa2lwvxPriGydOY-27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-37" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-26" target="HEOWdoa2lwvxPriGydOY-28">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-38" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-28" target="HEOWdoa2lwvxPriGydOY-29">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-39" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-29" target="HEOWdoa2lwvxPriGydOY-30">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <Narrative label="Evidence" cells="[&quot;HEOWdoa2lwvxPriGydOY-40&quot;,&quot;HEOWdoa2lwvxPriGydOY-44&quot;,&quot;HEOWdoa2lwvxPriGydOY-46&quot;,&quot;HEOWdoa2lwvxPriGydOY-48&quot;]" id="HEOWdoa2lwvxPriGydOY-41">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#fdbf6f;" vertex="1" parent="1">
+            <mxGeometry x="10" y="253.984375" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Evidence one" id="HEOWdoa2lwvxPriGydOY-40">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680.874817464199" y="269.1409540785712" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Evidence" id="HEOWdoa2lwvxPriGydOY-44">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400.8382548260329" y="253.984375" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="&lt;div&gt;Evidence&lt;/div&gt;" id="HEOWdoa2lwvxPriGydOY-46">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2120.9369987044142" y="268.79897696225134" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Evidence" id="HEOWdoa2lwvxPriGydOY-48">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400.3186370871815" y="283.9843760000001" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <Narrative label="Incident narrative 2" cells="[&quot;HEOWdoa2lwvxPriGydOY-52&quot;,&quot;HEOWdoa2lwvxPriGydOY-54&quot;,&quot;HEOWdoa2lwvxPriGydOY-55&quot;,&quot;HEOWdoa2lwvxPriGydOY-56&quot;,&quot;HEOWdoa2lwvxPriGydOY-57&quot;,&quot;HEOWdoa2lwvxPriGydOY-58&quot;,&quot;HEOWdoa2lwvxPriGydOY-59&quot;,&quot;HEOWdoa2lwvxPriGydOY-60&quot;,&quot;HEOWdoa2lwvxPriGydOY-61&quot;,&quot;HEOWdoa2lwvxPriGydOY-62&quot;]" id="HEOWdoa2lwvxPriGydOY-51">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#fb9a99;" vertex="1" parent="1">
+            <mxGeometry x="10" y="633.984375" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-75" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-52" target="HEOWdoa2lwvxPriGydOY-55">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Demolition of an old building with volatile substances&lt;/b&gt;&lt;br/&gt;An old building in Istanbul, previously unknown to hold volatile substances, is being demolished to make way for a new development." id="HEOWdoa2lwvxPriGydOY-52">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="320" y="722.3177083333334" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Construction workers proceed unaware of the risk&lt;/b&gt;&lt;br/&gt;Construction workers unwittingly work around these substances while proceeding with the demolition, unaware of the standard safety protocols for handling such material." id="HEOWdoa2lwvxPriGydOY-54">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="783.984375" width="260" height="110" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-73" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-55" target="HEOWdoa2lwvxPriGydOY-54">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-74" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-55" target="HEOWdoa2lwvxPriGydOY-54">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Site supervisor suspects danger and alerts authorities&lt;/b&gt;&lt;br/&gt;A site supervisor, noticing the unusual material, suspects it might be dangerous and calls the local authorities to inspect it." id="HEOWdoa2lwvxPriGydOY-55">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="727.3177083333334" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Accidental disturbance leads to an explosion&lt;/b&gt;&lt;br/&gt;In the process of demolition, the volatile material is accidentally disturbed, leading to an unexpected explosion." id="HEOWdoa2lwvxPriGydOY-56">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400" y="823.984375" width="260" height="90" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-72" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-57" target="HEOWdoa2lwvxPriGydOY-48">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Authorities defuse the situation avoiding a calamity&lt;/b&gt;&lt;br/&gt;The authorities recognize the dangerous compounds, evacuate the site, and safely defuse the situation, avoiding a major calamity." id="HEOWdoa2lwvxPriGydOY-57">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="653.984375" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Explosion causes widespread damage&lt;/b&gt;&lt;br/&gt;The explosion causes widespread damage to nearby infrastructure and leads to casualties." id="HEOWdoa2lwvxPriGydOY-58">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1760" y="829.3451255559921" width="260" height="70" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Building safely dismantled after incident&lt;/b&gt;&lt;br/&gt;The building is then professionally and safely dismantled, with lessons learned regarding safety inspections prior to demolition. Public safety awareness increases." id="HEOWdoa2lwvxPriGydOY-59">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400" y="633.984375" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Emergency services respond to the explosion&lt;/b&gt;&lt;br/&gt;Emergency services rush to the scene to help the casualties and try to contain the area’s damage. Hospitals prepare for the influx of those injured." id="HEOWdoa2lwvxPriGydOY-60">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2120" y="811.2216436862946" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Government investigation reveals oversight&lt;/b&gt;&lt;br/&gt;The government commissions a thorough investigation, which reveals that the explosion was accidental, caused by an oversight during the demolition process. A period of mourning is announced for casualties." id="HEOWdoa2lwvxPriGydOY-61">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2480" y="794.6599027514458" width="260" height="130" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;New protocols implemented after the incident&lt;/b&gt;&lt;br/&gt;New protocols and stringent inspection regulations are imposed to ensure the safe demolition of old buildings and avoid similar accidents in the future." id="HEOWdoa2lwvxPriGydOY-62">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fb9a99;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2840" y="809.6599027514458" width="260" height="100" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-65" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-54" target="HEOWdoa2lwvxPriGydOY-56">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-66" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-55" target="HEOWdoa2lwvxPriGydOY-57">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-67" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-56" target="HEOWdoa2lwvxPriGydOY-58">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-68" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-57" target="HEOWdoa2lwvxPriGydOY-59">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-69" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-58" target="HEOWdoa2lwvxPriGydOY-60">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-70" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-60" target="HEOWdoa2lwvxPriGydOY-61">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HEOWdoa2lwvxPriGydOY-71" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="HEOWdoa2lwvxPriGydOY-61" target="HEOWdoa2lwvxPriGydOY-62">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

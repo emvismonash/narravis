@@ -3,9 +3,9 @@ class NarrativeLanesController {
         this.app = app;
         this.graph = graph;
         this.margin = 20;
-        this.toplane = new NarrativeLane(graph, "Top Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
-        this.evidencelane = new NarrativeLane(graph, "Evidence Lane", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
-        this.botlane = new NarrativeLane(graph, "Bottom Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
+        this.toplane = new NarrativeLane(graph, "Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
+        this.evidencelane = new NarrativeLane(graph, "Evidence", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
+        this.botlane = new NarrativeLane(graph, "Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
         this.evidencenarrative = null;
         this.initListenerLayoutUpdated();
         this.initListenerNarrativeCellMoved();

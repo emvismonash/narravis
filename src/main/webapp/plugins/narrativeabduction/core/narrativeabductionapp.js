@@ -18,13 +18,14 @@ class NarrativeAbductionApp {
       this.narrativeaviewscontainer;
       this.narrativelayoutwindow;
       this.narrativegptauthor;
+      this.narrativeexamples;
       this.generatingsession = false;
     }
   
     initiate(){
       this.narrativelanescontroller = new NarrativeLanesController(this.editorui.editor.graph, this);
       this.narrativelanescontroller.initiate();
-
+      this.narrativeexamples = new NarrativeExamples(this);
       this.narrativegptauthor = new NarrativeGPTAuthoring(this);
       this.createNAPanel();
       this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives, this);  
@@ -591,7 +592,7 @@ class NarrativeAbductionApp {
       narratives: narrativesjson,
       lanes: lanesjson
     }
-    NAUtil.downloadJSONFile(output, "narrativegraph");
+    NAUtil.DownloadJSONFile(output, "narrativegraph");
  }
 
 

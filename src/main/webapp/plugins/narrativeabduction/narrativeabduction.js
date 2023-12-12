@@ -18,13 +18,15 @@ Draw.loadPlugin(function (ui) {
         mxscript("plugins/narrativeabduction/gpt/narrativegpt.js", function(){   
         mxscript("plugins/narrativeabduction/gpt/narrativegptauthoring.js", function(){
         mxscript("plugins/narrativeabduction/gpt/narrativegptjsonvalidator.js", function(){
+        mxscript("plugins/narrativeabduction/examples/narrativeexamples.js", function(){
         mxscript("plugins/narrativeabduction/core/narrativeabductionapp.js", function(){       
           let app = new NarrativeAbductionApp(ui);
-          
+          console.log(ui);
           ui.editor.addListener("fileLoaded", function(sender, evt) {
             app.initiate();                      
           });
 
+        });
         });
         });
         });

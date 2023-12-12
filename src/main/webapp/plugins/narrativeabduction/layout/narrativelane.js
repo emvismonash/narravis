@@ -32,11 +32,11 @@ class NarrativeLane {
 
     createLabelCell(){
         let boundcell = this.boundcell;
-        let yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 100;
+        let yPos = boundcell.geometry.y + (boundcell.geometry.height * 0.5) - 20;
         let graph = this.graph;
         graph.getModel().beginUpdate();
             try{
-                let labelVertex = graph.insertVertex(graph.getDefaultParent(), null, '', -200, yPos, 100, this.minheight);
+                let labelVertex = graph.insertVertex(graph.getDefaultParent(), null, '', -100, yPos, 100, this.minheight);
                 labelVertex.setStyle(this.lanelabelstyle);  
                 labelVertex.setValue(this.name);   
                 labelVertex.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, NASettings.Dictionary.ATTRIBUTES.SWIMLANELABEL);
