@@ -19,7 +19,7 @@ Currently, it only works with local file. Please choose "Device" as the storage.
 ![step1](https://github.com/KadekSatriadi/drawio-na/assets/19480468/df7d0d61-306e-48ac-950f-2a1d6d8cb078)
 
 Then, go to Extra -> Plugins -> Add
-Select narrativeabduction plugin. 
+Select narrativeabduction plugin. Then, select webcola plugin. These two plugins are required.  
 
 Refresh the page. 
 
