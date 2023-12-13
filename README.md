@@ -34,3 +34,7 @@ Activate "narrativeabduction" plugin to start.
 **Three Lanes Approach**
 
 **GPT-Powered Digram Creation**
+
+
+**NOTES FOR DEVELOPER**
+
