@@ -39,40 +39,7 @@ class NarrativeListViewContainer {
         t.app.newNarrative();
       });
     }
-  
-    /**
-     * Remove view from the list
-     * @param {*} narrative
-     */
-    removeListView(narrativecell) {
-      let listView = this.getListViewByNarrative(narrativecell);
-      if (listView) {
-        listView.narrative.deleteBound();
-        listView.unhighlightCells(listView.narrative.cells); // unhighligth cells
-        listView.remove(); //remove the view
-        this.colors.push(listView.color); //return the color
-      }
-      this.narrativealistviews.splice(
-        this.narrativealistviews.indexOf(listView),
-        1
-      ); //update the list
-    };
-  
-    
-    /**
-     * Get the view by narrative
-     * @param {*} narrative
-     */
-    getListViewByNarrative(narrative) {
-      let ret = null;
-      this.narrativealistviews.forEach((element) => {
-        if (element.narrative.id == narrative.id) {
-          ret = element;
-        }
-      });
-      return ret;
-    };
-  
+
     /**
      * Add view to the list
      * @param {*} na
@@ -97,7 +64,7 @@ class NarrativeListViewContainer {
   
       return naaccview;
     };
-  
+
     createListViewContainer(id){
       //container of the narrative view
       let container = document.createElement("div");
@@ -105,6 +72,24 @@ class NarrativeListViewContainer {
       container.setAttribute("draggable", true);
       return container;
     }
+
+    
+    /**
+     * Get the view by narrative
+     * @param {*} narrative
+     */
+    getListViewByNarrative(narrative) {
+      let ret = null;
+      this.narrativealistviews.forEach((element) => {
+        if (element.narrative.id == narrative.id) {
+          ret = element;
+        }
+      });
+      return ret;
+    };
+  
+
+  
 
     /**
      * Get new color
@@ -114,18 +99,7 @@ class NarrativeListViewContainer {
     };
 
 
-    /**
-     * Reorder the list view according to the order of the narratives
-     * @param {} narratives 
-     */
-    reorder(narratives){
-      narratives.forEach(narrative => {
-          let view = this.getListViewByNarrative(narrative);
-          if(view){
-            this.listcontainer.insertBefore(view.container, null);
-          }
-      });
-    }
+
 
     moveUp (narrative){
       let listView = this.getListViewByNarrative(narrative);
@@ -148,7 +122,37 @@ class NarrativeListViewContainer {
       }    
     }
     
+    /**
+     * Reorder the list view according to the order of the narratives
+     * @param {} narratives 
+     */
+    reorder(narratives){
+      narratives.forEach(narrative => {
+          let view = this.getListViewByNarrative(narrative);
+          if(view){
+            this.listcontainer.insertBefore(view.container, null);
+          }
+      });
+    }
 
+    /**
+     * Remove view from the list
+     * @param {*} narrative
+     */
+    removeListView(narrativecell) {
+      let listView = this.getListViewByNarrative(narrativecell);
+      if (listView) {
+        listView.narrative.deleteBound();
+        listView.unhighlightCells(listView.narrative.cells); // unhighligth cells
+        listView.remove(); //remove the view
+        this.colors.push(listView.color); //return the color
+      }
+      this.narrativealistviews.splice(
+        this.narrativealistviews.indexOf(listView),
+        1
+      ); //update the list
+    };
+    
    swapElementsPositions (firstlistview, secondlistview) {
       //swap views
       let firstElm = firstlistview.container;
@@ -161,6 +165,8 @@ class NarrativeListViewContainer {
       this.narrativealistviews[firstIdx] = secondlistview;
       this.narrativealistviews[secondIdx] = tmp;
   }
+
+
 
 }
   

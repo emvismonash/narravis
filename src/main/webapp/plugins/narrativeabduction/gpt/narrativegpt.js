@@ -1,3 +1,6 @@
+/**
+ * This is a base class contains the GPT setting and other options for the authoring chat
+ */
 class NarrativeGPT{
     constructor(){
         this.messages = [];
@@ -6,9 +9,11 @@ class NarrativeGPT{
         this.readablestream = new ReadableStream();        
     }
 
-    //TODO
-    static isSettingValid(){
-        return true;
+    addMessage(mrole, mcontent){
+        this.messages.push({
+            role: mrole, 
+            content: mcontent
+        });
     }
 
     applySetting(jsonData){
@@ -19,77 +24,6 @@ class NarrativeGPT{
         this.model = jsonData.model;
         this.formatjsonprompt = jsonData.formatjsonprompt;
         this.messages = [];
-    }
-
-    addMessage(mrole, mcontent){
-        this.messages.push({
-            role: mrole, 
-            content: mcontent
-        });
-    }
-
-    createRequest(prompt){
-        
-        this.addMessage("user", prompt);
-
-        const requestBody = {
-            model: this.model, 
-            messages: this.messages,
-            stream: true
-            //max_tokens: 50
-        };
-
-        let request = {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${this.apikey}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-        }
-
-        return {
-            request: request, 
-            url: this.apiURL
-        }
-    }
-
-    extractChunkContent(json){
-        return json.choices[0].delta.content;
-    }
-
-    stopStream(){
-        this.readablestream.cancel();
-    }
-
-    parseChunksString(dataString){
-        // Split the input string by newline characters to separate individual data objects
-        const dataEntries = dataString.split('\n').filter(entry => entry.trim() !== '');
-        // Initialize an array to store the parsed objects
-        const result = [];
-    
-        // Iterate through each data entry and parse it as JSON
-        for (const entry of dataEntries) {
-          try {
-            const parsedObject = JSON.parse(entry.replace('data: ', ''));
-            result.push(parsedObject);
-          } catch (error) {
-            console.error(`Error parsing data entry: ${entry}`);
-          }
-        }
-    
-        return result;
-    }
-
-    extractChunksContent(chunks){
-        let content = [];
-        chunks.forEach(chunk => {
-            //console.log(chunk);
-            let msg = this.extractChunkContent(chunk);
-            content.push(msg);
-        });
-
-        return content;
     }
 
     async chatStream(prompt, streamfunc, completefunc, t){
@@ -155,6 +89,53 @@ class NarrativeGPT{
        
     }
 
+
+    createRequest(prompt){
+        
+        this.addMessage("user", prompt);
+
+        const requestBody = {
+            model: this.model, 
+            messages: this.messages,
+            stream: true
+            //max_tokens: 50
+        };
+
+        let request = {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.apikey}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        }
+
+        return {
+            request: request, 
+            url: this.apiURL
+        }
+    }
+
+    extractChunkContent(json){
+        return json.choices[0].delta.content;
+    }
+
+    extractChunksContent(chunks){
+        let content = [];
+        chunks.forEach(chunk => {
+            //console.log(chunk);
+            let msg = this.extractChunkContent(chunk);
+            content.push(msg);
+        });
+
+        return content;
+    }
+
+    //TODO
+    static isSettingValid(){
+        return true;
+    }
+
     jsonStringifySafe(inputString) {
         // Escape special characters and enclose the string in double quotes
         const escapedString = JSON.stringify(inputString);
@@ -162,6 +143,26 @@ class NarrativeGPT{
         return escapedString.slice(1, escapedString.length - 1);
     }
 
+    parseChunksString(dataString){
+        // Split the input string by newline characters to separate individual data objects
+        const dataEntries = dataString.split('\n').filter(entry => entry.trim() !== '');
+        // Initialize an array to store the parsed objects
+        const result = [];
+    
+        // Iterate through each data entry and parse it as JSON
+        for (const entry of dataEntries) {
+          try {
+            const parsedObject = JSON.parse(entry.replace('data: ', ''));
+            result.push(parsedObject);
+          } catch (error) {
+            console.error(`Error parsing data entry: ${entry}`);
+          }
+        }
+    
+        return result;
+    }
 
-
+    stopStream(){
+        this.readablestream.cancel();
+    }
 }

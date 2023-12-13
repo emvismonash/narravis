@@ -11,12 +11,122 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
         this.initListenerJSON2DocumentItem();
     }
 
-    formatPrompt(text){
-        return this.formatjsonprompt + " Here is the text: \n" + text;        
+    completeStreamResponse(t){
+      NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.JSON2ITEMDONE, {
+      
+      });
+      t.enableChat();
     }
 
-    setText(text){
-        this.container.textareamessage.value = text;
+    async chatGPTStream(text){
+      this.streamparser = new NarrativeGPTJSONStreamParser();
+      await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
+    }
+
+    createWindow(){
+      const container = document.createElement("div");
+      container.classList.add("na-window-content");
+
+      const responseTextArea = document.createElement('textarea');
+      const textAreaJSON = document.createElement('textarea');
+      const buttonSaveJSON = document.createElement('button');    
+      const buttonDraw = document.createElement('button');
+      const fileNameInput = document.createElement('input');      
+
+      NAUIHelper.CreateHelpText(container, "This window can turn narrative text into the JSON format needed to create diaram. It requires gtp setting from GPT Authoring Window to work properly.")
+
+      let textAreaStyle = "min-height:200px;resize: vertical;";
+      textAreaJSON.style = textAreaStyle;
+      responseTextArea.style = textAreaStyle;
+
+      fileNameInput.style = "font-size:small; witdth:200px;";
+      fileNameInput.value = "generated-diagram";
+
+      let t = this;
+
+      buttonSaveJSON.innerHTML = "Download";
+      buttonSaveJSON.title = "Download the JSON data into file";
+      buttonSaveJSON.addEventListener('click', function(){
+          // Get the text you want to save
+          let textToSave = textAreaJSON.value;
+  
+          // Create a Blob with the text content
+          let blob = new Blob([textToSave], { type: "text/plain" });
+  
+          // Create a temporary link element for triggering the download
+          let a = document.createElement("a");
+          a.href = window.URL.createObjectURL(blob);
+
+          let filename = fileNameInput.value;
+          a.download = filename + ".json";
+  
+          // Trigger a click event on the link to initiate the download
+          a.click();
+          
+      });
+
+      buttonDraw.innerHTML = "Visualise";
+      buttonDraw.title = "Parse the JSON data into cells";
+      buttonDraw.style.marginRight = "20px";
+      buttonDraw.addEventListener('click', function(){
+          // Get the text you want to save
+          var textToSave = textAreaJSON.value;              
+          //trigger new narrative event
+          NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.INSERTJSON2DIAGRAM, {
+            jsontext: textToSave
+          });
+      });
+      
+      container.append(responseTextArea);
+      this.container = container;
+      this.container.textareamessage = responseTextArea;
+      this.container.textareajson = textAreaJSON;
+
+      let btnGenerate = NAUIHelper.AddButton("Generate", container, function(){
+          let text = responseTextArea.value;
+          let prompt = t.formatPrompt(text);
+          t.container.textareajson.value = "";
+          t.chatGPTStream(prompt);           
+          t.disableChat();            
+          NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.JSON2ITEMSTART, {
+          });
+        })
+
+     let btnStopGenerate = NAUIHelper.AddButton("Stop", container, function(){
+          t.stopGenerate();
+     })
+
+      container.append(textAreaJSON);
+      container.append(buttonDraw);
+      container.append(fileNameInput);
+      container.append(buttonSaveJSON);
+
+      this.container.uibuttongenerate = btnGenerate;
+      this.container.uibuttonstopgenerate = btnStopGenerate;
+      this.container.uibuttonstopgenerate.style.display = "none";
+
+
+      this.window =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 600);
+      this.window.setResizable(true);
+      this.window.setVisible(false);
+
+    }
+
+    disableChat(){
+      this.container.textareamessage.disabled = true;
+      this.container.uibuttongenerate.disabled = true;
+      this.container.uibuttongenerate.innerHTML = "Generating <img src='"+this.loadingurl+"' width='20px'>";
+      this.container.uibuttonstopgenerate.style.display = "block";    
+    }
+    enableChat(){
+      this.container.textareamessage.disabled = false;
+      this.container.uibuttongenerate.disabled = false;
+      this.container.uibuttongenerate.innerHTML = "Generate";
+      this.container.uibuttonstopgenerate.style.display = "none";
+    }
+  
+    formatPrompt(text){
+        return this.formatjsonprompt + " Here is the text: \n" + text;        
     }
 
     initListenerJSON2Diagram(){
@@ -61,130 +171,21 @@ class NarrativeGPTJSONValidator extends NarrativeGPT{
       });   
     }
 
-    createWindow(){
-        const container = document.createElement("div");
-        container.classList.add("na-window-content");
+    stopGenerate(){
+      super.stopStream()
+      this.enableChat();
+    }
 
-        const responseTextArea = document.createElement('textarea');
-        const textAreaJSON = document.createElement('textarea');
-        const buttonSaveJSON = document.createElement('button');    
-        const buttonDraw = document.createElement('button');
-        const fileNameInput = document.createElement('input');      
+    setText(text){
+      this.container.textareamessage.value = text;
+    }
 
-        NAUIHelper.CreateHelpText(container, "This window can turn narrative text into the JSON format needed to create diaram. It requires gtp setting from GPT Authoring Window to work properly.")
-
-        let textAreaStyle = "min-height:200px;resize: vertical;";
-        textAreaJSON.style = textAreaStyle;
-        responseTextArea.style = textAreaStyle;
-
-        fileNameInput.style = "font-size:small; witdth:200px;";
-        fileNameInput.value = "generated-diagram";
-
-        let t = this;
-
-        buttonSaveJSON.innerHTML = "Download";
-        buttonSaveJSON.title = "Download the JSON data into file";
-        buttonSaveJSON.addEventListener('click', function(){
-            // Get the text you want to save
-            let textToSave = textAreaJSON.value;
-    
-            // Create a Blob with the text content
-            let blob = new Blob([textToSave], { type: "text/plain" });
-    
-            // Create a temporary link element for triggering the download
-            let a = document.createElement("a");
-            a.href = window.URL.createObjectURL(blob);
-
-            let filename = fileNameInput.value;
-            a.download = filename + ".json";
-    
-            // Trigger a click event on the link to initiate the download
-            a.click();
-            
-        });
-
-        buttonDraw.innerHTML = "Visualise";
-        buttonDraw.title = "Parse the JSON data into cells";
-        buttonDraw.style.marginRight = "20px";
-        buttonDraw.addEventListener('click', function(){
-            // Get the text you want to save
-            var textToSave = textAreaJSON.value;              
-            //trigger new narrative event
-            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.INSERTJSON2DIAGRAM, {
-              jsontext: textToSave
-            });
-        });
-        
-        container.append(responseTextArea);
-        this.container = container;
-        this.container.textareamessage = responseTextArea;
-        this.container.textareajson = textAreaJSON;
-
-        let btnGenerate = NAUIHelper.AddButton("Generate", container, function(){
-            let text = responseTextArea.value;
-            let prompt = t.formatPrompt(text);
-            t.container.textareajson.value = "";
-            t.chatGPTStream(prompt);           
-            t.disableChat();            
-            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.JSON2ITEMSTART, {
-            });
-          })
-
-       let btnStopGenerate = NAUIHelper.AddButton("Stop", container, function(){
-            t.stopGenerate();
-       })
-
-        container.append(textAreaJSON);
-        container.append(buttonDraw);
-        container.append(fileNameInput);
-        container.append(buttonSaveJSON);
-
-        this.container.uibuttongenerate = btnGenerate;
-        this.container.uibuttonstopgenerate = btnStopGenerate;
-        this.container.uibuttonstopgenerate.style.display = "none";
+    updateStreamResponse(content, t){
+      t.container.textareajson.value += content;
+      t.streamparser.evaluate(content);
+    }
 
 
-        this.window =  NAUIHelper.CreateWindow("gpt-window-json", "GPT JSON Generation", container, 1000, 500, 400, 600);
-        this.window.setResizable(true);
-        this.window.setVisible(false);
-
-      }
-
-      async chatGPTStream(text){
-        this.streamparser = new NarrativeGPTJSONStreamParser();
-        await this.chatStream(text, this.updateStreamResponse, this.completeStreamResponse, this);
-      }
-
-      updateStreamResponse(content, t){
-          t.container.textareajson.value += content;
-          t.streamparser.evaluate(content);
-      }
-    
-      enableChat(){
-        this.container.textareamessage.disabled = false;
-        this.container.uibuttongenerate.disabled = false;
-        this.container.uibuttongenerate.innerHTML = "Generate";
-        this.container.uibuttonstopgenerate.style.display = "none";
-      }
-    
-      stopGenerate(){
-        super.stopStream()
-        this.enableChat();
-      }
-
-      disableChat(){
-        this.container.textareamessage.disabled = true;
-        this.container.uibuttongenerate.disabled = true;
-        this.container.uibuttongenerate.innerHTML = "Generating <img src='"+this.loadingurl+"' width='20px'>";
-        this.container.uibuttonstopgenerate.style.display = "block";    
-      }
-
-      completeStreamResponse(t){
-        NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.JSON2ITEMDONE, {
-        
-        });
-        t.enableChat();
-      }
 }
 
 
@@ -195,30 +196,6 @@ class NarrativeGPTJSONStreamParser {
       this.currenttext = "";
       this.currentprocces = "";
     }
-
-    static match(text, pattern){
-      return text.match(pattern);
-    }
-
-    static findJSONObjectsExcludeArrays(inputString) {
-      const jsonObjectRegex = /{[^[\]{}]+}/g;
-      const jsonObjects = inputString.match(jsonObjectRegex);
-    
-      if (jsonObjects) {
-        return jsonObjects.map((jsonStr) => JSON.parse(jsonStr));
-      } else {
-        return [];
-      }
-    }
-
-    elementExists(arr, elminput){
-      let res = false;
-      arr.forEach(elm => {
-        if(elm.id == elminput.id) res = true;      
-      });
-      return res;
-    }
-
 
     addItem(arr, isnode){
       let jsonPattern = /\{[^{}]*\}/g;
@@ -238,6 +215,14 @@ class NarrativeGPTJSONStreamParser {
           console.log(error);
         }
       });
+    }
+
+    elementExists(arr, elminput){
+      let res = false;
+      arr.forEach(elm => {
+        if(elm.id == elminput.id) res = true;      
+      });
+      return res;
     }
 
     evaluate(textchunk){
@@ -263,4 +248,20 @@ class NarrativeGPTJSONStreamParser {
         this.addItem(this.links, false);
       }
     }
+
+    static findJSONObjectsExcludeArrays(inputString) {
+      const jsonObjectRegex = /{[^[\]{}]+}/g;
+      const jsonObjects = inputString.match(jsonObjectRegex);
+    
+      if (jsonObjects) {
+        return jsonObjects.map((jsonStr) => JSON.parse(jsonStr));
+      } else {
+        return [];
+      }
+    }
+    
+    static match(text, pattern){
+      return text.match(pattern);
+    }
+
 }

@@ -9,6 +9,12 @@ class NarrativeLayoutSwimlaneWindow {
         this.initListenerLayoutUpdated();
     }
 
+    createWindow(){
+        this.container = document.createElement("div");
+        this.window = NAUIHelper.CreateWindow("Swimlane Window", "Swimlane Viewer", this.container, 0, 0, 200, 200);
+        this.window.setVisible(true);
+    }    
+
     initListenerLayoutUpdated(){
         let t = this;
         document.addEventListener(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, function(evt){
@@ -49,9 +55,5 @@ class NarrativeLayoutSwimlaneWindow {
         this.container.append(container);
     }
 
-    createWindow(){
-        this.container = document.createElement("div");
-        this.window = NAUIHelper.CreateWindow("Swimlane Window", "Swimlane Viewer", this.container, 0, 0, 200, 200);
-        this.window.setVisible(true);
-    }
+
 }

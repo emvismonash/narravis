@@ -1,0 +1,319 @@
+<mxfile host="127.0.0.1" modified="2023-12-03T22:15:42.887Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0" etag="C9xkxOb61NaPZYcopc-M" version="21.6.2" type="device">
+  <diagram name="Page-1" id="-CZtCa49bxqaDlBSObXa">
+    <mxGraphModel dx="3864" dy="2411" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="narrativecellsbound-kvKzHWFCBfKi5C0o3VjO-31" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="320" y="420.000004" width="980" height="215" as="geometry" />
+        </mxCell>
+        <mxCell id="narrativecellsbound-kvKzHWFCBfKi5C0o3VjO-36" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="680.1357552779966" y="240" width="2060.350014601466" height="150.000004" as="geometry" />
+        </mxCell>
+        <mxCell id="narrativecellsbound-kvKzHWFCBfKi5C0o3VjO-8" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="320" width="2420" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-5" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;resizable=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry y="420.000004" width="10" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-3" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;resizable=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry y="240" width="10" height="130.000003" as="geometry" />
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-1" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;resizable=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry width="10" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-2" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+          <mxGeometry x="-200" width="100" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-4" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+          <mxGeometry x="-200" y="240" width="100" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-6" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+          <mxGeometry x="-200" y="420.000004" width="100" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-11" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-7" target="kvKzHWFCBfKi5C0o3VjO-10">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-13" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-7" target="kvKzHWFCBfKi5C0o3VjO-12">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-15" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-7" target="kvKzHWFCBfKi5C0o3VjO-14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="The wolf wants to eat the pigs" id="kvKzHWFCBfKi5C0o3VjO-7">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="320" y="60" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <Narrative label="Narrative" cells="[&quot;kvKzHWFCBfKi5C0o3VjO-7&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-10&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-12&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-14&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-16&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-18&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-20&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-22&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-24&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-26&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-28&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-33&quot;]" id="kvKzHWFCBfKi5C0o3VjO-8">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#cab2d6;" vertex="1" parent="1">
+            <mxGeometry x="10" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-21" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-10" target="kvKzHWFCBfKi5C0o3VjO-20">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Wolf attempts to blow down the brick house" id="kvKzHWFCBfKi5C0o3VjO-10">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="60" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-17" value="Enables" style="editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-12" target="kvKzHWFCBfKi5C0o3VjO-16">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-50" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-12" target="kvKzHWFCBfKi5C0o3VjO-49">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Wolf blows down straw house" id="kvKzHWFCBfKi5C0o3VjO-12">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-19" value="Enables" style="editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-14" target="kvKzHWFCBfKi5C0o3VjO-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-48" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-14" target="kvKzHWFCBfKi5C0o3VjO-47">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Wolf blows down stick house" id="kvKzHWFCBfKi5C0o3VjO-14">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="180" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-52" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-16" target="kvKzHWFCBfKi5C0o3VjO-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Wolf eats Pig 1" id="kvKzHWFCBfKi5C0o3VjO-16">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-45" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-18" target="kvKzHWFCBfKi5C0o3VjO-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Wolf eat Pig 2" id="kvKzHWFCBfKi5C0o3VjO-18">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="180" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-25" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-20" target="kvKzHWFCBfKi5C0o3VjO-24">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-40" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-20" target="kvKzHWFCBfKi5C0o3VjO-39">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-42" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;entryX=0.273;entryY=0.943;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-20" target="kvKzHWFCBfKi5C0o3VjO-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Wolf fails to blow down brick house" id="kvKzHWFCBfKi5C0o3VjO-20">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="90" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-23" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-22" target="kvKzHWFCBfKi5C0o3VjO-20">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;div&gt;Brick material is wolf-proof&lt;/div&gt;" id="kvKzHWFCBfKi5C0o3VjO-22">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="120" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-27" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-24" target="kvKzHWFCBfKi5C0o3VjO-26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Wolf comes down to the chimney" id="kvKzHWFCBfKi5C0o3VjO-24">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400" y="90" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-29" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-26" target="kvKzHWFCBfKi5C0o3VjO-28">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Pig 3 puts large cauldron on fire" id="kvKzHWFCBfKi5C0o3VjO-26">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1760" y="90" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-34" value="Enables" style="editable=0;endArrow=classic;html=1;rounded=0;strokeWidth=3;dashed=1;dashPattern=1 1;strokeColor=#FF3333;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-28" target="kvKzHWFCBfKi5C0o3VjO-33">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Wolf falls into cauldron" id="kvKzHWFCBfKi5C0o3VjO-28">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2120" y="90" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-54" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-30" target="kvKzHWFCBfKi5C0o3VjO-53">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-60" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-30" target="kvKzHWFCBfKi5C0o3VjO-59">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-66" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-30" target="kvKzHWFCBfKi5C0o3VjO-65">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-70" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-30" target="kvKzHWFCBfKi5C0o3VjO-69">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Storm occurs" id="kvKzHWFCBfKi5C0o3VjO-30">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="320" y="510.000004" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <Narrative label="Narrative" cells="[&quot;kvKzHWFCBfKi5C0o3VjO-30&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-53&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-56&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-59&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-63&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-65&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-69&quot;]" id="kvKzHWFCBfKi5C0o3VjO-31">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#ff7f00;" vertex="1" parent="1">
+            <mxGeometry x="10" y="420.000004" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-38" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-33" target="kvKzHWFCBfKi5C0o3VjO-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Pig 3 eats Wolf" id="kvKzHWFCBfKi5C0o3VjO-33">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2480" y="90" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <Narrative label="Evidence" cells="[&quot;kvKzHWFCBfKi5C0o3VjO-35&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-39&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-41&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-43&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-47&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-49&quot;,&quot;kvKzHWFCBfKi5C0o3VjO-51&quot;]" id="kvKzHWFCBfKi5C0o3VjO-36">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#fdbf6f;" vertex="1" parent="1">
+            <mxGeometry x="10" y="240" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Wolf is missing" id="kvKzHWFCBfKi5C0o3VjO-35">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2480.485769879462" y="309.99877719251793" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Brick house undamaged" id="kvKzHWFCBfKi5C0o3VjO-39">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="860.8821517712585" y="270.000001" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Pig 3 alive in the brick house" id="kvKzHWFCBfKi5C0o3VjO-41">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="860.0405993653255" y="330.000003" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Pig 2 is missing" id="kvKzHWFCBfKi5C0o3VjO-43">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040.398257371193" y="240" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Scattered remains of stick house" id="kvKzHWFCBfKi5C0o3VjO-47">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680.8196868983495" y="360.000004" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Scattered remains of straw house" id="kvKzHWFCBfKi5C0o3VjO-49">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680.1357552779966" y="300.000002" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Pig 1 is missing" id="kvKzHWFCBfKi5C0o3VjO-51">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040.5475107515924" y="360.000004" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-55" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-53" target="kvKzHWFCBfKi5C0o3VjO-49">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-62" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-53" target="kvKzHWFCBfKi5C0o3VjO-56">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Storm blows down straw house" id="kvKzHWFCBfKi5C0o3VjO-53">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="420.000004" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-58" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-56" target="kvKzHWFCBfKi5C0o3VjO-51">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Pig 1 is drowning" id="kvKzHWFCBfKi5C0o3VjO-56">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="425.000004" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-61" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-59" target="kvKzHWFCBfKi5C0o3VjO-47">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-64" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-59" target="kvKzHWFCBfKi5C0o3VjO-63">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Storm blows down stick house" id="kvKzHWFCBfKi5C0o3VjO-59">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="480.000004" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <NarrativeItem natype="NarrativeItem" label="Pig 2 is drowing" id="kvKzHWFCBfKi5C0o3VjO-63">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="545.000004" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-67" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-65" target="kvKzHWFCBfKi5C0o3VjO-39">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-68" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-65" target="kvKzHWFCBfKi5C0o3VjO-41">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Storm could not blow down brick house" id="kvKzHWFCBfKi5C0o3VjO-65">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="540.000004" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="kvKzHWFCBfKi5C0o3VjO-71" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="kvKzHWFCBfKi5C0o3VjO-69" target="kvKzHWFCBfKi5C0o3VjO-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Wolf is drowning" id="kvKzHWFCBfKi5C0o3VjO-69">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="605.000004" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

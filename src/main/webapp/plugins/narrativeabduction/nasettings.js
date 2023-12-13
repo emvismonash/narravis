@@ -165,3 +165,21 @@ const NAEntries = [
     type: "edge",
   },
 ]
+
+const NAExamples =[
+  {
+      title: "Saki Airfield Explosion",
+      description: "Narrative of Saki airforce field explosion [Human authored].",
+      drawiofilepath: "plugins/narrativeabduction/examples/saki.drawio"
+  },
+  {
+      title: "Three Little Pigs",
+      description: "Competing narratives of three little pigs story [GPT authored]",
+      drawiofilepath: "plugins/narrativeabduction/examples/threepigs.drawio"
+  },
+  {
+      title: "Istanbul Explosion (Hypothetical)",
+      description: "Hypothetical narratives of an explosion in Istanbul [GPT authored]",
+      drawiofilepath: "plugins/narrativeabduction/examples/istanbulexplosion.drawio"
+  },            
+]

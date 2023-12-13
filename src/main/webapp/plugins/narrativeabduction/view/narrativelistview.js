@@ -20,104 +20,40 @@ class NarrativeListView {
       this.initListenerRemoveCell();
       //this.initListenerClickRemoveHighlight();
     }
-  
-    /**
-     * Remove the list view
-     */
-    remove() {
-      this.container.remove();
-    };
-  
-    /**
-     *
-     * @returns Get the style to hightlight
-     */
-    getHighlightStyle() {
-      return "strokeColor=" + this.color + ";strokeWidth=2";
-    };
-  
-    /**
-     * Highlight children cells
-     * @param {*} cellsToHighlight
-     */
-    highlightCells(cellsToHighlight) {
-      let highlightStyle = this.getHighlightStyle();
-  
-      let graph = this.editorui.editor.graph;
-      graph.getModel().beginUpdate();
-      try {
-        for (let cell of cellsToHighlight) {
-          graph.setCellStyle(cell.getStyle() + highlightStyle, [cell]);
-        }
-      } finally {
-        graph.getModel().endUpdate();
-      }
-      graph.refresh();
-    };
 
-    selectCells(){
-        let graph = this.editorui.editor.graph;
-        graph.getModel().beginUpdate();
-        try {
-            graph.setSelectionCells(this.narrative.cells);          
-        } finally {
-          graph.getModel().endUpdate();
-        }
-        graph.refresh();
-    }
-  
-    isAllCellsSelected(){
-        let graph = this.editorui.editor.graph;
-        let selectedCells = graph.getSelectionCells();
-        let docitems = [];
-        selectedCells.forEach(cell => {
-            if(NarrativeAbductionApp.isCellDocumentItem(cell)){
-                docitems.push(cell);
-            }
-        });
-        if(NAUtil.ArraysContainSameItems(docitems, this.narrative.cells)){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    /**
-     * Unhighilight the children cells
-     * @param {*} cellsToUnhighlight
-     */
-    unhighlightCells(cellsToUnhighlight) {
-      let graph = this.editorui.editor.graph;
-      let highlightStyle = this.getHighlightStyle();
-  
-      graph.getModel().beginUpdate();
-      try {
-        for (let cell of cellsToUnhighlight) {
-          let style = cell.getStyle().replace(highlightStyle, "");
-          graph.setCellStyle(style, [cell]);
-        }
-      } finally {
-         graph.getModel().endUpdate();
+    applyLayout(t){
+      if(t.narrative){
+          NarrativeLayout.applyLayout(t.narrative, t.editorui.editor.graph, null, null, ()=>{
+          });
       }
-      graph.refresh();
-    };
-  
-    /**
-     * Hide provided cells
-     * @param {*} cellsToHide 
-     */
-    toggleCellsVisibility (cellsToHide, status){
-      let graph = this.editorui.editor.graph;  
-      graph.getModel().beginUpdate();
-      try {
-         graph.cellsToggled(cellsToHide, status);
-      } finally {
-         graph.getModel().endUpdate();
-      }
-      graph.refresh();
-    }
+  }
 
-    /**
+  /**
+   * Assign selected node to the narrative.
+   * The narrative cell should contain the all information necessary to recreate the view, thus, the children cells' ids should be stored in the narrative cell.
+   */
+  assignNode(t) {
+    let graph = t.editorui.editor.graph;
+    let selectedCells = graph.getSelectionCells();
+    if (selectedCells) {
+      let validated = t.app.getValidatedAssignedCells(selectedCells);
+      let validcells = validated.validcells;        
+      t.assignNodes(validcells);
+      if(validated.invalidcells.length > 0){
+        mxUtils.alert("Some of the cells are ignored because they are part of existing narratives");
+      }
+    }
+  };
+  assignNodes(cells) {
+    this.narrative.addCells(cells); //add cell to the narrative object, this is where the children cells are added to the root cell
+    this.createBodyElements(); //create representaton
+    if(this.narrative.ishighlight) {
+          this.unhighlightCells(this.narrative.cells);
+          this.highlightCells(this.narrative.cells);
+      }
+  };
+    
+     /**
      * Create head, body, and name label
      * <head
      *      <top part
@@ -129,7 +65,7 @@ class NarrativeListView {
      *      <cell view
      *      <cell view
      */
-    createContainers() {
+     createContainers() {
       this.headContainer = document.createElement("div");
       this.bodyContainer = document.createElement("div");
       this.uinarrativetitle = document.createElement("div");
@@ -199,7 +135,228 @@ class NarrativeListView {
       this.headContainer.toppart = toppart;
       this.headContainer.bottompart = botpart;
     };
+      
+    /**
+     * Create assign nodes button
+     */
+    createAssignNodesButton() {
+      let buttonAssignNode = document.createElement("button");
+      buttonAssignNode.innerHTML = "←";
+      buttonAssignNode.title = NASettings.Language.English["assign"];
+      buttonAssignNode.onclick = this.assignNode.bind(null, this);
+      this.headContainer.bottompart.append(buttonAssignNode);
+    };
+
+    createLayoutButton(){
+        let buttonLayout = document.createElement("button");
+        buttonLayout.innerHTML = "⟲";
+        buttonLayout.title = "Reset layout"; //todo
+        buttonLayout.onclick = this.applyLayout.bind(null, this);
+        this.headContainer.bottompart.append(buttonLayout);       
+    }
+
+    createToggleHighlightButton(){
+        let buttonToggle = document.createElement("button");
+        buttonToggle.innerHTML = "H";
+        buttonToggle.title = "Toggle highlight"; //todo
+        buttonToggle.onclick = this.toggleHighlight.bind(null, this);
+        this.headContainer.bottompart.append(buttonToggle);       
+    }
+
+    createToggleVisibilityButton(){
+      let buttonToggle = document.createElement("button");
+      buttonToggle.title = "Toggle visibility"; //todo
+      buttonToggle.onclick = this.toggleVisibility.bind(null, this);
+      buttonToggle.innerHTML = "👁";
+      //let img = document.createElement('img');
+			//img.setAttribute('src', Editor.visibleImage);
+      //buttonToggle.append(img);
+      this.headContainer.bottompart.buttonvisibility = buttonToggle;
+     // this.headContainer.bottompart.buttonvisibility.img = img;
+      this.headContainer.bottompart.append(buttonToggle);  
+    }
+
+
+    createUpDownButtons(){
+      let upButton = document.createElement("button");
+      upButton.title = "Move up";
+      upButton.innerHTML = "↑";
+      upButton.onclick = this.moveUp.bind(null, this);
+      this.headContainer.bottompart.append(upButton);
+
+      let downButton = document.createElement("button");
+      downButton.title = "Move down";
+      downButton.innerHTML = "↓";
+      downButton.onclick = this.moveDown.bind(null, this);
+      this.headContainer.bottompart.append(downButton);
+    }
+   
+    /**
+     * Create representation of cells in the view's body
+     */
+    createBodyElements() {
+      let t = this;
+      this.bodyContainer.innerHTML = "";
+      this.cellviews = [];
+      this.narrative.cells.forEach(function (cell) {
+        t.createCellView(cell);
+      });
+    };
   
+    createHeadElements() {
+      this.createAssignNodesButton();
+      this.createLayoutButton();
+      //this.createToggleHighlightButton();
+      this.createToggleVisibilityButton();
+      //this.createUpDownButtons();
+    };
+
+   /**
+     * Create representation of the cell/node in the view
+     * @param {*} cell
+     */
+   createCellView(cell) {
+    if (cell.isVertex()) {
+      //container of the view
+      let container = document.createElement("div"); //main container
+      let textcontainer = document.createElement("div");
+      textcontainer.classList.add(
+        NASettings.CSSClasses.NarrativeListView.CellViewTitle
+      );
+
+      let uicontainer = document.createElement("div");
+      uicontainer.classList.add(
+        NASettings.CSSClasses.NarrativeListView.CellViewUIContainer
+      );
+      container.append(textcontainer);
+      container.append(uicontainer);
+
+      let title = this.app.getDocumentItemTitle(cell);
+      textcontainer.innerHTML = title;
+      textcontainer.title = "Click to select";
+      container.cell = cell;
+      container.style.cursor = "pointer";
+      container.classList.add(
+        NASettings.CSSClasses.NarrativeListView.CellViewContainer
+      );
+      container.id = cell.id;
+
+      //create unasign button
+      let unasignButton = document.createElement("button");
+      unasignButton.classList.add(
+        NASettings.CSSClasses.NarrativeListView.CellViewUnassignButton
+      );
+      unasignButton.innerHTML = "→";
+      unasignButton.title = NASettings.Language.English["unassign"];
+      unasignButton.onclick = this.unasignCell.bind(null, this, cell); //handler to remove this cell from the group
+      uicontainer.append(unasignButton);
+
+      //add the container to the body
+      this.bodyContainer.append(container);
+      let graph = this.editorui.editor.graph;
+      let highlight = new mxCellHighlight(graph, "#000", 2);
+      //add highlight
+      textcontainer.onmouseenter = function () {
+        highlight.highlight(graph.view.getState(cell));
+      };
+      textcontainer.onmouseleave = function () {
+        highlight.hide();
+      };
+      textcontainer.onclick = function () {
+        graph.setSelectionCell (cell);
+      };
+
+      let cellView = {
+        cell: cell,
+        htmlcontainer: container,
+        htmltitle: textcontainer,
+        htmluicontainer: uicontainer,
+      };
+
+      this.cellviews.push(cellView);
+    }
+  };
+
+    /**
+     *
+     * @returns Get the style to hightlight
+     */
+    getHighlightStyle() {
+      return "strokeColor=" + this.color + ";strokeWidth=2";
+    };
+  
+
+
+    getTitleCell(cell) {
+      let children = cell.children;
+      let ret = null;
+      if (children) {
+        children.forEach((child) => {
+          if (child.natype == NASettings.Dictionary.ATTRIBUTES.DOCTITLE) {
+            ret = child;
+          }
+        });
+      }
+      return ret;
+    };
+   
+    /**
+     * Get cell view from given cell
+     * @param {*} cell
+     * @returns
+     */
+    getCellView(cell) {
+      let ret = null;
+      this.cellviews.forEach((view) => {
+        if (view.cell == cell) {
+          ret = view;
+        }
+      });
+  
+      return ret;
+    };
+
+    /**
+     * Highlight children cells
+     * @param {*} cellsToHighlight
+     */
+    highlightCells(cellsToHighlight) {
+      let highlightStyle = this.getHighlightStyle();
+  
+      let graph = this.editorui.editor.graph;
+      graph.getModel().beginUpdate();
+      try {
+        for (let cell of cellsToHighlight) {
+          graph.setCellStyle(cell.getStyle() + highlightStyle, [cell]);
+        }
+      } finally {
+        graph.getModel().endUpdate();
+      }
+      graph.refresh();
+    };
+
+    
+  
+    isAllCellsSelected(){
+        let graph = this.editorui.editor.graph;
+        let selectedCells = graph.getSelectionCells();
+        let docitems = [];
+        selectedCells.forEach(cell => {
+            if(NarrativeAbductionApp.isCellDocumentItem(cell)){
+                docitems.push(cell);
+            }
+        });
+        if(NAUtil.ArraysContainSameItems(docitems, this.narrative.cells)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+  
+
+
     initListenerRemoveCell(){
       let t = this;
       let graph = this.editorui.editor.graph;
@@ -260,60 +417,6 @@ class NarrativeListView {
       });
     };
   
-    /**
-     * Create assign nodes button
-     */
-    createAssignNodesButton() {
-      let buttonAssignNode = document.createElement("button");
-      buttonAssignNode.innerHTML = "←";
-      buttonAssignNode.title = NASettings.Language.English["assign"];
-      buttonAssignNode.onclick = this.assignNode.bind(null, this);
-      this.headContainer.bottompart.append(buttonAssignNode);
-    };
-
-    createLayoutButton(){
-        let buttonLayout = document.createElement("button");
-        buttonLayout.innerHTML = "⟲";
-        buttonLayout.title = "Reset layout"; //todo
-        buttonLayout.onclick = this.applyLayout.bind(null, this);
-        this.headContainer.bottompart.append(buttonLayout);       
-    }
-
-    createToggleHighlightButton(){
-        let buttonToggle = document.createElement("button");
-        buttonToggle.innerHTML = "H";
-        buttonToggle.title = "Toggle highlight"; //todo
-        buttonToggle.onclick = this.toggleHighlight.bind(null, this);
-        this.headContainer.bottompart.append(buttonToggle);       
-    }
-
-    createToggleVisibilityButton(){
-      let buttonToggle = document.createElement("button");
-      buttonToggle.title = "Toggle visibility"; //todo
-      buttonToggle.onclick = this.toggleVisibility.bind(null, this);
-      buttonToggle.innerHTML = "👁";
-      //let img = document.createElement('img');
-			//img.setAttribute('src', Editor.visibleImage);
-      //buttonToggle.append(img);
-      this.headContainer.bottompart.buttonvisibility = buttonToggle;
-     // this.headContainer.bottompart.buttonvisibility.img = img;
-      this.headContainer.bottompart.append(buttonToggle);  
-    }
-
-
-    createUpDownButtons(){
-      let upButton = document.createElement("button");
-      upButton.title = "Move up";
-      upButton.innerHTML = "↑";
-      upButton.onclick = this.moveUp.bind(null, this);
-      this.headContainer.bottompart.append(upButton);
-
-      let downButton = document.createElement("button");
-      downButton.title = "Move down";
-      downButton.innerHTML = "↓";
-      downButton.onclick = this.moveDown.bind(null, this);
-      this.headContainer.bottompart.append(downButton);
-    }
 
     moveUp(t){
         t.app.narrativeaviewscontainer.moveUp(t.narrative);
@@ -323,166 +426,6 @@ class NarrativeListView {
       t.app.narrativeaviewscontainer.moveDown(t.narrative);
     }
 
-    /**
-     * Toggle the visibility of the narrative in the view. This also changes the visibility of the cells. 
-     */
-    toggleVisibility(t){
-      if(t.narrative){
-        let cells = t.narrative.cells;
-        if(t.narrative.isvisible){
-          t.toggleCellsVisibility(cells, false);
-          t.toggleCellsVisibility([t.narrative.rootcell], false);
-          t.narrative.hideBound();
-          t.narrative.isvisible = false;
-          //t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.hiddenImage);
-          t.headContainer.bottompart.buttonvisibility.innerHTML = "⎯";
-
-        }else{
-          t.toggleCellsVisibility(cells, true);
-          t.toggleCellsVisibility([t.narrative.rootcell], true);
-
-          t.narrative.showBound();
-          //t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.visibleImage);
-          t.headContainer.bottompart.buttonvisibility.innerHTML = "👁";
-          t.narrative.isvisible = true;
-          t.narrative.updateCellsBound();
-        }        
-      }
-    }
-
-    toggleHighlight(t){
-        if(t.narrative){
-            if(t.narrative.ishighlight){
-                t.unhighlightCells(t.narrative.cells);
-                t.narrative.ishighlight = false;
-            }else{
-                t.highlightCells(t.narrative.cells);
-                t.narrative.ishighlight = true;
-            }
-        }
-    }
-
-    applyLayout(t){
-        if(t.narrative){
-            NarrativeLayout.applyLayout(t.narrative, t.editorui.editor.graph, null, null, ()=>{
-            });
-        }
-    }
-  
-    /**
-     * Assign selected node to the narrative.
-     * The narrative cell should contain the all information necessary to recreate the view, thus, the children cells' ids should be stored in the narrative cell.
-     */
-    assignNode(t) {
-      let graph = t.editorui.editor.graph;
-      let selectedCells = graph.getSelectionCells();
-      if (selectedCells) {
-        let validated = t.app.getValidatedAssignedCells(selectedCells);
-        let validcells = validated.validcells;        
-        t.assignNodes(validcells);
-        if(validated.invalidcells.length > 0){
-          mxUtils.alert("Some of the cells are ignored because they are part of existing narratives");
-        }
-      }
-    };
-    assignNodes(cells) {
-      this.narrative.addCells(cells); //add cell to the narrative object, this is where the children cells are added to the root cell
-      this.createBodyElements(); //create representaton
-      if(this.narrative.ishighlight) {
-            this.unhighlightCells(this.narrative.cells);
-            this.highlightCells(this.narrative.cells);
-        }
-    };
-  
-    getTitleCell(cell) {
-      let children = cell.children;
-      let ret = null;
-      if (children) {
-        children.forEach((child) => {
-          if (child.natype == NASettings.Dictionary.ATTRIBUTES.DOCTITLE) {
-            ret = child;
-          }
-        });
-      }
-      return ret;
-    };
-  
-    /**
-     * Create representation of the cell/node in the view
-     * @param {*} cell
-     */
-    createCellView(cell) {
-      if (cell.isVertex()) {
-        //container of the view
-        let container = document.createElement("div"); //main container
-        let textcontainer = document.createElement("div");
-        textcontainer.classList.add(
-          NASettings.CSSClasses.NarrativeListView.CellViewTitle
-        );
-  
-        let uicontainer = document.createElement("div");
-        uicontainer.classList.add(
-          NASettings.CSSClasses.NarrativeListView.CellViewUIContainer
-        );
-        container.append(textcontainer);
-        container.append(uicontainer);
-  
-        let title = this.app.getDocumentItemTitle(cell);
-        textcontainer.innerHTML = title;
-        textcontainer.title = "Click to select";
-        container.cell = cell;
-        container.style.cursor = "pointer";
-        container.classList.add(
-          NASettings.CSSClasses.NarrativeListView.CellViewContainer
-        );
-        container.id = cell.id;
-  
-        //create unasign button
-        let unasignButton = document.createElement("button");
-        unasignButton.classList.add(
-          NASettings.CSSClasses.NarrativeListView.CellViewUnassignButton
-        );
-        unasignButton.innerHTML = "→";
-        unasignButton.title = NASettings.Language.English["unassign"];
-        unasignButton.onclick = this.unasignCell.bind(null, this, cell); //handler to remove this cell from the group
-        uicontainer.append(unasignButton);
-  
-        //add the container to the body
-        this.bodyContainer.append(container);
-        let graph = this.editorui.editor.graph;
-        let highlight = new mxCellHighlight(graph, "#000", 2);
-        //add highlight
-        textcontainer.onmouseenter = function () {
-          highlight.highlight(graph.view.getState(cell));
-        };
-        textcontainer.onmouseleave = function () {
-          highlight.hide();
-        };
-        textcontainer.onclick = function () {
-          graph.setSelectionCell (cell);
-        };
-
-        let cellView = {
-          cell: cell,
-          htmlcontainer: container,
-          htmltitle: textcontainer,
-          htmluicontainer: uicontainer,
-        };
-  
-        this.cellviews.push(cellView);
-      }
-    };
-  
-    /**
-     * Remove cell from the list
-     * @param {*} t
-     * @param {*} c
-     */
-    unasignCell(t, c) {
-      t.narrative.removeCell(c);
-      t.removeCellView(c);
-    };
-  
     /**
      * Remove cell view
      * @param {*} cell
@@ -494,41 +437,81 @@ class NarrativeListView {
       this.cellviews = NAUtil.RemoveElementArray(this.cellviews.indexOf(cellView), this.cellviews);
     };
   
-    /**
-     * Get cell view from given cell
-     * @param {*} cell
-     * @returns
+     /**
+     * Remove the list view
      */
-    getCellView(cell) {
-      let ret = null;
-      this.cellviews.forEach((view) => {
-        if (view.cell == cell) {
-          ret = view;
-        }
-      });
-  
-      return ret;
+     remove() {
+      this.container.remove();
     };
+     
+
+
   
-    /**
-     * Create representation of cells in the view's body
+    selectCells(){
+      let graph = this.editorui.editor.graph;
+      graph.getModel().beginUpdate();
+      try {
+          graph.setSelectionCells(this.narrative.cells);          
+      } finally {
+        graph.getModel().endUpdate();
+      }
+      graph.refresh();
+  }
+
+   /**
+     * Toggle the visibility of the narrative in the view. This also changes the visibility of the cells. 
      */
-    createBodyElements() {
-      let t = this;
-      this.bodyContainer.innerHTML = "";
-      this.cellviews = [];
-      this.narrative.cells.forEach(function (cell) {
-        t.createCellView(cell);
-      });
-    };
-  
-    createHeadElements() {
-      this.createAssignNodesButton();
-      this.createLayoutButton();
-      //this.createToggleHighlightButton();
-      this.createToggleVisibilityButton();
-      //this.createUpDownButtons();
-    };
+   toggleVisibility(t){
+    if(t.narrative){
+      let cells = t.narrative.cells;
+      if(t.narrative.isvisible){
+        t.toggleCellsVisibility(cells, false);
+        t.toggleCellsVisibility([t.narrative.rootcell], false);
+        t.narrative.hideBound();
+        t.narrative.isvisible = false;
+        //t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.hiddenImage);
+        t.headContainer.bottompart.buttonvisibility.innerHTML = "⎯";
+
+      }else{
+        t.toggleCellsVisibility(cells, true);
+        t.toggleCellsVisibility([t.narrative.rootcell], true);
+
+        t.narrative.showBound();
+        //t.headContainer.bottompart.buttonvisibility.img.setAttribute('src', Editor.visibleImage);
+        t.headContainer.bottompart.buttonvisibility.innerHTML = "👁";
+        t.narrative.isvisible = true;
+        t.narrative.updateCellsBound();
+      }        
+    }
+  }
+
+  toggleHighlight(t){
+      if(t.narrative){
+          if(t.narrative.ishighlight){
+              t.unhighlightCells(t.narrative.cells);
+              t.narrative.ishighlight = false;
+          }else{
+              t.highlightCells(t.narrative.cells);
+              t.narrative.ishighlight = true;
+          }
+      }
+  }
+
+
+  /**
+ * Hide provided cells
+ * @param {*} cellsToHide 
+ */
+  toggleCellsVisibility (cellsToHide, status){
+    let graph = this.editorui.editor.graph;  
+    graph.getModel().beginUpdate();
+    try {
+        graph.cellsToggled(cellsToHide, status);
+    } finally {
+        graph.getModel().endUpdate();
+    }
+    graph.refresh();
+  }
   
     updateView() {
       this.createContainers();
@@ -548,4 +531,36 @@ class NarrativeListView {
         .getModel()
         .setStyle(this.narrative.rootcell, style);
     };
+
+    /**
+     * Unhighilight the children cells
+     * @param {*} cellsToUnhighlight
+     */
+    unhighlightCells(cellsToUnhighlight) {
+      let graph = this.editorui.editor.graph;
+      let highlightStyle = this.getHighlightStyle();
+  
+      graph.getModel().beginUpdate();
+      try {
+        for (let cell of cellsToUnhighlight) {
+          let style = cell.getStyle().replace(highlightStyle, "");
+          graph.setCellStyle(style, [cell]);
+        }
+      } finally {
+         graph.getModel().endUpdate();
+      }
+      graph.refresh();
+    };    
+
+      
+    /**
+     * Remove cell from the list
+     * @param {*} t
+     * @param {*} c
+     */
+    unasignCell(t, c) {
+      t.narrative.removeCell(c);
+      t.removeCellView(c);
+    };
+  
   }

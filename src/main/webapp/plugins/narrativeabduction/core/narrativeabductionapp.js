@@ -18,13 +18,14 @@ class NarrativeAbductionApp {
       this.narrativeaviewscontainer;
       this.narrativelayoutwindow;
       this.narrativegptauthor;
+      this.narrativeexamples;
       this.generatingsession = false;
     }
   
     initiate(){
       this.narrativelanescontroller = new NarrativeLanesController(this.editorui.editor.graph, this);
       this.narrativelanescontroller.initiate();
-
+      this.narrativeexamples = new NarrativeExamples(this, NAExamples);
       this.narrativegptauthor = new NarrativeGPTAuthoring(this);
       this.createNAPanel();
       this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives, this);  
@@ -39,27 +40,6 @@ class NarrativeAbductionApp {
       this.updateMoreShapesButton();
       this.loadExistingNarratives();
     }
-
-    // /**
-    //  * Assign the narrative cell into the narrative list
-    //  * @param {*} cell
-    //  */
-    // addNarrativeCellToList(cell) {
-    //   if (this.narrativelistcell) {
-    //     const graph = this.editorui.editor.graph;
-    //     graph.getModel().beginUpdate();
-    //     try {
-    //       graph.getModel().add(this.narrativelistcell, cell);
-    //       let layout = new mxStackLayout(graph, true);
-    //       layout.execute(this.narrativelistcell);
-    //       // cell.setParent();
-    //     } finally {
-    //       graph.getModel().endUpdate();
-    //     }
-    //   }
-    // };
-  
-
       
     /** Assign cells to a narrative */
     assignNodes(nalistview, targets){
@@ -261,25 +241,6 @@ class NarrativeAbductionApp {
       container.appendChild(exportButton);
       this.createCommonMenu("Load JSON", container);
     }  
-
-  
-  
-   
-
-    /**
-     * Update the layout of all document cells that are not part of any narrative
-     */
-    updateLayoutOfNonNarrativeCells(dx, dy){
-      let graph = this.editorui.editor.graph;
-      graph.selectAll();
-      let allcells = graph.getSelectionCells();
-      let cells = [];
-      allcells.forEach(cell => {
-          if(!this.isCellPartOfExistingNarrative(cell) && NarrativeAbductionApp.isCellDocumentItem(cell)) cells.push(cell);
-      });
-      NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells, 0, -200);
-    }
-
 
 
     createDocumentItemFromJSONObject(node){
@@ -538,34 +499,15 @@ class NarrativeAbductionApp {
       NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);
     };
   
-    // /**
-    //  * Create the container cell that will contain the narrative cells
-    //  */
-    // createNarrativeListCell() {
-    //   let entry = this.getEntryByName(NASettings.Dictionary.CELLS.NARRATIVELIST);
-    //   let graph = this.editorui.editor.graph;
-    //   let doc = mxUtils.createXmlDocument();
-    //   let obj = doc.createElement(entry.name);
   
-    //   graph.getModel().beginUpdate();
-    //   try {
-    //     let cell = graph.insertVertex(
-    //       graph.getDefaultParent(),
-    //       null,
-    //       obj,
-    //       0,
-    //       0,
-    //       100,
-    //       100
-    //     );
-    //     cell.setStyle(entry.style);
-    //     this.narrativelistcell = cell;
-    //   } finally {
-    //     graph.getModel().endUpdate();
-    //   }
-    // };
-  
-
+    /**
+     * Remove all narratives
+     */
+    clearNarratives(){
+      this.narratives.forEach(na => {
+        this.deleteNarrative(na.rootcell);
+      });
+    }
   
     /**
      * Remove narrative from the list
@@ -586,7 +528,7 @@ class NarrativeAbductionApp {
       this.narratives.splice(this.narratives.indexOf(narrative), 1);
     };
   
-      /**
+    /**
      * JSON Structure
      * graph:{
      *    nodes: [
@@ -631,60 +573,31 @@ class NarrativeAbductionApp {
       narratives: narrativesjson,
       lanes: lanesjson
     }
-    NAUtil.downloadJSONFile(output, "narrativegraph");
+    NAUtil.DownloadJSONFile(output, "narrativegraph");
  }
 
- lanesToJSON(){
-  let toplanejson = {
-    name: this.narrativelanescontroller.toplane.name,
-    narratives: []
-  } 
-  this.narrativelanescontroller.toplane.narratives.forEach(narrative => {
-    toplanejson.narratives.push(narrative.rootcell.id)
-  });
 
-  let evidencelanejson = {
-    name: this.narrativelanescontroller.evidencelane.name,
-    narratives: []
-  } 
-  this.narrativelanescontroller.evidencelane.narratives.forEach(narrative => {
-    evidencelanejson.narratives.push(narrative.rootcell.id)
-  });
+ static extractTitleContentFromText(text, regex) {
+    
+    // Use the `exec` method to find the first match
+    const match = regex.exec(text);
 
-  let botlanejson = {
-    name: this.narrativelanescontroller.botlane.name,
-    narratives: []
-  } 
-  this.narrativelanescontroller.botlane.narratives.forEach(narrative => {
-    botlanejson.narratives.push(narrative.rootcell.id)
-  });
+    if (match) {
+      // Extract the text between asterisks
+      const title = match[1];
+      
+      // Remove the first match from the input text
+      const content = text.replace(match[0], '');
 
-  return {
-    toplane: toplanejson,
-    evidencelane: evidencelanejson,
-    botlane: botlanejson
+      // Create and return an object with the extracted title and content
+      return { title, content};
+    } else {
+      // If no match is found, return null or an appropriate value
+      return null;
+    }
   }
 
- }
 
- narrativesToJSON(){
-    let narrativesjson = [];
-    this.narratives.forEach(narrative => {
-        let name = narrative.getName();
-        let resna = {
-          name: name,
-          id: narrative.rootcell.id,
-          geometry: narrative.rootcell.geometry
-        }
-        let ids = [];
-        narrative.cells.forEach(cell => {
-          ids.push(cell.id);
-        });
-        resna.cells = ids;
-        narrativesjson.push(resna);
-    });
-    return narrativesjson;
- }
 
     /**
      * Return the narrative entry
@@ -924,6 +837,10 @@ class NarrativeAbductionApp {
       return narrative;
     }
   
+    /**
+     * Turn the current graph to a JSON object
+     * @returns 
+     */
     graphToJSON(){
       let graph = this.editorui.editor.graph;
       let model = graph.getModel();
@@ -1000,6 +917,11 @@ class NarrativeAbductionApp {
       });
     };
   
+    /**
+     * Create a document item cell and add it to the canvas
+     * @param {*} jsonObject 
+     * @returns 
+     */
     insertDocumentItemFromJSONObject(jsonObject){
       let graph = this.editorui.editor.graph;
       let parent = graph.getDefaultParent();
@@ -1019,6 +941,11 @@ class NarrativeAbductionApp {
       return cells;
   }
 
+  /**
+   * Create a link (edge) from json object and nodes and add it to the canvas
+   * @param {*} jsonObject 
+   * @param {*} nodes 
+   */
   insertDocumentLinkFromJSONObject(jsonObject, nodes){
     let graph = this.editorui.editor.graph;
     let parent = graph.getDefaultParent();
@@ -1038,8 +965,6 @@ class NarrativeAbductionApp {
 
     //#region listeners
   
-    
-
     /**
      * Handler for when the vanila document item size is updated.
      * The requirement is that the height can't be manually adjusted. The height is adjusted based on the content of the description.
@@ -1629,32 +1554,9 @@ class NarrativeAbductionApp {
             return null;
           };    
     }
-  
-  
-  
-  
+ 
+    //#endregion listeners
 
-
-
-    static extractTitleContentFromText(text, regex) {
-  
-    // Use the `exec` method to find the first match
-    const match = regex.exec(text);
-  
-    if (match) {
-      // Extract the text between asterisks
-      const title = match[1];
-      
-      // Remove the first match from the input text
-      const content = text.replace(match[0], '');
-  
-      // Create and return an object with the extracted title and content
-      return { title, content};
-    } else {
-      // If no match is found, return null or an appropriate value
-      return null;
-    }
-  }
     /**
      * Is the cell a document item
      * @param {*} cell 
@@ -1714,7 +1616,39 @@ class NarrativeAbductionApp {
   
 
 
-  
+    lanesToJSON(){
+      let toplanejson = {
+        name: this.narrativelanescontroller.toplane.name,
+        narratives: []
+      } 
+      this.narrativelanescontroller.toplane.narratives.forEach(narrative => {
+        toplanejson.narratives.push(narrative.rootcell.id)
+      });
+    
+      let evidencelanejson = {
+        name: this.narrativelanescontroller.evidencelane.name,
+        narratives: []
+      } 
+      this.narrativelanescontroller.evidencelane.narratives.forEach(narrative => {
+        evidencelanejson.narratives.push(narrative.rootcell.id)
+      });
+    
+      let botlanejson = {
+        name: this.narrativelanescontroller.botlane.name,
+        narratives: []
+      } 
+      this.narrativelanescontroller.botlane.narratives.forEach(narrative => {
+        botlanejson.narratives.push(narrative.rootcell.id)
+      });
+    
+      return {
+        toplane: toplanejson,
+        evidencelane: evidencelanejson,
+        botlane: botlanejson
+      }
+    
+     }
+
     /**
      * Check for existing narrative cells and update the view accordingly
      */
@@ -1770,6 +1704,25 @@ class NarrativeAbductionApp {
         let entry = this.getEntryByName(node.type);
         return this.createDocumentItem(entry);
     }
+
+    narrativesToJSON(){
+      let narrativesjson = [];
+      this.narratives.forEach(narrative => {
+          let name = narrative.getName();
+          let resna = {
+            name: name,
+            id: narrative.rootcell.id,
+            geometry: narrative.rootcell.geometry
+          }
+          let ids = [];
+          narrative.cells.forEach(cell => {
+            ids.push(cell.id);
+          });
+          resna.cells = ids;
+          narrativesjson.push(resna);
+      });
+      return narrativesjson;
+   }
 
     /**
      * Create a new narrative, trigger create narrative view and narrative cell
@@ -1966,6 +1919,20 @@ class NarrativeAbductionApp {
       graph.autoSizeCell(cell);
       let newWidth = Math.max(cell.geometry.width, t.documentitemminwidth);
       cell.geometry.width = newWidth;
+    }
+
+    /**
+     * Update the layout of all document cells that are not part of any narrative
+     */
+    updateLayoutOfNonNarrativeCells(dx, dy){
+      let graph = this.editorui.editor.graph;
+      graph.selectAll();
+      let allcells = graph.getSelectionCells();
+      let cells = [];
+      allcells.forEach(cell => {
+          if(!this.isCellPartOfExistingNarrative(cell) && NarrativeAbductionApp.isCellDocumentItem(cell)) cells.push(cell);
+      });
+      NarrativeLayout.applyCellsLayout(graph, graph.getModel(), cells, 0, -200);
     }
 
     /**
