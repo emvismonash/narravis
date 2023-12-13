@@ -191,7 +191,7 @@ class NarrativeGPTAuthoring extends NarrativeGPT{
 
     chatContainer.style = "display:flex; flex-direction: column; height:100%;";
     messagePanel.style = 'min-height:80px;padding-top:10px;padding-bot:5px;overflow-y: scroll;flex:1;';
-    chatPanel.style = "height: 200px;margin-bottom:20px";
+    chatPanel.style = "height: 200px;margin-bottom:30px";
 
     chatContainer.append(messagePanel);
     chatContainer.append(chatPanel);

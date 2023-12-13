@@ -25,7 +25,7 @@ class NarrativeAbductionApp {
     initiate(){
       this.narrativelanescontroller = new NarrativeLanesController(this.editorui.editor.graph, this);
       this.narrativelanescontroller.initiate();
-      this.narrativeexamples = new NarrativeExamples(this);
+      this.narrativeexamples = new NarrativeExamples(this, NAExamples);
       this.narrativegptauthor = new NarrativeGPTAuthoring(this);
       this.createNAPanel();
       this.narrativeaviewscontainer = new NarrativeListViewContainer(NASettings.Colors.Narratives, this);  
@@ -499,34 +499,15 @@ class NarrativeAbductionApp {
       NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);
     };
   
-    // /**
-    //  * Create the container cell that will contain the narrative cells
-    //  */
-    // createNarrativeListCell() {
-    //   let entry = this.getEntryByName(NASettings.Dictionary.CELLS.NARRATIVELIST);
-    //   let graph = this.editorui.editor.graph;
-    //   let doc = mxUtils.createXmlDocument();
-    //   let obj = doc.createElement(entry.name);
   
-    //   graph.getModel().beginUpdate();
-    //   try {
-    //     let cell = graph.insertVertex(
-    //       graph.getDefaultParent(),
-    //       null,
-    //       obj,
-    //       0,
-    //       0,
-    //       100,
-    //       100
-    //     );
-    //     cell.setStyle(entry.style);
-    //     this.narrativelistcell = cell;
-    //   } finally {
-    //     graph.getModel().endUpdate();
-    //   }
-    // };
-  
-
+    /**
+     * Remove all narratives
+     */
+    clearNarratives(){
+      this.narratives.forEach(na => {
+        this.deleteNarrative(na.rootcell);
+      });
+    }
   
     /**
      * Remove narrative from the list
@@ -547,7 +528,7 @@ class NarrativeAbductionApp {
       this.narratives.splice(this.narratives.indexOf(narrative), 1);
     };
   
-      /**
+    /**
      * JSON Structure
      * graph:{
      *    nodes: [
