@@ -1,0 +1,197 @@
+<mxfile host="127.0.0.1" modified="2023-12-15T02:55:08.224Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0" etag="35QNoS7H7ebIEoSvJzvc" version="21.6.2" type="device">
+  <diagram name="Page-1" id="SUGzRCpQXbvGxewrjCOF">
+    <mxGraphModel dx="3864" dy="2411" grid="1" gridSize="11" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="narrativecellsbound-gG7KRd495OGmiV8fREUv-34" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="715.0009950553356" y="148.90625" width="1485.7776517047098" height="80.000001" as="geometry" />
+        </mxCell>
+        <mxCell id="narrativecellsbound-gG7KRd495OGmiV8fREUv-21" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="320" y="288.90625" width="2060" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="narrativecellsbound-gG7KRd495OGmiV8fREUv-8" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="320" width="1700" height="118.90625" as="geometry" />
+        </mxCell>
+        <mxCell id="botlanebound" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry y="288.90625" width="10" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="evidencelanebound" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry y="148.90625" width="10" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="toplanebound" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry width="10" height="128.90625" as="geometry" />
+        </mxCell>
+        <mxCell id="toplaneroot" value="Narratives" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+          <mxGeometry x="-100" width="100" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="evidencelaneroot" value="Evidence" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+          <mxGeometry x="-100" y="148.90625" width="100" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="botlaneroot" value="Narratives" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+          <mxGeometry x="-100" y="288.90625" width="100" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="gG7KRd495OGmiV8fREUv-11" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-7" target="gG7KRd495OGmiV8fREUv-10">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;div&gt;&lt;b&gt;Precursor&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Precursor evolves in bats in cave in Yunnan&lt;/div&gt;" id="gG7KRd495OGmiV8fREUv-7">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="320" y="10" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <Narrative label="Lab Leak" cells="[&quot;gG7KRd495OGmiV8fREUv-7&quot;,&quot;gG7KRd495OGmiV8fREUv-10&quot;,&quot;gG7KRd495OGmiV8fREUv-12&quot;,&quot;gG7KRd495OGmiV8fREUv-14&quot;,&quot;gG7KRd495OGmiV8fREUv-16&quot;,&quot;gG7KRd495OGmiV8fREUv-18&quot;]" id="gG7KRd495OGmiV8fREUv-8">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#cab2d6;" vertex="1" parent="1">
+            <mxGeometry x="10" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <mxCell id="gG7KRd495OGmiV8fREUv-13" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-10" target="gG7KRd495OGmiV8fREUv-12">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;WIV&lt;/b&gt;&lt;br&gt;Precursor taken to Wuhan Institute of Virology (WIV)" id="gG7KRd495OGmiV8fREUv-10">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" width="260" height="60" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="gG7KRd495OGmiV8fREUv-15" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-12" target="gG7KRd495OGmiV8fREUv-14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gG7KRd495OGmiV8fREUv-41" value="Conflicts" style="editable=0;editable=1;endArrow=cross;html=1;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;connectable=1;startArrow=none;startFill=0;endFill=0;strokeWidth=2;strokeColor=#ff0000;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-12" target="gG7KRd495OGmiV8fREUv-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gG7KRd495OGmiV8fREUv-43" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-12" target="gG7KRd495OGmiV8fREUv-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Gain function&lt;/b&gt;&lt;br&gt;&quot;Gain of function&quot; to create SARS-CoV-2 (SC2)" id="gG7KRd495OGmiV8fREUv-12">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="8.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="gG7KRd495OGmiV8fREUv-19" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-14" target="gG7KRd495OGmiV8fREUv-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Workers infection&lt;/b&gt;&lt;br&gt;SC2 infects lab workers" id="gG7KRd495OGmiV8fREUv-14">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400" y="43.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="gG7KRd495OGmiV8fREUv-17" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-16" target="gG7KRd495OGmiV8fREUv-14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Safety standard&lt;/b&gt;&lt;br&gt;Poor safety practices in WIV" id="gG7KRd495OGmiV8fREUv-16">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="78.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="gG7KRd495OGmiV8fREUv-36" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-18" target="gG7KRd495OGmiV8fREUv-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Global pandemic&lt;/b&gt;&lt;br&gt;COVID-19 global pandemic sstarted" id="gG7KRd495OGmiV8fREUv-18">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1760" y="43.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="gG7KRd495OGmiV8fREUv-24" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-20" target="gG7KRd495OGmiV8fREUv-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Precusors&lt;/b&gt;&lt;br&gt;Precursor evolves in bats in cave in Yunnan" id="gG7KRd495OGmiV8fREUv-20">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="320" y="288.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <Narrative label="Zoonotic" cells="[&quot;gG7KRd495OGmiV8fREUv-20&quot;,&quot;gG7KRd495OGmiV8fREUv-23&quot;,&quot;gG7KRd495OGmiV8fREUv-25&quot;,&quot;gG7KRd495OGmiV8fREUv-27&quot;,&quot;gG7KRd495OGmiV8fREUv-29&quot;,&quot;gG7KRd495OGmiV8fREUv-31&quot;]" id="gG7KRd495OGmiV8fREUv-21">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#ff7f00;" vertex="1" parent="1">
+            <mxGeometry x="10" y="288.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <mxCell id="gG7KRd495OGmiV8fREUv-26" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-23" target="gG7KRd495OGmiV8fREUv-25">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Wildlife jump&lt;/b&gt;&lt;br&gt;Jumps to wildlife species" id="gG7KRd495OGmiV8fREUv-23">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="288.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="gG7KRd495OGmiV8fREUv-28" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-25" target="gG7KRd495OGmiV8fREUv-27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Evolves&lt;/b&gt; &lt;br&gt;Evolves into SC2 in wildlife species" id="gG7KRd495OGmiV8fREUv-25">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1040" y="288.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="gG7KRd495OGmiV8fREUv-30" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-27" target="gG7KRd495OGmiV8fREUv-29">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Animal infection&lt;/b&gt;&lt;br&gt;Infected animals taken to HSM in Wuhan" id="gG7KRd495OGmiV8fREUv-27">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400" y="288.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="gG7KRd495OGmiV8fREUv-32" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-29" target="gG7KRd495OGmiV8fREUv-31">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gG7KRd495OGmiV8fREUv-39" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-29" target="gG7KRd495OGmiV8fREUv-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Human jump&lt;/b&gt;&lt;br&gt;SC2 jumps to humans in HSM" id="gG7KRd495OGmiV8fREUv-29">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1760" y="288.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="gG7KRd495OGmiV8fREUv-37" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="gG7KRd495OGmiV8fREUv-31" target="gG7KRd495OGmiV8fREUv-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="&lt;b&gt;Global pandemic&lt;/b&gt;&lt;br&gt;COVID-19 Pandemic started" id="gG7KRd495OGmiV8fREUv-31">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="2120" y="288.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <Narrative label="Evidence" cells="[&quot;gG7KRd495OGmiV8fREUv-33&quot;,&quot;gG7KRd495OGmiV8fREUv-38&quot;,&quot;gG7KRd495OGmiV8fREUv-40&quot;,&quot;gG7KRd495OGmiV8fREUv-42&quot;]" id="gG7KRd495OGmiV8fREUv-34">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#fdbf6f;" vertex="1" parent="1">
+            <mxGeometry x="10" y="148.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="&lt;b&gt;Wuhan centre point&lt;/b&gt;&lt;br&gt;Pandemic started in Wuhan" id="gG7KRd495OGmiV8fREUv-33">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1940.7786467600451" y="148.90625" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="&lt;b&gt;Early cases&lt;/b&gt;&lt;br&gt;Preponderance of early cases around HSM" id="gG7KRd495OGmiV8fREUv-38">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1760.0364162298563" y="188.906251" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="&lt;b&gt;WIV in SC2&lt;/b&gt;&lt;br&gt;No evidence of SC2 being held in WIV" id="gG7KRd495OGmiV8fREUv-40">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1039.995478681468" y="163.90814337543978" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="&lt;b&gt;Animal evidence&lt;br&gt;&lt;/b&gt;No evidence of infected animals prior to outbreak" id="gG7KRd495OGmiV8fREUv-42">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="715.0009950553356" y="148.90814437543978" width="260" height="55" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

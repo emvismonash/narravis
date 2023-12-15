@@ -171,5 +171,10 @@ const NAExamples =[
       title: "Saki Airfield Explosion",
       description: "Narrative of Saki airforce field explosion [Human authored].",
       drawiofilepath: "plugins/narrativeabduction/examples/saki.drawio"
-  }        
+  },
+  {
+    title: "COVID 19 Origins",
+    description: "Narrative of COVID 19 origins [Human authored].",
+    drawiofilepath: "plugins/narrativeabduction/examples/covid19.drawio"
+  }           
 ]
