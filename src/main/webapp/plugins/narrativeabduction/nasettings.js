@@ -178,3 +178,9 @@ const NAExamples =[
     drawiofilepath: "plugins/narrativeabduction/examples/covid19.drawio"
   }           
 ]
+
+const NAAbout = {
+  name: "Narrative Abduction Tool",
+  description: "This repository contains a slightly customized version of draw.io and mainly a narrativeabduction plugin. The narrative abduction plugin is designed to demonstrate the concept of narrative abduction for intelligent analysis.<br/><br/> For more information, visit the <a href='https://github.com/KadekSatriadi/drawio-na' target='_blank'>website</a>",
+  version: "Development version Dec 2023"
+}

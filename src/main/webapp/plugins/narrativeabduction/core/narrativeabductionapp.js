@@ -20,6 +20,7 @@ class NarrativeAbductionApp {
       this.narrativegptauthor;
       this.narrativeexamples;
       this.generatingsession = false;
+      this.aboutwindow;
     }
   
     initiate(){
@@ -184,6 +185,7 @@ class NarrativeAbductionApp {
       container.append(commonmenu);
   
       this.createCommonMenus();
+      this.createAboutWindow();
       //This part contains some functions for development purposes
       //this.createDevToolPanel(container);
     };
@@ -194,7 +196,7 @@ class NarrativeAbductionApp {
         this.panelwindow.commonmenu.append(title);
         this.createUpdateLinksMenu();
         this.createLoadJSONMenu();
-        this.createLoadNarrativeMenu();
+        //this.createLoadNarrativeMenu();
     }
 
     createLoadJSONMenu(){
@@ -231,6 +233,7 @@ class NarrativeAbductionApp {
 
       let  exportButton = document.createElement('button');
       exportButton.innerHTML = "Export";
+      exportButton.title = "Export the current graph data as a JSON file.";
       exportButton.addEventListener('click', ()=>{
           t.exportWorkspace();
       })
@@ -239,7 +242,7 @@ class NarrativeAbductionApp {
       // Append the input element to the desired location in the DOM
       container.appendChild(inputElement); // Example: append it to the body
       container.appendChild(exportButton);
-      this.createCommonMenu("Load JSON", container);
+      this.createCommonMenu("Load JSON", container, "Use this menu to export or load the current narratives data. Note: the file format is JSON. You can also save and open the .drawio file using the main menu on the top bar. ");
     }  
 
 
@@ -403,12 +406,15 @@ class NarrativeAbductionApp {
 
     }
    
-    createCommonMenu(label, menucontainer){
+    createCommonMenu(label, menucontainer, helptext){
         let container = document.createElement("div");
         let labelcontainer = document.createElement("div");
         labelcontainer.innerHTML = label;
         labelcontainer.classList.add(NASettings.CSSClasses.NarrativeListView.MenuLabel);
         container.append(labelcontainer);
+        if(helptext){
+          NAUIHelper.CreateHelpText(container, helptext);
+        }
         container.append(menucontainer);
         this.panelwindow.commonmenu.append(container);
     }    
@@ -458,7 +464,7 @@ class NarrativeAbductionApp {
           );
         }
       });
-      this.createCommonMenu("Update selected edge into", setlinktypecontainer);
+      this.createCommonMenu("Update selected edge into", setlinktypecontainer, "Select edges on the canvas and select one of the buttons bellow to change the type of the selected edges.");
     }
 
   
@@ -498,6 +504,27 @@ class NarrativeAbductionApp {
       NAUtil.AddPalette(this.editorui.sidebar, "Narrative Abduction", entries);
     };
   
+    createAboutWindow(){
+        let container = document.createElement('div');
+        let name = document.createElement('div');
+        let desc = document.createElement('div');
+        let version = document.createElement('div');
+
+        name.innerHTML = NAAbout.name;
+        desc.innerHTML = NAAbout.description;
+        version.innerHTML = NAAbout.version;
+
+        container.append(name);
+        container.append(desc);
+        container.append(version);
+
+        container.style = "padding:10px";
+        name.style = "font-weight:bold; margin-bottom:10px";
+        version.style = "font-style: italic;margin-top: 10px;";
+
+        this.aboutwindow = NAUIHelper.CreateWindow("aboutwindow", "About Plugin", container, 500, 500, 200, 250);
+        this.aboutwindow.setVisible(true);
+    }
   
     /**
      * Remove all narratives

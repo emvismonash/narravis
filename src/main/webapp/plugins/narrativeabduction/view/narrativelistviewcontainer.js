@@ -17,6 +17,8 @@ class NarrativeListViewContainer {
        */
       let title = document.createElement("h3");
       title.innerHTML = "Narrative List View";
+
+
       let menucontainer = document.createElement("div");
       let listcontainer = document.createElement("div");
       let container = document.createElement("div");    
@@ -25,6 +27,7 @@ class NarrativeListViewContainer {
 
       listcontainer.id = "naListContainer";
       container.append(title);
+      NAUIHelper.CreateHelpText(container, "The list shows narratives on the canvas. To rearrange the narratives, move the narrative title on the canvas.");
       container.append(menucontainer);
       container.append(listcontainer);
       
@@ -35,9 +38,10 @@ class NarrativeListViewContainer {
 
           // add create narrative buttion
       let t = this;
-      NAUIHelper.AddButton(NASettings.Language.English.newnarrative, this.menucontainer, () => {
+      let newnarrativebutton = NAUIHelper.AddButton(NASettings.Language.English.newnarrative, this.menucontainer, () => {
         t.app.newNarrative();
       });
+      newnarrativebutton.title = "Create a new narrative. Selected cells will be part of the new narrative. If no cell is selected, an empty narrative will be created.";
     }
 
     /**
