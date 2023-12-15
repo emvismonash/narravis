@@ -13,7 +13,7 @@ Original repositoty: https://github.com/jgraph/drawio
 
 **HOW TO USE**
 
-Go the current live version: https://kadeksatriadi.github.io/drawio-na/
+Go the current live version: https://emvismonash.github.io/narravis/
 
 Currently, it only works with local file. Please choose "Device" as the storage. 
 ![step1](https://github.com/KadekSatriadi/drawio-na/assets/19480468/df7d0d61-306e-48ac-950f-2a1d6d8cb078)
