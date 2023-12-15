@@ -8,10 +8,10 @@ Live demo: https://emvismonash.github.io/narravis/ [Read HOW TO USE below first]
 
 *Development version maybe unstable*
 
-![cover2](https://raw.githubusercontent.com/KadekSatriadi/drawio-na/base-version/screenshots/capture_2_generating.PNG)
+![cover2](https://raw.githubusercontent.com/emvismonash/narravis/base-version/screenshots/15Dec23/1.PNG?token=GHSAT0AAAAAACF7W4MVVFZM6N25W2S2G54AZL37GAQ)
 
 
-## HOW TO USE
+## How to activate the plugin
 
 - Go the current live version: https://emvismonash.github.io/narravis/
 
