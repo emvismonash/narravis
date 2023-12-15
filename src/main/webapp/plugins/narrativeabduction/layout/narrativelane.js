@@ -1,5 +1,5 @@
 class NarrativeLane {
-    constructor(graph, name, growdirection, app){
+    constructor(graph, name, id, growdirection, app){
         this.app = app;
         this.narratives = [];
         this.container; // this is the container on the side menu
@@ -10,8 +10,11 @@ class NarrativeLane {
         this.minheight = 120;
         this.margin = 10;
         this.name = name;
+        this.id = id;
+        this.rootid = id+"root";
+        this.boundid = id+"bound";
         this.lanelabelstyle = "text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;"; 
-        this.laneboundstyle = "connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=1;movable=0;resizable=0;rotatable=0;";
+        this.laneboundstyle = "connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=1;movable=0;rotatable=0;";
     }
     
     static GROWDIRECTION = {
@@ -27,7 +30,7 @@ class NarrativeLane {
     }
 
     assignNarrative(narrative){        
-        this.narratives.push(narrative); 
+       if(!this.narratives.includes(narrative)) this.narratives.push(narrative); 
     }
 
     createLabelCell(){
@@ -39,6 +42,7 @@ class NarrativeLane {
                 let labelVertex = graph.insertVertex(graph.getDefaultParent(), null, '', -100, yPos, 100, this.minheight);
                 labelVertex.setStyle(this.lanelabelstyle);  
                 labelVertex.setValue(this.name);   
+                labelVertex.id = this.rootid;
                 labelVertex.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, NASettings.Dictionary.ATTRIBUTES.SWIMLANELABEL);
                 this.rootcell = labelVertex;
             }finally{
@@ -58,6 +62,7 @@ class NarrativeLane {
             vertex.setStyle(this.laneboundstyle);
             vertex.geometry.width = maxWidth;
             vertex.setAttribute(NASettings.Dictionary.ATTRIBUTES.NATYPE, NASettings.Dictionary.ATTRIBUTES.SWIMLANEINDICATOR);
+            vertex.id= this.boundid;
             this.boundcell = vertex;
             graph.orderCells(true, [vertex]);
             graph.setCellStyles(mxConstants.STYLE_EDITABLE, '0', [vertex]);
@@ -66,17 +71,6 @@ class NarrativeLane {
           graph.refresh();             
         }
     }
-
-
-
-    // createLaneContainer(){
-    //     this.container = document.createElement("div");
-    //     this.container.style.padding = "2px";
-    //     let title = document.createElement("div");
-    //     title.innerHTML = this.name;
-    //     this.container.append(title);
-    //     this.container.title = title;
-    // }
 
     checkNarrativeInLane(narrative){
         if(narrative){
@@ -97,17 +91,26 @@ class NarrativeLane {
      */
     getLaneHeight(){
         let height = 0;
+        if(this.narratives.length > 2) console.log("get lane height", this.narratives);
         this.narratives.forEach(narrative => {
             if(narrative){
                 narrative.updateCellsBound();
                 if(narrative.bound){
+                    if(this.narratives.length > 2) console.log("narrative.rootcell", narrative.rootcell);
+                    if(this.narratives.length > 2) console.log("narrative.rootcell.geometry.height", narrative.rootcell.geometry.height);
+                    if(this.narratives.length > 2) console.log("narrative.bound.height", narrative.bound.height);
+
                     let h = Math.max(narrative.rootcell.geometry.height, narrative.bound.height);
                     height += h + this.margin;
+                    if(this.narratives.length > 2) console.log("height", height);
+
                 }
             }
             
         });
         //set minimun height
+        if(this.narratives.length > 2) console.log("height", height);
+
         height = Math.max(this.minheight, height);
         return height;
     }
@@ -239,37 +242,45 @@ class NarrativeLane {
         //get the height
         let height = this.getLaneHeight();
         let diff = currentheight - height;
-
+        let model = this.graph.getModel();
         this.graph.getModel().beginUpdate();
         try{
             //update height
-            this.boundcell.geometry.height = height;
+            let boundgeom = model.getGeometry(this.boundcell);
+            let rootgeom = model.getGeometry(this.rootcell);
+
             //move the root and indicator according to grow direction, 
             switch(this.growdirection){
                 case NarrativeLane.GROWDIRECTION.UPWARD:
                     //move up of the height
-                    this.boundcell.geometry.y += diff;
-                    this.rootcell.geometry.y += diff;
+                    boundgeom.y += diff;
+                    rootgeom.geometry.y += diff;
                     break;
                 case NarrativeLane.GROWDIRECTION.EQUAL:
                     //move up half of the height
-                    this.boundcell.geometry.y += diff * 0.5;
-                    this.rootcell.geometry.y += diff * 0.5;
+                    boundgeom.y += diff * 0.5;
+                    rootgeom.geometry.y += diff * 0.5;
                     break;
                 case NarrativeLane.GROWDIRECTION.DOWNWARD:
-                    //this is a default behaviour, do nothing .. 
+                    boundgeom.height = height;
                     break;
             }
+
+            model.setGeometry(this.boundcell, boundgeom);
+            model.setGeometry(this.rootcell, rootgeom);
+
         }finally{
-            let morph = new mxMorphing(this.graph);
-            morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
-            {
-                this.graph.getModel().endUpdate();      
-                this.updateNarrativesPositions();  
-                NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
-                });                      
-            }));
-            morph.startAnimation();
+            // let morph = new mxMorphing(this.graph);
+            // morph.addListener(mxEvent.DONE, mxUtils.bind(this, function()
+            // {
+                              
+            // }));
+            // morph.startAnimation();
+            this.graph.getModel().endUpdate();      
+            this.updateNarrativesPositions();  
+            this.graph.refresh();
+            NAUtil.DispatchEvent(NASettings.Dictionary.EVENTS.LANELAYOUTUPDATED, {
+            });       
         }
     }
 
@@ -295,6 +306,36 @@ class NarrativeLane {
         n.forEach(elm => {
             this.narratives.push(elm.na)
         });
+    }
+
+    removeCells(){
+        let graph = this.graph;
+        let model = this.graph.getModel();      
+        graph.getModel().beginUpdate();
+        try{
+            model.remove(this.rootcell);
+            model.remove(this.boundcell);
+        }finally{
+            graph.getModel().endUpdate(); 
+            graph.refresh();             
+        }
+    }
+
+    resetLaneCellsReferences(){
+        let model = this.graph.getModel();
+        let rootId  = this.rootid;
+        let boundid = this.boundid;
+
+        let rootCell = model.getCell(rootId);
+        this.rootcell = rootCell;
+
+        let boundCell = model.getCell(boundid);
+        this.boundcell = boundCell;
+    }
+
+    resetCells(){
+        this.removeCells();
+        this.initiate();
     }
 
 }

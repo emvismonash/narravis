@@ -3,12 +3,12 @@ class NarrativeLanesController {
         this.app = app;
         this.graph = graph;
         this.margin = 20;
-        this.toplane = new NarrativeLane(graph, "Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
-        this.evidencelane = new NarrativeLane(graph, "Evidence", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
-        this.botlane = new NarrativeLane(graph, "Narratives", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
+        this.toplane = new NarrativeLane(graph, "Narratives", "toplane", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
+        this.evidencelane = new NarrativeLane(graph, "Evidence", "evidencelane", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
+        this.botlane = new NarrativeLane(graph, "Narratives", "botlane", NarrativeLane.GROWDIRECTION.DOWNWARD, app);
         this.evidencenarrative = null;
         this.initListenerLayoutUpdated();
-        this.initListenerNarrativeCellMoved();
+        this.initListenerNarrativeCellMoved(); 
     }
 
     initiate(){
@@ -18,6 +18,22 @@ class NarrativeLanesController {
         this.updateLanesPosition();
         this.graph.refresh();
     }
+
+        /**
+     * Assign narrative to appropriate lane, useful when on move action is not triggered (e.g., load file)
+     * @param {*} narrative 
+     */
+        assignNarrativeToAppropriateLane(narrative){
+            if(this.toplane.isCellInLane(narrative.rootcell)){
+                this.toplane.assignNarrative(narrative);
+            }
+            if(this.evidencelane.isCellInLane(narrative.rootcell)){
+                this.evidencelane.assignNarrative(narrative);
+            }
+            if(this.botlane.isCellInLane(narrative.rootcell)){
+                this.botlane.assignNarrative(narrative);
+            }
+        }
 
     /**
      * TODO
@@ -94,9 +110,24 @@ class NarrativeLanesController {
         if(this.toplane.narratives.includes(narrative)) this.toplane.unAssignNarrative(narrative);
         if(this.evidencelane.narratives.includes(narrative)) this.evidencelane.unAssignNarrative(narrative);
         if(this.botlane.narratives.includes(narrative)) this.botlane.unAssignNarrative(narrative);
-      }
-  
+    }
 
+
+
+    /**
+     * Reset the reference of the root and bound cell of the narrative lane
+     */
+    resetLanesCellsReferences(){
+        this.toplane.resetLaneCellsReferences();
+        this.evidencelane.resetLaneCellsReferences();
+        this.botlane.resetLaneCellsReferences();
+    }
+
+    removeLanesCells(){
+        this.toplane.removeCells();
+        this.evidencelane.removeCells();
+        this.botlane.removeCells();
+    }
 
     updateLanesGrowth(){
         this.toplane.updateLaneLayout();

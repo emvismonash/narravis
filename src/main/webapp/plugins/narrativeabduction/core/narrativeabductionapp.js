@@ -272,7 +272,6 @@ class NarrativeAbductionApp {
     createDocumentItemsFromJSON(parsedObject){
         //create nodes
         let graph = this.editorui.editor.graph;
-        let model = graph.getModel();
         let parent = graph.getDefaultParent();
         //check structure
         let nonarrative = (parsedObject.narratives == undefined && parsedObject.nodes && parsedObject.links);
@@ -505,8 +504,8 @@ class NarrativeAbductionApp {
      */
     clearNarratives(){
       this.narratives.forEach(na => {
-        this.deleteNarrative(na.rootcell);
-      });
+        this.editorui.editor.graph.removeCells([na.rootcell]);
+      });      
     }
   
     /**
@@ -1660,7 +1659,7 @@ class NarrativeAbductionApp {
       let cells = graph.getSelectionCells();
   
       let nacells = this.getNarrativeCells(cells);
-  
+
       nacells.forEach((cell) => {
         //if the cell is already bound with a view, ignore
         let narrative = this.getNarrativeFromRootCell(cell);
@@ -1695,8 +1694,14 @@ class NarrativeAbductionApp {
           if(NarrativeLayout.isNarrativeEvidenceOnly(na)){
             t.narrativelanescontroller.evidencenarrative = na;
           }
+          //check assignment
+          t.narrativelanescontroller.assignNarrativeToAppropriateLane(na);
         }
       });
+      console.log(t.narrativelanescontroller.toplane);
+      console.log(t.narrativelanescontroller.evidencelane);
+      console.log(t.narrativelanescontroller.botlane);
+
       t.editorui.editor.graph.removeSelectionCells(cells);
     };
   
@@ -1790,7 +1795,7 @@ class NarrativeAbductionApp {
     };
 
       
-    parseDocumentContent(content){
+  parseDocumentContent(content){
       return  NarrativeAbductionApp.getTextBetweenAsterisks(content);
   }
   
@@ -1812,6 +1817,15 @@ class NarrativeAbductionApp {
       }
     };
   
+  resetLanesCellsReferences(){      
+      //reset lanes
+      this.narrativelanescontroller.resetLanesCellsReferences();
+  }
+
+  removeLanesCells(){
+    this.narrativelanescontroller.removeLanesCells();
+  }
+
     /**
      * Show edge type options at position x and y
      * @param {*} edge

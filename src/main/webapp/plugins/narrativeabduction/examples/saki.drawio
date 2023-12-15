@@ -1,207 +1,184 @@
-<mxfile host="127.0.0.1" modified="2023-12-13T00:32:32.315Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0" etag="F0SmOuoHOP-DGMWMSnSa" version="21.6.2" type="device">
-  <diagram name="Page-1" id="ZFEaA5PCDv6EkBnC_zPG">
-    <mxGraphModel dx="3332" dy="2180" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+<mxfile host="127.0.0.1" modified="2023-12-15T01:22:37.407Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0" etag="FdqGtWGc9psP8zlr44PE" version="21.6.2" type="device">
+  <diagram name="Page-1" id="IzL6Y6K2tYLs58HiKE3v">
+    <mxGraphModel dx="3864" dy="2411" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="narrativecellsbound-TeTjwUva3yv7ynu0UgP8-47" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
-          <mxGeometry x="320" y="280" width="980" height="102.5" as="geometry" />
+        <mxCell id="narrativecellsbound-lkYUUzZSFetyrEzaiLP_-29" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="320.9307463358022" y="140.110001" width="1629.0722152765215" height="60.00218436333617" as="geometry" />
         </mxCell>
-        <mxCell id="narrativecellsbound-TeTjwUva3yv7ynu0UgP8-44" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
-          <mxGeometry x="320.6310160746862" y="140" width="1340.2965893294443" height="90.000001" as="geometry" />
+        <mxCell id="narrativecellsbound-lkYUUzZSFetyrEzaiLP_-26" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+          <mxGeometry x="320" y="280" width="1160" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="narrativecellsbound-TeTjwUva3yv7ynu0UgP8-41" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
+        <mxCell id="narrativecellsbound-lkYUUzZSFetyrEzaiLP_-17" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
           <mxGeometry x="320" width="1340" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-5" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;resizable=0;rotatable=0;" vertex="1" parent="1">
+        <mxCell id="botlanebound" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;rotatable=0;" vertex="1" parent="1">
           <mxGeometry y="280" width="10" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-3" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;resizable=0;rotatable=0;" vertex="1" parent="1">
+        <mxCell id="evidencelanebound" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;rotatable=0;" vertex="1" parent="1">
           <mxGeometry y="140" width="10" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-1" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;resizable=0;rotatable=0;" vertex="1" parent="1">
+        <mxCell id="toplanebound" value="" style="connectable=1;moveable=0;movable=1;resizable=1;rotatable=1;deletable=1;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6D0DE;fillColor=#ddd;strokeWidth=2;perimeterSpacing=3;fillStyle=solid;comic=0;container=0;collapsible=0;dropTarget=0;;editable=0;movable=0;rotatable=0;" vertex="1" parent="1">
           <mxGeometry width="10" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-2" value="Narratives" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+        <mxCell id="toplaneroot" value="Narratives" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
           <mxGeometry x="-100" width="100" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-4" value="Evidence" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+        <mxCell id="evidencelaneroot" value="Evidence" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
           <mxGeometry x="-100" y="140" width="100" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-6" value="Narratives" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
+        <mxCell id="botlaneroot" value="Narratives" style="text;html=1;strokeColor=none;fillColor=none;align=center;locked=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;flipV=0;direction=south;horizontal=0;fontSize=20;fontStyle=0;fontFamily=Helvetica;connectable=0;allowArrows=0;editable=1;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;cloneable=0;pointerEvents=0;expand=0;recursiveResize=0;fontColor=#c0c0c0;" vertex="1" parent="1">
           <mxGeometry x="-100" y="280" width="100" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-7" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
-          <mxGeometry x="320" y="280" width="980" height="100" as="geometry" />
-        </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-8" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
-          <mxGeometry x="320.6310160746862" y="140" width="1340.2965893294443" height="90.000001" as="geometry" />
-        </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-9" value="" style="connectable=0;editable=1;moveable=0;movable=0;resizable=0;rotatable=0;deletable=0;locked=0;recursiveResize=0;expand=0;cloneable=0;allowArrows=0;strokeColor=#E6E6E6;dashed=1;fillColor=none;strokeWidth=2;perimeterSpacing=3;" vertex="1" parent="1">
-          <mxGeometry x="320" width="1340" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-10" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-12" target="TeTjwUva3yv7ynu0UgP8-14">
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-7" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-9" target="lkYUUzZSFetyrEzaiLP_-11">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-11" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-12" target="TeTjwUva3yv7ynu0UgP8-16">
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-8" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-9" target="lkYUUzZSFetyrEzaiLP_-13">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <NarrativeItem natype="NarrativeItem" label="Careless operation on the saki base" id="TeTjwUva3yv7ynu0UgP8-12">
+        <NarrativeItem natype="NarrativeItem" label="Careless operation on the saki base" id="lkYUUzZSFetyrEzaiLP_-9">
           <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
             <mxGeometry x="320" y="30" width="260" height="30" as="geometry" />
           </mxCell>
         </NarrativeItem>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-13" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-14" target="TeTjwUva3yv7ynu0UgP8-20">
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-10" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-11" target="lkYUUzZSFetyrEzaiLP_-15">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <NarrativeItem natype="NarrativeItem" label="Storage of munitions and fuel too close together" id="TeTjwUva3yv7ynu0UgP8-14">
+        <NarrativeItem natype="NarrativeItem" label="Storage of munitions and fuel too close together" id="lkYUUzZSFetyrEzaiLP_-11">
           <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
             <mxGeometry x="680" width="260" height="30" as="geometry" />
           </mxCell>
         </NarrativeItem>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-15" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-16" target="TeTjwUva3yv7ynu0UgP8-20">
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-12" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-13" target="lkYUUzZSFetyrEzaiLP_-15">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <NarrativeItem natype="NarrativeItem" label="Accident triggering an initial explosion" id="TeTjwUva3yv7ynu0UgP8-16">
+        <NarrativeItem natype="NarrativeItem" label="Accident triggering an initial explosion" id="lkYUUzZSFetyrEzaiLP_-13">
           <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
             <mxGeometry x="680" y="60" width="260" height="30" as="geometry" />
           </mxCell>
         </NarrativeItem>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-17" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-20" target="TeTjwUva3yv7ynu0UgP8-23">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-18" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;opacity=100;textOpacity=100" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-20" target="TeTjwUva3yv7ynu0UgP8-24">
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-14" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-15" target="lkYUUzZSFetyrEzaiLP_-16">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-19" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;opacity=100;textOpacity=100" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-20" target="TeTjwUva3yv7ynu0UgP8-25">
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-33" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-15" target="lkYUUzZSFetyrEzaiLP_-32">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <NarrativeItem natype="NarrativeItem" label="Massive explosions in fuel or munitions dumps" id="TeTjwUva3yv7ynu0UgP8-20">
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-35" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-15" target="lkYUUzZSFetyrEzaiLP_-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Massive explosions in fuel or munitions dumps" id="lkYUUzZSFetyrEzaiLP_-15">
           <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
             <mxGeometry x="1040" y="30" width="260" height="30" as="geometry" />
           </mxCell>
         </NarrativeItem>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-21" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;opacity=100;textOpacity=100" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-23" target="TeTjwUva3yv7ynu0UgP8-26">
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-39" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-16" target="lkYUUzZSFetyrEzaiLP_-38">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-22" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;opacity=100;textOpacity=100" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-23" target="TeTjwUva3yv7ynu0UgP8-27">
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-41" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-16" target="lkYUUzZSFetyrEzaiLP_-40">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <NarrativeItem natype="NarrativeItem" label="Destruction of aircraft on the ground" id="TeTjwUva3yv7ynu0UgP8-23">
+        <NarrativeItem natype="NarrativeItem" label="Destruction of aircraft on the ground" id="lkYUUzZSFetyrEzaiLP_-16">
           <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#cab2d6;strokeWidth=2" vertex="1" parent="1">
             <mxGeometry x="1400" y="30" width="260" height="30" as="geometry" />
           </mxCell>
         </NarrativeItem>
-        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Four massive explosions" id="TeTjwUva3yv7ynu0UgP8-24">
-          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
-            <mxGeometry x="1040.150778242762" y="170.20781313421963" width="260" height="30" as="geometry" />
-          </mxCell>
-        </NarrativeEvidenceCore>
-        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Mani minor explosions" id="TeTjwUva3yv7ynu0UgP8-25">
-          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
-            <mxGeometry x="1040.8916838907508" y="140.20781213421964" width="260" height="30" as="geometry" />
-          </mxCell>
-        </NarrativeEvidenceCore>
-        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Aircraft destroyed" id="TeTjwUva3yv7ynu0UgP8-26">
-          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
-            <mxGeometry x="1400.39948750226" y="140" width="260" height="30" as="geometry" />
-          </mxCell>
-        </NarrativeEvidenceCore>
-        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Some aircraft right next to major explosions were untouched while others further away were destroyed" id="TeTjwUva3yv7ynu0UgP8-27">
-          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
-            <mxGeometry x="1400.9276054041304" y="170.000001" width="260" height="60" as="geometry" />
-          </mxCell>
-        </NarrativeEvidenceCore>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-28" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;opacity=100;textOpacity=100" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-30" target="TeTjwUva3yv7ynu0UgP8-31">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-29" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-30" target="TeTjwUva3yv7ynu0UgP8-34">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <NarrativeItem natype="NarrativeItem" label="US provides ATACMS to Ukraine" id="TeTjwUva3yv7ynu0UgP8-30">
-          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
-            <mxGeometry x="320" y="315" width="260" height="30" as="geometry" />
-          </mxCell>
-        </NarrativeItem>
-        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="US denies providing ATACMS to Ukraine" id="TeTjwUva3yv7ynu0UgP8-31">
-          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
-            <mxGeometry x="320.6310160746862" y="154.54134145789658" width="260" height="30" as="geometry" />
-          </mxCell>
-        </NarrativeEvidenceCore>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-32" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-34" target="TeTjwUva3yv7ynu0UgP8-36">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-33" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-34" target="TeTjwUva3yv7ynu0UgP8-40">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <NarrativeItem natype="NarrativeItem" label="Ukraine launches attack on Saki base with multiple ATACMS" id="TeTjwUva3yv7ynu0UgP8-34">
-          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
-            <mxGeometry x="680" y="342.5" width="260" height="40" as="geometry" />
-          </mxCell>
-        </NarrativeItem>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-35" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;opacity=100;textOpacity=100" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-36" target="TeTjwUva3yv7ynu0UgP8-24">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <NarrativeItem natype="NarrativeItem" label="Missiles strike fuels or munitions dumps" id="TeTjwUva3yv7ynu0UgP8-36">
-          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
-            <mxGeometry x="1040" y="280" width="260" height="30" as="geometry" />
-          </mxCell>
-        </NarrativeItem>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-37" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;opacity=100;textOpacity=100" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-40" target="TeTjwUva3yv7ynu0UgP8-25">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-38" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;opacity=100;textOpacity=100" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-40" target="TeTjwUva3yv7ynu0UgP8-26">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="TeTjwUva3yv7ynu0UgP8-39" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;opacity=100;textOpacity=100" edge="1" parent="1" source="TeTjwUva3yv7ynu0UgP8-40" target="TeTjwUva3yv7ynu0UgP8-27">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <NarrativeItem natype="NarrativeItem" label="Other missiles hit aircraft, or near them" id="TeTjwUva3yv7ynu0UgP8-40">
-          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
-            <mxGeometry x="1040" y="340" width="260" height="30" as="geometry" />
-          </mxCell>
-        </NarrativeItem>
-        <Narrative label="Accident" cells="[&quot;TeTjwUva3yv7ynu0UgP8-12&quot;,&quot;TeTjwUva3yv7ynu0UgP8-16&quot;,&quot;TeTjwUva3yv7ynu0UgP8-14&quot;,&quot;TeTjwUva3yv7ynu0UgP8-20&quot;,&quot;TeTjwUva3yv7ynu0UgP8-23&quot;]" id="TeTjwUva3yv7ynu0UgP8-41">
+        <Narrative label="Accident" cells="[&quot;lkYUUzZSFetyrEzaiLP_-9&quot;,&quot;lkYUUzZSFetyrEzaiLP_-13&quot;,&quot;lkYUUzZSFetyrEzaiLP_-11&quot;,&quot;lkYUUzZSFetyrEzaiLP_-15&quot;,&quot;lkYUUzZSFetyrEzaiLP_-16&quot;]" id="lkYUUzZSFetyrEzaiLP_-17">
           <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#cab2d6;" vertex="1" parent="1">
             <mxGeometry x="10" width="260" height="40" as="geometry" />
           </mxCell>
         </Narrative>
-        <Narrative label="Evidence" cells="[&quot;TeTjwUva3yv7ynu0UgP8-25&quot;,&quot;TeTjwUva3yv7ynu0UgP8-24&quot;,&quot;TeTjwUva3yv7ynu0UgP8-31&quot;,&quot;TeTjwUva3yv7ynu0UgP8-26&quot;,&quot;TeTjwUva3yv7ynu0UgP8-27&quot;]" id="TeTjwUva3yv7ynu0UgP8-44">
-          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#ff7f00;" vertex="1" parent="1">
-            <mxGeometry x="10" y="140" width="260" height="40" as="geometry" />
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-19" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-20" target="lkYUUzZSFetyrEzaiLP_-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-31" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-20" target="lkYUUzZSFetyrEzaiLP_-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="US provides ATACMS to Ukraine" id="lkYUUzZSFetyrEzaiLP_-20">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="320" y="310" width="260" height="30" as="geometry" />
           </mxCell>
-        </Narrative>
-        <Narrative label="Attack on Saki" cells="[&quot;TeTjwUva3yv7ynu0UgP8-30&quot;,&quot;TeTjwUva3yv7ynu0UgP8-34&quot;,&quot;TeTjwUva3yv7ynu0UgP8-36&quot;,&quot;TeTjwUva3yv7ynu0UgP8-40&quot;]" id="TeTjwUva3yv7ynu0UgP8-47">
-          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#fdbf6f;" vertex="1" parent="1">
+        </NarrativeItem>
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-21" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-23" target="lkYUUzZSFetyrEzaiLP_-24">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-22" value="Causes" style="editable=1;endArrow=classic;html=1;rounded=1;strokeWidth=3;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-23" target="lkYUUzZSFetyrEzaiLP_-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Ukraine launches attack on Saki base with multiple ATACMS" id="lkYUUzZSFetyrEzaiLP_-23">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="680" y="305" width="260" height="40" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-36" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-24" target="lkYUUzZSFetyrEzaiLP_-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-42" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-24" target="lkYUUzZSFetyrEzaiLP_-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Missiles strike fuels or munitions dumps" id="lkYUUzZSFetyrEzaiLP_-24">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1220" y="280" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-37" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-25" target="lkYUUzZSFetyrEzaiLP_-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lkYUUzZSFetyrEzaiLP_-43" value="Explains" style="editable=1;endArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#00CC00;snapToPoint=1;" edge="1" parent="1" source="lkYUUzZSFetyrEzaiLP_-25" target="lkYUUzZSFetyrEzaiLP_-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <NarrativeItem natype="NarrativeItem" label="Other missiles hit aircraft, or near them" id="lkYUUzZSFetyrEzaiLP_-25">
+          <mxCell style="html=1;absoluteArcSize=1;editable=1;rounded=1;whiteSpace=wrap;fontColor=#333333;strokeColor=default;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2strokeColor=#ff7f00;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1220" y="340" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeItem>
+        <Narrative label="Attack" cells="[&quot;lkYUUzZSFetyrEzaiLP_-20&quot;,&quot;lkYUUzZSFetyrEzaiLP_-23&quot;,&quot;lkYUUzZSFetyrEzaiLP_-24&quot;,&quot;lkYUUzZSFetyrEzaiLP_-25&quot;]" id="lkYUUzZSFetyrEzaiLP_-26">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#ff7f00;" vertex="1" parent="1">
             <mxGeometry x="10" y="280" width="260" height="40" as="geometry" />
           </mxCell>
         </Narrative>
+        <Narrative label="Evidence" cells="[&quot;lkYUUzZSFetyrEzaiLP_-28&quot;,&quot;lkYUUzZSFetyrEzaiLP_-32&quot;,&quot;lkYUUzZSFetyrEzaiLP_-34&quot;,&quot;lkYUUzZSFetyrEzaiLP_-38&quot;,&quot;lkYUUzZSFetyrEzaiLP_-40&quot;]" id="lkYUUzZSFetyrEzaiLP_-29">
+          <mxCell style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;connectable=0;;fontColor=#fdbf6f;" vertex="1" parent="1">
+            <mxGeometry x="10" y="140" width="260" height="40" as="geometry" />
+          </mxCell>
+        </Narrative>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="US denies providing ATACMS to Ukraine" id="lkYUUzZSFetyrEzaiLP_-28">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="320.9307463358022" y="154.85123754770208" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Many minor explosions" id="lkYUUzZSFetyrEzaiLP_-32">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1100.0043769402548" y="140.110001" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Four massive explosions" id="lkYUUzZSFetyrEzaiLP_-34">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="779.9967260379137" y="145" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Aircraft destroyed" id="lkYUUzZSFetyrEzaiLP_-38">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1400.2445689904914" y="140.11218436333618" width="260" height="30" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
+        <NarrativeEvidenceCore natype="NarrativeEvidenceCore" label="Some aircraft right next to major explosions were untouched while others further away were destroyed" id="lkYUUzZSFetyrEzaiLP_-40">
+          <mxCell style="editable=1;rounded=0;whiteSpace=wrap;html=1;autosize=1;resizeHeight=0;resizeWidth=1;fixedWidth=1;strokeColor=#fdbf6f;strokeWidth=2" vertex="1" parent="1">
+            <mxGeometry x="1690.0029616123238" y="140.11218536333618" width="260" height="60" as="geometry" />
+          </mxCell>
+        </NarrativeEvidenceCore>
       </root>
     </mxGraphModel>
   </diagram>

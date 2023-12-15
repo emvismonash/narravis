@@ -47,10 +47,19 @@ class NarrativeExamples{
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             app.clearNarratives();
-                            var xmlData = xhr.responseText;
-                            var e = mxUtils.parseXml(xmlData);
-                            app.editorui.editor.setGraphXml(e.documentElement);
-                            app.loadExistingNarratives();
+
+                            (async()=>{
+                                await new Promise((resolve) => setTimeout(resolve, 600))
+                                .then(()=>{
+                                    var xmlData = xhr.responseText;
+                                    var e = mxUtils.parseXml(xmlData);
+                                    app.removeLanesCells();
+                                    app.editorui.editor.setGraphXml(e.documentElement);
+                                    app.loadExistingNarratives();
+                                    app.resetLanesCellsReferences();
+                                });                
+                              })();
+                           
                             //app.editorui.openLocalFile(xmlData); // this opens a new window but does not load the narrative components
                         }
                     };
