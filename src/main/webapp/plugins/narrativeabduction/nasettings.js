@@ -180,7 +180,7 @@ const NAExamples =[
 ]
 
 const NAAbout = {
-  name: "Narrative Abduction Tool",
-  description: "This repository contains a slightly customized version of draw.io and mainly a narrativeabduction plugin. The narrative abduction plugin is designed to demonstrate the concept of narrative abduction for intelligent analysis.<br/><br/> For more information, visit the <a href='https://github.com/KadekSatriadi/drawio-na' target='_blank'>website</a>",
+  name: "Narravis",
+  description: "Narravis is a draw.io plugin designed to demonstrate the concept of narrative abduction for intelligent analysis.<br/><br/> For more information, visit the <a href='https://github.com/emvismonash/narravis' target='_blank'>website</a>",
   version: "Development version Dec 2023"
 }

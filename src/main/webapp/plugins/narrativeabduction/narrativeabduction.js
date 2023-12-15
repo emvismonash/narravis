@@ -1,7 +1,6 @@
 /**
- * Narrative Abduction plugin contains custom functionalities to support narrative abduction workflow.
+ * Narrvis plugin contains custom functionalities to support narrative abduction workflow.
  * The registration of this plugin still requires modification of the original app (e.g., app.js, App.js, etc.).
- * External libraries: Sortable.js https://github.com/SortableJS/Sortable
  */
 // load plugin
 Draw.loadPlugin(function (ui) {
