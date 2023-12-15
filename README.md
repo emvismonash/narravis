@@ -1,4 +1,4 @@
-Narrative Visualisation 
+Narravis
 ----
 
 This repository contains a slightly customized version of draw.io and mainly a narrativeabduction plugin. The narrative abduction plugin is designed to demonstrate the concept of narrative abduction for intelligent analysis. 
