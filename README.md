@@ -6,10 +6,9 @@ Narravis is a draw.io plugin designed to demonstrate the concept of narrative ab
 
 Live demo: https://emvismonash.github.io/narravis/ [Read HOW TO USE below first]
 
-*Development version maybe unstable*
+*Development version*
 
-![cover2](https://raw.githubusercontent.com/emvismonash/narravis/base-version/screenshots/15Dec23/1.PNG?token=GHSAT0AAAAAACF7W4MVVFZM6N25W2S2G54AZL37GAQ)
-
+![2](https://github.com/emvismonash/narravis/assets/19480468/f8667663-0650-47f7-a6ea-2e650f41e631)
 
 ## How to activate the plugin
 
