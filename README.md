@@ -32,5 +32,5 @@ If this that is not the case, try to refresh the page, and create a new diagram.
 
 ## Wiki
 
-More information about features and development is the wiki: https://github.com/emvismonash/narravis/wiki
-
+- More information about features and development is the wiki: https://github.com/emvismonash/narravis/wiki
+- The path to the plugin is https://github.com/emvismonash/narravis/tree/base-version/src/main/webapp/plugins/narrativeabduction
