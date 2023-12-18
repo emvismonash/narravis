@@ -23,6 +23,11 @@ Live demo: https://emvismonash.github.io/narravis/ [Read HOW TO USE below first]
 
 - Refresh the page. 
 
+Once the plugin is succefully loaded, you should see something similar to this: 
+![image](https://github.com/emvismonash/narravis/assets/19480468/f9fa4c89-c772-4bce-9bca-5fac9c3ebfe3)
+
+If this that is not the case, try to refresh the page, and create a new diagram. 
+
 ## Wiki
 
 More information about features and development is the wiki: https://github.com/emvismonash/narravis/wiki
