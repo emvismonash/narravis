@@ -12,6 +12,8 @@ Live demo: https://emvismonash.github.io/narravis/ [Read HOW TO USE below first]
 
 https://github.com/emvismonash/narravis/assets/19480468/ceb33397-6c52-4ea7-9d13-471c28c51838
 
+_This video shows the older version of the plugin, but the features are the same._
+
 ## How to activate the plugin
 
 - Go the current live version: https://emvismonash.github.io/narravis/
