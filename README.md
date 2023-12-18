@@ -10,6 +10,8 @@ Live demo: https://emvismonash.github.io/narravis/ [Read HOW TO USE below first]
 
 ![2](https://github.com/emvismonash/narravis/assets/19480468/f8667663-0650-47f7-a6ea-2e650f41e631)
 
+https://github.com/emvismonash/narravis/assets/19480468/ceb33397-6c52-4ea7-9d13-471c28c51838
+
 ## How to activate the plugin
 
 - Go the current live version: https://emvismonash.github.io/narravis/
